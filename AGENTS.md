@@ -73,12 +73,16 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 ```text
 src/server/init.server.luau                  → ServerScriptService.Server (Script)
 src/server/Services/ExampleService.luau       → Server.Services.ExampleService (ModuleScript)
+src/server/Services/DataService.luau          → Server.Services.DataService (ModuleScript)
+src/server/Data/DataSchema.luau               → Server.Data.DataSchema (ModuleScript)
+src/server/Data/DataMigrations.luau           → Server.Data.DataMigrations (ModuleScript)
+src/server/Tests/DataLayerTests.luau          → Server.Tests.DataLayerTests (ModuleScript)
 src/client/init.client.luau                  → StarterPlayer.StarterPlayerScripts.Client (LocalScript)
 src/client/Controllers/ExampleController.luau → Client.Controllers.ExampleController (ModuleScript)
 src/shared/                                 → ReplicatedStorage.Shared (Folder)
-  Config.luau                               # MAX_ARMY_SIZE = 10; log prefix
+  Config.luau                               # army cap, logging, data/store/test constants
   Logger.luau                               # typed scoped Info/Warn logger
-  Types.luau                                # Lifecycle type; future type definitions
+  Types.luau                                # Lifecycle and PlayerData types
   Hello.luau                                # retained unused starter module
 Packages/                                   → ReplicatedStorage.Packages (Folder)
 ServerPackages/                             → ServerScriptService.ServerPackages (Folder)
@@ -88,16 +92,30 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   as children. StarterPlayerScripts clones Client and its descendants into each
   player's PlayerScripts. ReplicatedStorage is visible to clients; do not put
   secrets or authoritative data there.
-- Server startup order: require ExampleService → call all services' Init() → call
-  all services' Start() → log ServerBootstrap Ready.
+- Server startup order: require DataService, then ExampleService → call all
+  services' Init() → call all services' Start() → log ServerBootstrap Ready.
+  DataService loads player profiles asynchronously; Ready is not a data-ready signal.
+  The optional Studio-only test switch runs DataLayerTests afterward via task.spawn.
 - Client startup order: require ExampleController → call all controllers' Init()
   → call all controllers' Start() → log ClientBootstrap Ready.
 - Lists are explicit and ordered. Modules implement typed `Init(): ()` and
   `Start(): ()` functions called with dot syntax. Require/Init must avoid gameplay
   side effects; Start must return promptly. Errors halt that bootstrap before Ready.
   The server and client bootstraps have no shared ordering guarantee.
-- Wally output stays at the repository root, is generated/ignored, and currently
-  has no dependencies. Track wally.lock; never edit generated packages by hand.
+- Wally output stays at the repository root and is generated/ignored. ProfileStore
+  1.0.3 is pinned as a server dependency. Track wally.lock; never edit generated packages.
+- DataService is the sole gameplay access path: GetSnapshot returns detached data;
+  Update validates a non-yielding draft, rejects errors/stale revisions, and copies
+  committed data. No profiles or player data are replicated in this milestone.
+- Schema v1: Gold = 0, Rebirths = 0, PurchasedBuildings = {}, SchemaVersion = 1.
+  Future migrations run sequentially on copies when individual records load;
+  no historical steps exist yet. Invalid/unsupported/newer records are rejected.
+- Studio defaults to Mock; optional Persistent uses only the test store. Published
+  servers use only the live store. Persistent loads refuse unavailable API access
+  and preflight raw envelopes (one extra read/join, not atomic with session locking).
+  ProfileStore supplies its default 300-second autosave and session locking;
+  DataService releases on leave/shutdown, rejects inactive updates, and disconnects
+  handlers after final saves. See README for API contracts and verification details.
 - Workspace and Lighting are Studio-owned and unmapped; the template Baseplate
   and FilteringEnabled entry were removed. A fresh Rojo build contains code only.
 - Unknown instances at the DataModel/service boundaries are preserved explicitly.
@@ -106,7 +124,7 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   SoundService retains RespectFilteringEnabled = true and can overwrite that
   property's Studio value. Save a copy and review the Rojo sync diff, especially
   when changing an existing sync session's mappings.
-- Asset contracts: none for milestone 1.1; no map, model, terrain, or UI is created.
+- Asset contracts: none for milestones 1.1–1.2; no map, model, terrain, or UI is created.
 
 ## 11. Commands
 Run project commands from the repository root. Aftman 0.3.0 is already installed
@@ -130,7 +148,7 @@ aftman trust JohnnyMorganz/StyLua
 aftman trust Kampfkarren/selene
 aftman install
 
-# No gameplay dependencies yet. Wally may omit empty output directories.
+# Installs server-only ProfileStore. Wally may omit empty output directories.
 wally install
 mkdir -p Packages ServerPackages
 
@@ -152,11 +170,20 @@ only to the intended place. For the map/lighting, continue using the existing
 Studio place. Edit source scripts on disk, never in Studio's script editor.
 Selene checks lint rules; Studio Script Analysis remains the check for Roblox
 types under `--!strict`. Both server/client Output filters must be enabled to see
-all four startup messages.
+bootstrap messages plus DataService's startup/profile messages. If installed
+package folders are absent after reconnecting, restart Rojo after `wally install`.
+
+Data verification: set Config.DATA.RUN_TESTS_IN_STUDIO to true on disk, leave
+STUDIO_MODE = "Mock", sync, and Play. Expect `All mock data-layer checks passed`;
+Stop should print `Final save confirmed for <userId> (Mock)`. Reset the switch to
+false. Full service tests must run in the normal Script context via this switch,
+not a command/plugin context with a separate module cache. For optional durable
+test-store fixtures and cross-Play verification, follow README's Data layer section.
+Do not enable Studio API access or change store names automatically.
 
 ## 12. Status
 - [x] 1.1 Project setup — scaffold and tool configuration implemented; verification below
-- [ ] 1.2 Data layer
+- [x] 1.2 Data layer — implemented; mock runtime verified, durable check pending
 - [ ] 1.3 Plot system
 - [ ] 1.4 Dropper loop
 - [ ] 1.5 Purchase buttons
@@ -185,3 +212,19 @@ true. Empty package folders exist in the build but were absent from the connecte
 Studio tree; reconnect Rojo after initialization to apply the full mapping.
 Studio Script Analysis type diagnostics still need a manual review; lint/runtime
 checks do not establish that all strict type diagnostics are clear.
+
+Milestone 1.2 verification (2026-10-06):
+- [x] Wally installs pinned ProfileStore 1.0.3 into ServerPackages.
+- [x] StyLua, Selene, strict Luau-LSP analysis with Roblox definitions, and Rojo build pass.
+- [x] Studio loads schema-1 mock player data and preserves the existing scene.
+- [x] Eleven schema cases, snapshot isolation, invalid/throwing/yielding/stale
+  mutation rejection, and mock final-save/reload tests pass.
+- [x] Stop Play confirms the player's final mock save; Studio returned to Edit.
+- [ ] Durable test-store save/reload across Play sessions and actual Persistent
+  player-load path: Studio API access is currently disabled. No live store was touched.
+- [ ] Cross-server session takeover and departure during a slow load need a later
+  integration check; implementation guards exist but these races were not simulated.
+
+The fresh Rojo session used localhost:34873 because the older session omitted
+new package folders. Normal `rojo serve` still defaults to 34872; connect to the
+port printed by the server. Tests are disabled and Studio mode is Mock by default.

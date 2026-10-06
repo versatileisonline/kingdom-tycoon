@@ -9,6 +9,7 @@ local logger = Logger.new("ServerBootstrap")
 
 -- Require and run services in this explicit order. Add services as milestones land.
 local services: { Types.Lifecycle } = {
+	require(script.Services.DataService),
 	require(script.Services.ExampleService),
 }
 
@@ -21,3 +22,10 @@ for _, service in services do
 end
 
 logger.Info("Ready")
+
+local Config = require(Shared:WaitForChild("Config"))
+if game:GetService("RunService"):IsStudio() and Config.DATA.RUN_TESTS_IN_STUDIO then
+	task.spawn(function(): ()
+		require(script.Tests.DataLayerTests).Run()
+	end)
+end

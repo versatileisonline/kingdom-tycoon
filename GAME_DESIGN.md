@@ -122,3 +122,15 @@ Roaming ambient NPCs; counts capped per server for performance.
 - Milestone 1.1: leave Workspace and Lighting under Studio ownership by removing
   the template Workspace/Baseplate mapping and Lighting property overrides;
   preserve the existing SoundService setting.
+- Milestone 1.2: persist progress automatically with ProfileStore now, rather than
+  adding a manual save button or deferring saving. Initial schema version is 1,
+  with zero Gold, zero Rebirths, and an empty PurchasedBuildings dictionary.
+- Milestone 1.2: Studio defaults to in-memory mock data; opt-in persistent testing
+  uses a separate test store, never live player data. Invalid/future data and load
+  failures stop access rather than silently resetting progress.
+- Approved early-loop direction (future milestones, not implemented in 1.2):
+  plot claim provides a free starter farm producer; one outside farm and its
+  required upgrades unlock the Royal Mint inside the kingdom. Collectors display
+  unclaimed earnings and reset on collection; physical props are removed after
+  their value reaches the collector. Walls progress from wooden to stone;
+  defenses come later.

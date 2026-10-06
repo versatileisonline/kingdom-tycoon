@@ -12,3 +12,4 @@ server-packages = "game.ServerScriptService.ServerPackages"
 [dependencies]
 
 [server-dependencies]
+ProfileStore = "lm-loleris/profilestore@=1.0.3"
