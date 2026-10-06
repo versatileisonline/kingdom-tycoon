@@ -4,4 +4,6 @@
 # To add a new tool, add an entry to this table.
 [tools]
 rojo = "rojo-rbx/rojo@7.7.1"
-# rojo = "rojo-rbx/rojo@6.2.0"
+wally = "UpliftGames/wally@0.3.2"
+stylua = "JohnnyMorganz/StyLua@2.5.2"
+selene = "Kampfkarren/selene@0.32.0"

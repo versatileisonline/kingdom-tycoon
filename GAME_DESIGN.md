@@ -115,3 +115,10 @@ Roaming ambient NPCs; counts capped per server for performance.
 - No overthrowing other players' kingdoms.
 - Use Rojo + Git workflow.
 - Army cap is 10 soldiers per player.
+- Milestone 1.1: keep the existing init-script layout, use explicitly ordered
+  Init/Start services and controllers, and retain the unused Hello template.
+- Milestone 1.1: keep Wally-generated Packages and ServerPackages at the repo root;
+  add no gameplay dependencies yet. Retain Aftman and pin formatting/lint tools.
+- Milestone 1.1: leave Workspace and Lighting under Studio ownership by removing
+  the template Workspace/Baseplate mapping and Lighting property overrides;
+  preserve the existing SoundService setting.
