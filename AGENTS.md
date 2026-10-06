@@ -183,7 +183,7 @@ Do not enable Studio API access or change store names automatically.
 
 ## 12. Status
 - [x] 1.1 Project setup — scaffold and tool configuration implemented; verification below
-- [x] 1.2 Data layer — implemented; mock runtime verified, durable check pending
+- [x] 1.2 Data layer — implemented; mock runtime and durable persistence verified
 - [ ] 1.3 Plot system
 - [ ] 1.4 Dropper loop
 - [ ] 1.5 Purchase buttons
@@ -220,11 +220,28 @@ Milestone 1.2 verification (2026-10-06):
 - [x] Eleven schema cases, snapshot isolation, invalid/throwing/yielding/stale
   mutation rejection, and mock final-save/reload tests pass.
 - [x] Stop Play confirms the player's final mock save; Studio returned to Edit.
-- [ ] Durable test-store save/reload across Play sessions and actual Persistent
-  player-load path: Studio API access is currently disabled. No live store was touched.
+- [x] Durable test-store save/reload across Play sessions and actual Persistent
+  player-load path verified (2026-10-06). Studio API access enabled with explicit
+  approval; no live store was touched.
 - [ ] Cross-server session takeover and departure during a slow load need a later
   integration check; implementation guards exist but these races were not simulated.
 
 The fresh Rojo session used localhost:34873 because the older session omitted
 new package folders. Normal `rojo serve` still defaults to 34872; connect to the
 port printed by the server. Tests are disabled and Studio mode is Mock by default.
+
+Durable persistence verification (2026-10-06):
+- Connected Kingdom Tycoon place 77311816657817 (experience 10769565462) was
+  explicitly approved for verification. All project data reads/writes used
+  KingdomTycoon_PlayerData_Test; the live player store was not accessed.
+- RunStorage(true) saved Gold 77 at fixture key
+  Verify_8ba817fb-b8a0-48b8-b82e-9cc5d2310772. After Stop/Play, RunStorage with
+  that same key passed its read-only reload check. The fixture remains in the test store.
+- The normal server bootstrap loaded Player_9916983918 in Persistent mode across
+  two Play sessions. Both Stops printed Final save confirmed (Persistent).
+  Fresh, uncached reads confirmed schema 1, unchanged starting data, session load
+  count increasing from 1 to 2, and ActiveSession cleared after each Stop.
+- Config was restored to STUDIO_MODE = "Mock" and RUN_TESTS_IN_STUDIO = false;
+  Studio returned to Edit mode. Studio API access remains enabled as approved.
+- Cross-server takeover and departure during slow loading remain unverified;
+  these checks did not exercise outages or wait for the 300-second autosave.

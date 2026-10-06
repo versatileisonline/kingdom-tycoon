@@ -194,7 +194,7 @@ depend on that running service context.
 
 - [ ] **Layer 1: Core tycoon** (dropper, collector, farms, shop, rebirth, saving, leaderboards)
   - [x] 1.1 Project setup
-  - [x] 1.2 Data layer (mock runtime verified; durable persistence check pending)
+  - [x] 1.2 Data layer (mock runtime and durable persistence verified)
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)
