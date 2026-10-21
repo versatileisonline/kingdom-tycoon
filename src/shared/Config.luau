@@ -3,6 +3,15 @@
 return table.freeze({
 	MAX_ARMY_SIZE = 10,
 	LOG_PREFIX = "KingdomTycoon",
+	PLOTS = table.freeze({
+		CLAIM_DISTANCE = 12,
+		CLAIM_COOLDOWN_SECONDS = 1,
+		PROMPT_HOLD_SECONDS = 0.5,
+		CHARACTER_TIMEOUT_SECONDS = 10,
+		FEEDBACK_SECONDS = 4,
+		TEST_SPAWN_RADIUS = 10,
+		RUN_TESTS_IN_STUDIO = false,
+	}),
 	DATA = table.freeze({
 		SCHEMA_VERSION = 1,
 		STARTING_GOLD = 0,
