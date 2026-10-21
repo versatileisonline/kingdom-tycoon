@@ -74,11 +74,15 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 src/server/init.server.luau                  → ServerScriptService.Server (Script)
 src/server/Services/ExampleService.luau       → Server.Services.ExampleService (ModuleScript)
 src/server/Services/DataService.luau          → Server.Services.DataService (ModuleScript)
+src/server/Services/PlotService.luau          → Server.Services.PlotService (ModuleScript)
+src/server/Plots/PlotRegistry.luau            → Server.Plots.PlotRegistry (ModuleScript)
 src/server/Data/DataSchema.luau               → Server.Data.DataSchema (ModuleScript)
 src/server/Data/DataMigrations.luau           → Server.Data.DataMigrations (ModuleScript)
 src/server/Tests/DataLayerTests.luau          → Server.Tests.DataLayerTests (ModuleScript)
+src/server/Tests/PlotServiceTests.luau        → Server.Tests.PlotServiceTests (ModuleScript)
 src/client/init.client.luau                  → StarterPlayer.StarterPlayerScripts.Client (LocalScript)
 src/client/Controllers/ExampleController.luau → Client.Controllers.ExampleController (ModuleScript)
+src/client/Controllers/PlotController.luau   → Client.Controllers.PlotController (ModuleScript)
 src/shared/                                 → ReplicatedStorage.Shared (Folder)
   Config.luau                               # army cap, logging, data/store/test constants
   Logger.luau                               # typed scoped Info/Warn logger
@@ -92,11 +96,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   as children. StarterPlayerScripts clones Client and its descendants into each
   player's PlayerScripts. ReplicatedStorage is visible to clients; do not put
   secrets or authoritative data there.
-- Server startup order: require DataService, then ExampleService → call all
+- Server startup order: require DataService, PlotService, then ExampleService → call all
   services' Init() → call all services' Start() → log ServerBootstrap Ready.
   DataService loads player profiles asynchronously; Ready is not a data-ready signal.
   The optional Studio-only test switch runs DataLayerTests afterward via task.spawn.
-- Client startup order: require ExampleController → call all controllers' Init()
+- Client startup order: require ExampleController, PlotController → call all controllers' Init()
   → call all controllers' Start() → log ClientBootstrap Ready.
 - Lists are explicit and ordered. Modules implement typed `Init(): ()` and
   `Start(): ()` functions called with dot syntax. Require/Init must avoid gameplay
@@ -125,6 +129,23 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   property's Studio value. Save a copy and review the Rojo sync diff, especially
   when changing an existing sync session's mappings.
 - Asset contracts: none for milestones 1.1–1.2; no map, model, terrain, or UI is created.
+- Milestone 1.3 asset contract: Workspace.KingdomMap.ArrivalSpawn (SpawnLocation),
+  Workspace.Plots.Plot01–Plot04 (Models with unique PlotId attributes, anchored
+  Origin, and anchored ClaimMarker containing ClaimPrompt + ClaimLabel), empty
+  Workspace.ActiveKingdoms (Folder), and ServerStorage.KingdomTemplate (anchored,
+  script-free Model with PrimaryPart, SpawnPoint (enabled neutral SpawnLocation), and OwnerLabel).
+  Detailed hierarchy and verification: docs/MILESTONE_1_3.md. These containers
+  remain Studio-owned; default.project.json is unchanged.
+- The user approved one-time Studio editing commands for the 1.3 assets as a
+  session exception to section 7 (2026-10-20). tools/BuildPlotScene.luau is the
+  reproducible recipe, not a runtime script or Rojo mapping; it refuses existing
+  named assets. Grounds center (1400, 40, 0); the existing castle, terrain,
+  foliage, buildings, and original spawn were preserved.
+- PlotRegistry owns non-yielding session assignments. PlotService validates
+  data readiness, live characters, distance, and request cooldown; clones the
+  template with rollback on error; handles respawn and departure/shutdown cleanup.
+  PlotController reads server attributes for guidance and feedback. No data
+  schema changes, client request remotes, or economy behavior were added.
 
 ## 11. Commands
 Run project commands from the repository root. Aftman 0.3.0 is already installed
@@ -184,7 +205,7 @@ Do not enable Studio API access or change store names automatically.
 ## 12. Status
 - [x] 1.1 Project setup — scaffold and tool configuration implemented; verification below
 - [x] 1.2 Data layer — implemented; mock runtime and durable persistence verified
-- [ ] 1.3 Plot system
+- [x] 1.3 Plot system — implemented; single-player and multiplayer lifecycle verified
 - [ ] 1.4 Dropper loop
 - [ ] 1.5 Purchase buttons
 - [ ] 1.6 Farms
@@ -229,6 +250,47 @@ Milestone 1.2 verification (2026-10-06):
 The fresh Rojo session used localhost:34873 because the older session omitted
 new package folders. Normal `rojo serve` still defaults to 34872; connect to the
 port printed by the server. Tests are disabled and Studio mode is Mock by default.
+
+Milestone 1.3 implementation (2026-10-20):
+- [x] Four Studio plots, arrival plaza, and reusable starter template built in a
+  separate area; existing assets preserved. One-time builder retained under tools/.
+- [x] Server claims, ownership signs, respawn handling, rollback, cleanup, and
+  client guidance implemented; opt-in ownership/service tests added.
+- [x] Selene and strict Luau-LSP analysis with Roblox definitions pass; Rojo build succeeds.
+- [x] Studio runtime suite passes, including rollback, clone/release/reclaim,
+  replicated availability count, and actual character death/kingdom respawn.
+- [x] Native hold-E claim interaction verified in single-player Studio; normal
+  startup reports Ready (4 plots). Mock final-save confirmation verified on Stop.
+- [x] Two-client claim contention, replicated visuals, and departure/reclaim check (2026-10-21).
+- [ ] Save the Studio place to retain the map assets; Rojo exports code only.
+
+Respawn verification found and fixed a CharacterAdded teleport race: Roblox's
+later spawn placement overrode the courtyard teleport. PlotService now assigns
+each player's native RespawnLocation on join, claim, and release; it has no
+per-character wait tasks/connections. The template SpawnPoint is an enabled,
+neutral SpawnLocation. The old marker was retained as LegacySpawnMarker in the
+connected Studio template for reversibility. Plot tests are disabled by default.
+Streaming is enabled in the existing place, so availability UI reads the server's
+AvailablePlotCount attribute rather than counting potentially unloaded plot models.
+
+Multiplayer verification (2026-10-21):
+- Native StudioTestService launched two clients in the approved Kingdom Tycoon
+  place. Both used Mock data and arrived at the plaza; no live data was accessed.
+- Concurrent native hold-E attempts on Plot01 produced one owner and one clone.
+  Both clients agreed on ownership, sign text, and available plot count.
+- The owner was rejected when attempting a second plot; the other player claimed
+  Plot02 independently. Both clients saw the same two kingdoms.
+- Actual owner death respawned in the assigned courtyard (within 3 studs of its spawn).
+- Disconnecting the temporary owner released Plot01, destroyed its clone,
+  reenabled its prompt, and updated availability for the remaining client.
+  DataService confirmed the departing player's final mock save.
+- A fresh test connection arrived at the plaza and reclaimed Plot01. Both clients
+  saw the new owner/sign while the other player's Plot02 remained unchanged.
+- Temporary test sessions ended; the main place returned to Edit mode. Test
+  switches remain false. Four-owned-plots/fifth-client feedback was not exercised.
+- Developer requested hands-on Studio testing going forward; computer use only
+  when explicitly requested. A local-copy save dialog was left for the developer;
+  saving that copy has not been confirmed.
 
 Durable persistence verification (2026-10-06):
 - Connected Kingdom Tycoon place 77311816657817 (experience 10769565462) was

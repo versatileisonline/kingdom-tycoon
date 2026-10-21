@@ -109,6 +109,15 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Milestone 1.3 (2026-10-20): use manual entrance claiming, four plots for the
+  first demonstration, and session-only plot locations. Saved progression stays
+  independent of land assignment. Players respawn in their claimed kingdom;
+  departure releases the plot and removes its runtime template.
+- Milestone 1.3: approved one-time Studio editing commands to build the starter
+  scene and template as an exception to the no-script-generated-map rule. Runtime
+  code only clones the Studio template. Preserve the existing castle/landscape;
+  the demonstration grounds are a separate area. The farm footprint is visual
+  only; production, purchasing, and the general HUD remain future milestones.
 - Build in four releasable layers.
 - Dragons are cosmetic only.
 - No damage-boost gamepass.

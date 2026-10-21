@@ -55,12 +55,17 @@ src/
 │   │   └── DataMigrations.luau     # versioned preparation; sequential migration registry
 │   ├── Services/
 │   │   ├── DataService.luau        # server-only player sessions and validated updates
+│   │   ├── PlotService.luau        # server-authoritative claims, template clones, respawns, cleanup
 │   │   └── ExampleService.luau     # startup example; no gameplay
+│   ├── Plots/
+│   │   └── PlotRegistry.luau       # non-yielding session ownership and exclusivity
 │   └── Tests/
-│       └── DataLayerTests.luau     # opt-in Studio checks; never runs in published servers
+│       ├── DataLayerTests.luau     # opt-in Studio checks; never runs in published servers
+│       └── PlotServiceTests.luau   # ownership, validation, rollback, clone/release/reclaim checks
 ├── client/                         → StarterPlayer.StarterPlayerScripts.Client (LocalScript)
 │   ├── init.client.luau            # thin client bootstrap
 │   └── Controllers/
+│       ├── PlotController.luau     # claim guidance and server feedback; no authority
 │       └── ExampleController.luau  # startup example; no gameplay
 └── shared/                         → ReplicatedStorage.Shared (Folder)
     ├── Config.luau                 # shared constants, including MAX_ARMY_SIZE = 10
@@ -69,6 +74,8 @@ src/
     └── Hello.luau                  # retained template module; unused
 Packages/                          → ReplicatedStorage.Packages (generated, ignored)
 ServerPackages/                    → ServerScriptService.ServerPackages (generated, ignored)
+tools/BuildPlotScene.luau            # one-time Edit-mode scene builder; not synced or run in-game
+docs/MILESTONE_1_3.md                # plot contract, architecture, and verification
 ```
 
 `init.*` makes each source directory a script with child folders rather than a plain
@@ -78,8 +85,8 @@ and server-only packages stay on the server.
 
 Each bootstrap requires an explicit ordered list of services/controllers, calls
 all `Init()` functions, then all `Start()` functions in the same order, and logs
-`Ready` only if startup succeeds. Server order is DataService, then ExampleService;
-the client contains ExampleController. Player profiles load asynchronously, so
+`Ready` only if startup succeeds. Server order is DataService, PlotService, then ExampleService;
+the client contains ExampleController and PlotController. Player profiles load asynchronously, so
 server `Ready` does not mean a particular player's data is ready.
 Modules must keep top-level code and `Init()` free of gameplay side effects;
 `Start()` should return promptly. There is no server/client ordering guarantee.
@@ -127,8 +134,8 @@ On Play, expect these lines (server/client pairs may interleave):
 ### Data layer (milestone 1.2)
 
 Initial player data: `SchemaVersion = 1`, `Gold = 0`, `Rebirths = 0`,
-`PurchasedBuildings = {}` (building ID → boolean). No currency earnings,
-purchases, plots, UI, or data remotes are implemented yet.
+`PurchasedBuildings = {}` (building ID → boolean). Plots do not change this schema.
+Currency earnings, purchases, the economy HUD, and data remotes are not implemented yet.
 
 Only server services should call `DataService.GetSnapshot(player)` or
 `DataService.Update(player, function(draft) ... end)`. Snapshots are detached;
@@ -195,6 +202,7 @@ depend on that running service context.
 - [ ] **Layer 1: Core tycoon** (dropper, collector, farms, shop, rebirth, saving, leaderboards)
   - [x] 1.1 Project setup
   - [x] 1.2 Data layer (mock runtime and durable persistence verified)
+  - [x] 1.3 Plot system (single-player and multiplayer verified; see [asset contract and verification](docs/MILESTONE_1_3.md))
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)
