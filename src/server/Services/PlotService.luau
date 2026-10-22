@@ -15,7 +15,6 @@ type Plot = {
 	Model: Model,
 	Origin: BasePart,
 	Marker: BasePart,
-	Prompt: ProximityPrompt,
 	Label: TextLabel,
 	Kingdom: Model?,
 }
@@ -86,9 +85,9 @@ local function resetPlot(plot: Plot): ()
 		plot.Kingdom = nil
 	end
 	plot.Model:SetAttribute("OwnerUserId", nil)
-	plot.Label.Text = "UNCLAIMED LAND"
+	plot.Label.Text = "CLAIM KINGDOM — FREE"
 	plot.Label.Visible = true
-	plot.Prompt.Enabled = true
+	plot.Marker.CanTouch = true
 end
 
 function PlotService.GetPlotId(player: Player): string?
@@ -112,7 +111,7 @@ function PlotService.Release(player: Player): ()
 	end
 end
 
--- Called by server-bound prompts only; no client-supplied position or ownership.
+-- Called by server-bound plates only; no client-supplied position or ownership.
 -- Do not add yields between reservation and commit/rollback.
 function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string)
 	if typeof(player) ~= "Instance" or not player:IsA("Player") or player.Parent ~= Players then
@@ -144,7 +143,7 @@ function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string
 		return false, "Your character must be alive to claim land."
 	end
 	if not ((root.Position - plot.Marker.Position).Magnitude <= SETTINGS.CLAIM_DISTANCE) then
-		return false, "Move closer to the claim banner."
+		return false, "Step onto the claim plate."
 	end
 	local reserved, reason = registry.Reserve(player.UserId, plotId)
 	if not reserved then
@@ -171,7 +170,7 @@ function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string
 		plot.Model:SetAttribute("OwnerUserId", player.UserId)
 		plot.Label.Text = player.DisplayName .. "'s Kingdom"
 		plot.Label.Visible = false -- The kingdom entrance supplies the owner sign.
-		plot.Prompt.Enabled = false
+		-- Keep the reusable touch connection alive; ownership gates later touches.
 		player:SetAttribute("KingdomPlotId", plotId)
 		player.RespawnLocation = spawn
 		for observer in observers do
@@ -254,14 +253,12 @@ function PlotService.Start(): ()
 		local id = model:GetAttribute("PlotId")
 		local origin = model:FindFirstChild("Origin")
 		local marker = model:FindFirstChild("ClaimMarker")
-		local prompt = if marker ~= nil then marker:FindFirstChild("ClaimPrompt") else nil
 		local label = if marker ~= nil then marker:FindFirstChild("ClaimLabel", true) else nil
 		assert(typeof(id) == "string" and id ~= "" and plots[id] == nil, "Plot IDs must be unique nonempty strings")
 		assert(origin ~= nil and origin:IsA("BasePart") and origin.Anchored, "Missing anchored Origin")
 		assert(marker ~= nil and marker:IsA("BasePart") and marker.Anchored, "Missing anchored ClaimMarker")
-		assert(prompt ~= nil and prompt:IsA("ProximityPrompt"), "Missing ClaimPrompt")
 		assert(label ~= nil and label:IsA("TextLabel"), "Missing ClaimLabel")
-		plots[id] = { Model = model, Origin = origin, Marker = marker, Prompt = prompt, Label = label, Kingdom = nil }
+		plots[id] = { Model = model, Origin = origin, Marker = marker, Label = label, Kingdom = nil }
 		table.insert(ids, id)
 	end
 	assert(#ids > 0, "No plots configured")
@@ -273,11 +270,14 @@ function PlotService.Start(): ()
 	started = true
 	for id, plot in plots do
 		resetPlot(plot)
-		plot.Prompt.MaxActivationDistance = SETTINGS.CLAIM_DISTANCE
-		plot.Prompt.HoldDuration = SETTINGS.PROMPT_HOLD_SECONDS
 		table.insert(
 			connections,
-			plot.Prompt.Triggered:Connect(function(player: Player): ()
+			plot.Marker.Touched:Connect(function(hit: BasePart): ()
+				local character = hit:FindFirstAncestorOfClass("Model")
+				local player = if character ~= nil then Players:GetPlayerFromCharacter(character) else nil
+				if player == nil or registry.GetOwner(id) ~= nil then
+					return
+				end
 				local previous = lastRequests[player]
 				if previous ~= nil and os.clock() - previous < SETTINGS.CLAIM_COOLDOWN_SECONDS then
 					return -- Avoid replicating feedback for throttled requests.

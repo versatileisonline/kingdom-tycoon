@@ -9,5 +9,7 @@ return table.freeze({
 	CONVEYOR_SPEED = 8,
 	COLLECT_DISTANCE = 8, -- Distance from the plate's surface, not its center.
 	COLLECT_COOLDOWN_SECONDS = 1,
+	START_DISTANCE = 5, -- Distance from the start plate's surface.
+	START_COOLDOWN_SECONDS = 1,
 	RUN_TESTS_IN_STUDIO = false,
 })

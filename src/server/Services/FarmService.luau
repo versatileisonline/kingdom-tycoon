@@ -25,6 +25,10 @@ type Farm = {
 	Expires: { [BasePart]: number },
 	Overlap: OverlapParams,
 	Connection: RBXScriptConnection?,
+	StartConnection: RBXScriptConnection?,
+	StartPlate: BasePart,
+	Started: boolean,
+	LastStart: number,
 	NextDrop: number,
 	LastCollect: number,
 }
@@ -62,25 +66,85 @@ local function publish(farm: Farm): ()
 	farm.Model:SetAttribute("ActiveBundleCount", farm.Ledger.GetCount())
 end
 
-function FarmService.TryCollect(player: Player): (boolean, number)
-	local farm = farms[player]
-	if not running or farm == nil or player.Parent ~= Players or PlotService.GetKingdom(player) ~= farm.Kingdom then
-		return false, 0
-	end
+local function isNearPlate(player: Player, plate: BasePart, distance: number): boolean
 	local character = player.Character
 	local root = if character ~= nil then character:FindFirstChild("HumanoidRootPart") else nil
 	local humanoid = if character ~= nil then character:FindFirstChildOfClass("Humanoid") else nil
 	if root == nil or not root:IsA("BasePart") or humanoid == nil or humanoid.Health <= 0 then
-		return false, 0
+		return false
 	end
-	local localPosition = farm.Plate.CFrame:PointToObjectSpace(root.Position)
-	local half = farm.Plate.Size / 2
+	local localPosition = plate.CFrame:PointToObjectSpace(root.Position)
+	local half = plate.Size / 2
 	local nearest = Vector3.new(
 		math.clamp(localPosition.X, -half.X, half.X),
 		math.clamp(localPosition.Y, -half.Y, half.Y),
 		math.clamp(localPosition.Z, -half.Z, half.Z)
 	)
-	if not ((localPosition - nearest).Magnitude <= Settings.COLLECT_DISTANCE) then
+	return (localPosition - nearest).Magnitude <= distance
+end
+
+function FarmService.TryStart(player: Player): boolean
+	local farm = farms[player]
+	if
+		not running
+		or farm == nil
+		or farm.Started
+		or player.Parent ~= Players
+		or PlotService.GetKingdom(player) ~= farm.Kingdom
+		or DataService.GetSnapshot(player) == nil
+	then
+		return false
+	end
+	local now = os.clock()
+	if now - farm.LastStart < Settings.START_COOLDOWN_SECONDS then
+		return false
+	end
+	farm.LastStart = now
+	if not isNearPlate(player, farm.StartPlate, Settings.START_DISTANCE) then
+		return false
+	end
+	-- Non-yielding: reserve once before revealing or connecting collection.
+	farm.Started = true
+	farm.NextDrop = now + Settings.PRODUCTION_SECONDS
+	farm.Model.Parent = farm.Kingdom
+	farm.Conveyor.AssemblyLinearVelocity = farm.Conveyor.CFrame.LookVector * Settings.CONVEYOR_SPEED
+	farm.Plate.CanTouch = true
+	farm.Connection = farm.Plate.Touched:Connect(function(hit: BasePart): ()
+		local character = player.Character
+		if character ~= nil and hit:IsDescendantOf(character) then
+			FarmService.TryCollect(player)
+		end
+	end)
+	if farm.StartConnection ~= nil then
+		farm.StartConnection:Disconnect()
+		farm.StartConnection = nil
+	end
+	farm.StartPlate.CanTouch = false
+	farm.StartPlate.CanCollide = false
+	farm.StartPlate.Transparency = 1
+	for _, descendant in farm.StartPlate:GetDescendants() do
+		if descendant:IsA("LayerCollector") then
+			descendant.Enabled = false
+		end
+	end
+	farm.Kingdom:SetAttribute("StarterFarmStarted", true)
+	player:SetAttribute("StarterFarmStarted", true)
+	logger.Info(string.format("Activated starter farm for %d", player.UserId))
+	return true
+end
+
+function FarmService.TryCollect(player: Player): (boolean, number)
+	local farm = farms[player]
+	if
+		not running
+		or farm == nil
+		or not farm.Started
+		or player.Parent ~= Players
+		or PlotService.GetKingdom(player) ~= farm.Kingdom
+	then
+		return false, 0
+	end
+	if not isNearPlate(player, farm.Plate, Settings.COLLECT_DISTANCE) then
 		return false, 0
 	end
 	local now = os.clock()
@@ -114,19 +178,26 @@ local function release(player: Player, _kingdom: Model): ()
 	if farm.Connection ~= nil then
 		farm.Connection:Disconnect()
 	end
+	if farm.StartConnection ~= nil then
+		farm.StartConnection:Disconnect()
+	end
 	farm.Conveyor.AssemblyLinearVelocity = Vector3.zero
 	farm.Bundles:Destroy()
 	table.clear(farm.Expires)
 	farm.Ledger.Clear()
+	-- Includes the unparented, not-yet-started model retained by this farm record.
+	farm.Model:Destroy()
+	player:SetAttribute("StarterFarmStarted", nil)
 	logger.Info(string.format("Cleaned up farm for %d (uncollected Gold discarded)", player.UserId))
 end
 
-local function activate(player: Player, kingdom: Model): ()
+local function prepare(player: Player, kingdom: Model): ()
 	if not running then
 		return
 	end
 	assert(farms[player] == nil, "Player already has a farm")
 	local model, drop, conveyor, pit, plate, label = assets(kingdom)
+	local startPlate = part(kingdom, "FarmStartPlate")
 	local bundles = Instance.new("Folder")
 	bundles.Name = "ActiveBundles"
 	bundles.Parent = model
@@ -151,22 +222,31 @@ local function activate(player: Player, kingdom: Model): ()
 		Expires = {},
 		Overlap = overlap,
 		Connection = nil,
+		StartConnection = nil,
+		StartPlate = startPlate,
+		Started = false,
+		LastStart = -math.huge,
 		NextDrop = os.clock() + Settings.PRODUCTION_SECONDS,
 		LastCollect = -math.huge,
 	}
 	farms[player] = farm
-	conveyor.AssemblyLinearVelocity = conveyor.CFrame.LookVector * Settings.CONVEYOR_SPEED
+	conveyor.AssemblyLinearVelocity = Vector3.zero
 	pit.CanCollide = false
 	pit.CanQuery = true
-	plate.CanTouch = true
-	farm.Connection = plate.Touched:Connect(function(hit: BasePart): ()
+	plate.CanTouch = false
+	farm.StartConnection = startPlate.Touched:Connect(function(hit: BasePart): ()
 		local character = player.Character
 		if character ~= nil and hit:IsDescendantOf(character) then
-			FarmService.TryCollect(player)
+			FarmService.TryStart(player)
 		end
 	end)
 	publish(farm)
-	logger.Info(string.format("Activated starter farm for %d", player.UserId))
+	-- Keep all scenery, physics, and UI out of Workspace until the owner starts it.
+	-- This server record retains the model; release explicitly destroys it.
+	model.Parent = nil
+	kingdom:SetAttribute("StarterFarmStarted", false)
+	player:SetAttribute("StarterFarmStarted", false)
+	logger.Info(string.format("Starter farm awaiting activation for %d", player.UserId))
 end
 
 local function dropBundle(farm: Farm, now: number): ()
@@ -238,6 +318,7 @@ function FarmService.Start(): ()
 	end
 	assert(kingdom:IsA("Model") and source:IsA("BasePart") and source.Archivable, "Invalid farm templates")
 	assets(kingdom)
+	part(kingdom, "FarmStartPlate")
 	for _, child in source:GetDescendants() do
 		assert(
 			not child:IsA("LuaSourceContainer") and not child:IsA("BasePart"),
@@ -246,17 +327,20 @@ function FarmService.Start(): ()
 	end
 	template = source
 	running = true
-	unsubscribe = PlotService.ObserveKingdoms(activate, release)
+	unsubscribe = PlotService.ObserveKingdoms(prepare, release)
 	for _, player in Players:GetPlayers() do
 		local assigned = PlotService.GetKingdom(player)
 		if assigned ~= nil then
-			activate(player, assigned)
+			prepare(player, assigned)
 		end
 	end
 	game:BindToClose(FarmService.Shutdown)
 	task.spawn(function(): ()
 		while running do
 			for player, farm in farms do
+				if not farm.Started then
+					continue
+				end
 				local ok, reason = pcall(function(): string?
 					tickFarm(farm, os.clock())
 					return nil

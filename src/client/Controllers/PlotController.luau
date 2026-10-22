@@ -63,7 +63,9 @@ function PlotController.Start(): ()
 	local function render(): ()
 		if player:GetAttribute("KingdomPlotId") ~= nil then
 			title.Text = "YOUR KINGDOM"
-			detail.Text = "Your banner is raised. You will respawn in your courtyard."
+			detail.Text = if player:GetAttribute("StarterFarmStarted") == true
+				then "Your farm is producing wheat. Step onto its gold plate to collect earnings."
+				else "Your land is claimed. Step onto Start Farm — FREE beside the entrance path."
 			return
 		end
 		local available = plots:GetAttribute("AvailablePlotCount")
@@ -74,7 +76,7 @@ function PlotController.Start(): ()
 		end
 		title.Text = if available > 0 then "FOUND YOUR KINGDOM" else "ALL LAND IS CLAIMED"
 		detail.Text = if available > 0
-			then "Choose an open plot and interact with its gold claim banner."
+			then "Step onto an open kingdom's Claim Kingdom plate to make the whole plot yours."
 			else "Explore the grounds. A plot becomes available when its owner leaves."
 	end
 	local function refresh(): ()
@@ -83,6 +85,7 @@ function PlotController.Start(): ()
 	end
 	table.insert(connections, plots:GetAttributeChangedSignal("AvailablePlotCount"):Connect(refresh))
 	table.insert(connections, player:GetAttributeChangedSignal("KingdomPlotId"):Connect(refresh))
+	table.insert(connections, player:GetAttributeChangedSignal("StarterFarmStarted"):Connect(refresh))
 	table.insert(
 		connections,
 		player:GetAttributeChangedSignal("PlotMessageSerial"):Connect(function(): ()

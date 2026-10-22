@@ -1,5 +1,10 @@
 # Milestone 1.4: Starter farm and gold collection
 
+> Layout revision (2026-10-21): see [KINGDOM_LAYOUT.md](KINGDOM_LAYOUT.md) for the
+> current contract and acceptance checks. The farm now starts on a separate free
+> plate after claim. The former footprint, immediate activation, and four-plot
+> layout below describe the original implementation.
+
 Claim a kingdom to activate its free starter farm. Every three seconds a wheat
 bundle drops onto the conveyor. The pit consumes registered bundles for one Gold
 each, held in session memory until the living owner steps onto the gold plate.

@@ -109,6 +109,17 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Milestone 1.4 layout revision (2026-10-21): explicitly approved the entire
+  320 × 320 demonstration meadow as one player's kingdom plot, with full-size
+  plots duplicated later. One kingdom per player remains. Reserve 216 × 216
+  for future wooden/stone walls and an empty interior, with a 112 × 48 farm at
+  the front outside those walls and a path to the centered future gate.
+  Touch a floor plate to claim, then a separate free Start Farm plate to reveal
+  the farm and start production. This supersedes hold-E claiming and immediate
+  farm activation on claim. Farm start is session-only in this milestone;
+  general purchases/upgrades remain deferred. Approved Studio implementation of
+  this layout with the original scene archived for reversal; no walls/interior
+  construction or Rojo mapping changes.
 - Milestone 1.4 (2026-10-21): approved interpreting the dropper loop as a free
   starter farm activated on claim: physical wheat bundles travel by conveyor to
   a pit, which credits session-only uncollected Gold. Initial tuning is one

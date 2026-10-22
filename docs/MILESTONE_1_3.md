@@ -1,5 +1,9 @@
 # Milestone 1.3: Claim your kingdom
 
+> Layout revision (2026-10-21): see [KINGDOM_LAYOUT.md](KINGDOM_LAYOUT.md) for the
+> current contract. The four small plots and hold-E prompts below describe the
+> original installation and its verification history.
+
 Players arrive at the kingdom grounds, approach a gold banner, and hold the native
 Roblox interaction to claim an available plot. Their starter settlement appears,
 the entrance sign identifies its owner, and future character spawns move into its

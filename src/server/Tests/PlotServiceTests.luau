@@ -58,8 +58,6 @@ function Tests.Run(): ()
 	assert(plot ~= nil, "Missing Plot01")
 	local marker = plot:FindFirstChild("ClaimMarker")
 	assert(marker ~= nil and marker:IsA("BasePart"), "Missing ClaimMarker")
-	local prompt = marker:FindFirstChild("ClaimPrompt")
-	assert(prompt ~= nil and prompt:IsA("ProximityPrompt"), "Missing ClaimPrompt")
 	local before = DataService.GetSnapshot(player)
 	local function nextRequest(): ()
 		task.wait(Config.PLOTS.CLAIM_COOLDOWN_SECONDS + Config.DATA.WAIT_INTERVAL_SECONDS)
@@ -70,7 +68,8 @@ function Tests.Run(): ()
 		character:PivotTo(marker.CFrame + Vector3.new(0, 0, Config.PLOTS.CLAIM_DISTANCE * 3))
 		assert(not PlotService.TryClaim(player :: Player, "Plot01"), "Distant claim accepted")
 		nextRequest()
-		character:PivotTo(marker.CFrame + Vector3.new(0, 0, 3))
+		-- Within claim distance, but outside the plate so native touches cannot race this suite.
+		character:PivotTo(marker.CFrame + Vector3.new(0, 3, 10))
 		label.Name = "TemporarilyMissingOwnerLabel"
 		assert(not PlotService.TryClaim(player :: Player, "Plot01"), "Broken template should fail")
 		label.Name = "OwnerLabel"
@@ -78,15 +77,12 @@ function Tests.Run(): ()
 			PlotService.GetPlotId(player :: Player) == nil and #active:GetChildren() == 0,
 			"Rollback leaked ownership or clone"
 		)
-		assert(plot:GetAttribute("OwnerUserId") == nil and prompt.Enabled, "Rollback did not restore plot")
+		assert(plot:GetAttribute("OwnerUserId") == nil and marker.CanTouch, "Rollback did not restore plot")
 		nextRequest()
 		assert(PlotService.TryClaim(player :: Player, "Plot01"), "Valid claim failed")
 		assert(PlotService.GetPlotId(player :: Player) == "Plot01", "Registry assignment missing")
 		assert(player:GetAttribute("KingdomPlotId") == "Plot01", "Player ownership attribute missing")
-		assert(
-			plot:GetAttribute("OwnerUserId") == player.UserId and not prompt.Enabled,
-			"Plot ownership state incorrect"
-		)
+		assert(plot:GetAttribute("OwnerUserId") == player.UserId and marker.CanTouch, "Plot ownership state incorrect")
 		assert(#active:GetChildren() == 1, "Expected exactly one kingdom")
 		assert(
 			plotFolder:GetAttribute("AvailablePlotCount") == availableBefore - 1,
@@ -107,7 +103,7 @@ function Tests.Run(): ()
 		assert(not PlotService.TryClaim(player :: Player, "Plot01"), "Duplicate claim accepted")
 		PlotService.Release(player :: Player)
 		PlotService.Release(player :: Player)
-		assert(#active:GetChildren() == 0 and prompt.Enabled, "Release leaked a kingdom or disabled prompt")
+		assert(#active:GetChildren() == 0 and marker.CanTouch, "Release leaked a kingdom or disabled plate")
 		assert(plotFolder:GetAttribute("AvailablePlotCount") == availableBefore, "Release did not restore availability")
 		local map = workspace:FindFirstChild("KingdomMap")
 		assert(

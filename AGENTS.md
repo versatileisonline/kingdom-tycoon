@@ -70,6 +70,24 @@ After completing any task, update docs as follows.
 If you notice a rule here is wrong, outdated, or blocking good work, propose a change instead of working around it.
 
 ## 10. Project structure
+
+Current layout revision (2026-10-21): `docs/KINGDOM_LAYOUT.md` supersedes the
+original 1.3/1.4 layout and immediate-activation descriptions below. One complete
+320 × 320 platform is Plot01. Touch ClaimMarker to claim, then FarmStartPlate
+to reveal/start the free farm. Both plates are server-validated; no claim prompt
+is required. StarterFarm and its machinery retain their direct-child contract.
+The inactive farm Model is held unparented by FarmService and destroyed explicitly
+on release; it does not produce or collide. Started state is session-only.
+Player/kingdom StarterFarmStarted attributes are presentation-only.
+`LayoutReservations` stores local wall/gate/farm metadata; no walls or interior
+are built. `tools/BuildKingdomLayout.luau` is the approved one-time Edit recipe,
+not Rojo-mapped. Originals are archived without deletion under
+ServerStorage.KingdomLayoutBackup_20261021, including the template's edited scale
+and pivot. The replacement template is in ServerStorage and pivots to Origin.
+Only one full-size site is installed; copy the whole plot and assign unique
+PlotIds later. No Rojo mappings changed. The asset hierarchy, dimensions,
+editing/copying/rollback steps, and verification are in docs/KINGDOM_LAYOUT.md.
+
 ```text
 src/server/init.server.luau                  → ServerScriptService.Server (Script)
 src/server/Services/ExampleService.luau       → Server.Services.ExampleService (ModuleScript)
@@ -174,6 +192,13 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   lock per player to avoid competing toggles. The render callback is client-only.
 
 ## 11. Commands
+
+Current layout acceptance: use docs/KINGDOM_LAYOUT.md. Claims are touch-based,
+and claiming must not activate the farm. The free farm-start plate is separate.
+The optional farm/plot suites use this new contract; native touch interactions
+remain hands-on checks. All test switches are false by default. Do not rerun the
+one-time layout recipe after its backup exists. Save the Studio place for assets.
+
 Run project commands from the repository root. Aftman 0.3.0 is already installed
 on the developer's Mac. For another Mac, download the matching macOS release
 archive from [Aftman releases](https://github.com/LPGhatguy/aftman/releases/tag/v0.3.0),
@@ -237,9 +262,29 @@ is safe in Edit mode; full service tests require the bootstrap's normal Script
 context. Asset setup and hands-on acceptance are in docs/MILESTONE_1_4.md.
 
 ## 12. Status
+
+Full-platform layout revision (2026-10-21):
+- [x] Approved plan implemented: one 320 × 320 plot, front approach/claim plate,
+  separate free farm-start plate, relocated rig, crop beds, static farmer, shed,
+  and fencing. Future 216 × 216 wall area is reserved as metadata, left empty.
+- [x] Original map, four plots, resized kingdom, and wheat bundle archived in
+  ServerStorage.KingdomLayoutBackup_20261021; unrelated scene art preserved.
+- [x] Touch claim, one-time owner farm start, inactive/active cleanup, client
+  guidance, and revised opt-in service tests implemented; Rojo sync confirmed.
+- [x] Installed layout checks pass: single plot, hierarchy, anchored/script-free
+  template, farm bounds, conveyor direction, spawn facing, and bundle fit.
+- [x] StyLua, Selene (zero errors/warnings), strict Luau-LSP with Roblox types,
+  code-only Rojo build, module loading, and Edit-mode accounting checks pass.
+- [ ] Revised native touch, production/collection, death, and multiplayer Play
+  acceptance remain with the developer; historical checks below predate revision.
+- [ ] Save the Studio place to retain the new assets and backup.
+
+Studio remains in Edit mode, Mock mode and all test switches remain unchanged.
+No runtime Play suite was run during this revision. No commit or push was made.
+
 - [x] 1.1 Project setup — scaffold and tool configuration implemented; verification below
 - [x] 1.2 Data layer — implemented; mock runtime and durable persistence verified
-- [x] 1.3 Plot system — implemented; single-player and multiplayer lifecycle verified
+- [x] 1.3 Plot system — original lifecycle verified; revised touch acceptance pending
 - [ ] 1.4 Dropper loop
 - [ ] 1.5 Purchase buttons
 - [ ] 1.6 Farms

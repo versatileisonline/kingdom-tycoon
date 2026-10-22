@@ -82,6 +82,8 @@ Packages/                          → ReplicatedStorage.Packages (generated, ig
 ServerPackages/                    → ServerScriptService.ServerPackages (generated, ignored)
 tools/BuildPlotScene.luau            # one-time Edit-mode scene builder; not synced or run in-game
 tools/BuildStarterFarm.luau          # approved one-time farm asset recipe; preserves existing art
+tools/BuildKingdomLayout.luau        # full-platform revision; archives the original scene
+docs/KINGDOM_LAYOUT.md              # current plot/farm contract, activation, copying and verification
 docs/MILESTONE_1_3.md                # plot contract, architecture, and verification
 docs/MILESTONE_1_4.md                # farm contract, camera/spawn behavior, tests and acceptance
 ```
@@ -213,8 +215,8 @@ depend on that running service context.
 - [ ] **Layer 1: Core tycoon** (dropper, collector, farms, shop, rebirth, saving, leaderboards)
   - [x] 1.1 Project setup
   - [x] 1.2 Data layer (mock runtime and durable persistence verified)
-  - [x] 1.3 Plot system (single-player and multiplayer verified; see [asset contract and verification](docs/MILESTONE_1_3.md))
-  - [ ] 1.4 Starter farm/dropper loop (implemented; [hands-on Play verification pending](docs/MILESTONE_1_4.md))
+  - [x] 1.3 Plot system (original lifecycle verified; [revised full-platform touch acceptance pending](docs/KINGDOM_LAYOUT.md))
+  - [ ] 1.4 Starter farm/dropper loop (front farm and activation plate implemented; [hands-on Play verification pending](docs/KINGDOM_LAYOUT.md))
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)
