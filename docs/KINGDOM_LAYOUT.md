@@ -19,8 +19,8 @@ screenshot. The template pivot matches the plot Origin at ground height.
 | Main path | 16 wide, Z 76…160 |
 | Farm grounds | 112 × 48; X -136…-24, Z 100…148 |
 | Farm branch | 10 wide, X -24…0 at Z 118 |
-| Claim plate | 12 × 10 at X 0, Z 148 |
-| Start plate | 10 × 10 at X -16, Z 118 |
+| Claim plate | 6-stud circle at X 0, Z 148; 6.6-stud black outer rim |
+| Start plate | Matching circle at X -16, Z 118 |
 | Arrival spawn | X 0, Z 184, on a 28 × 40 approach platform |
 | Claimed spawn | X 0, Z 136, before the farm turnoff |
 
@@ -51,9 +51,24 @@ wall upgrades require no farm move.
 
 The farm has two 24 × 20 crop beds, an open 20 × 16 shed, low fencing with a
 12-stud entrance, a static farmer mannequin, and the existing rig moved together
-without scaling. CollectPlate is now 8 × 8. WheatBundle was resized to match the
+without scaling. CollectPlate uses the same 6-stud circle. WheatBundle was resized to match the
 currently resized conveyor. The original source and bundle are preserved.
 Crops, shed, and farmer are scenery; there is no NPC AI or extra income source.
+The farmer now stands in front of the dropper toward the arrival side, aligned
+with DropPoint instead of standing on the left. Its feet and rotation were
+preserved. Two additional droppers are planned to the left; they are not built
+in this pass, and field/fence clearance must be checked when adding them.
+
+All three plates use SmoothPlastic, a 0.4-stud-thick colored cylinder and a
+noninteractive black Outline cylinder underneath. Config.PLATES defines the
+6-stud diameter, 0.3-stud rim, and colors. Available is bright green; unavailable
+is red. The claim plate is green while unclaimed and red while owned. The free
+start plate is green after claim, then disappears with its outline after use.
+The collector is red with zero uncollected Gold and green with any positive
+balance. Successful collection returns it to red; a failed credit preserves the
+balance and green color. Free plates do not require saved Gold. Colors communicate
+shared plot/farm availability; ownership and distance are still checked on the
+server, so a visitor cannot use a green owner-only plate.
 
 ## Asset contract
 
@@ -68,6 +83,7 @@ Workspace
       Ground (anchored 320 × 2 × 320 Part)
       PlateauRock
       ClaimMarker (anchored floor Part; CanTouch = true)
+        Outline (anchored black cylinder; no collision/touch/query)
         ClaimLabelGui
           ClaimLabel (TextLabel)
       ... original perimeter trees
@@ -81,6 +97,7 @@ ServerStorage
       OwnerLabelGui
         OwnerLabel (TextLabel)
     FarmStartPlate (direct anchored Part; CanTouch = true)
+      Outline (matching noninteractive black cylinder)
       StartLabelGui
         StartLabel (TextLabel)
     LayoutReservations (Folder; local design attributes)
@@ -89,6 +106,7 @@ ServerStorage
       Conveyor (direct anchored, collidable Part)
       CollectionPit (direct anchored, noncolliding Part)
       CollectPlate (direct anchored Part; descendant EarningsLabel)
+        Outline (matching noninteractive black cylinder)
       ... existing working rig parts
       Scenery (Model; fields, farmer, shed, fences, farm ground)
   WheatBundle (single archivable, script-free BasePart)
@@ -143,6 +161,13 @@ replacements before archiving originals without deletion. The source's edited
 scale/pivot are retained in the backup. The unrelated castle, terrain, and scene
 folders are unchanged. No Rojo mappings changed.
 
+`tools/RefineFarmPlates.luau` is the subsequent one-time plate/farmer refinement.
+It preserves the prior template and ClaimMarker in
+ServerStorage.PlateRefinementBackup_20261021, refuses a second run, preserves each
+plate's surface height, and returns KingdomTemplate to ServerStorage before Play.
+It does not move the working conveyor, pit, or drop point. This refinement adds
+one static outline Part per plate and no new runtime loop/connections.
+
 The stored farm is intentionally invisible in Edit mode. To decorate it, move
 the stored KingdomTemplate temporarily to Workspace while not playing, then
 return it to ServerStorage before Play. Preserve TemplateRoot's pivot and move
@@ -178,6 +203,10 @@ Keep Mock mode and all test switches false for hands-on acceptance:
    and the start plate/label disappear. Repeated touches cannot duplicate it.
 4. See wheat enter the pit and its displayed total rise. Step on the collector:
    expect `Collected <amount> Gold for <userId>` and the display resets.
+   Check red at zero, green above zero, then red after collecting. All plates
+   should be matching small circles with black rims. Starting the farm must hide
+   both the green face and its black outline. Claim changes green to red, and
+   departure restores green. Color changes add no per-tick Output messages.
 5. Reset: respawn near the entrance with five seconds of native protection;
    farm activation and uncollected earnings persist.
 6. Two clients: only one can claim this plot. Visitors cannot start the owner's

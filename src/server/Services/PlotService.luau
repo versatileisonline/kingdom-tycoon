@@ -88,6 +88,7 @@ local function resetPlot(plot: Plot): ()
 	plot.Label.Text = "CLAIM KINGDOM — FREE"
 	plot.Label.Visible = true
 	plot.Marker.CanTouch = true
+	plot.Marker.Color = Config.PLATES.AVAILABLE_COLOR
 end
 
 function PlotService.GetPlotId(player: Player): string?
@@ -170,6 +171,7 @@ function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string
 		plot.Model:SetAttribute("OwnerUserId", player.UserId)
 		plot.Label.Text = player.DisplayName .. "'s Kingdom"
 		plot.Label.Visible = false -- The kingdom entrance supplies the owner sign.
+		plot.Marker.Color = Config.PLATES.UNAVAILABLE_COLOR
 		-- Keep the reusable touch connection alive; ownership gates later touches.
 		player:SetAttribute("KingdomPlotId", plotId)
 		player.RespawnLocation = spawn

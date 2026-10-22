@@ -83,6 +83,7 @@ ServerPackages/                    → ServerScriptService.ServerPackages (gener
 tools/BuildPlotScene.luau            # one-time Edit-mode scene builder; not synced or run in-game
 tools/BuildStarterFarm.luau          # approved one-time farm asset recipe; preserves existing art
 tools/BuildKingdomLayout.luau        # full-platform revision; archives the original scene
+tools/RefineFarmPlates.luau          # circular plate style and front farmer; archives prior assets
 docs/KINGDOM_LAYOUT.md              # current plot/farm contract, activation, copying and verification
 docs/MILESTONE_1_3.md                # plot contract, architecture, and verification
 docs/MILESTONE_1_4.md                # farm contract, camera/spawn behavior, tests and acceptance

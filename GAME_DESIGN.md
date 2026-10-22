@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Milestone 1.4 plate/farmer refinement (2026-10-21): requested smaller matching
+  circular plates with black outlines, bright green when available and red when
+  unavailable. Collector color follows uncollected earnings (zero red, positive
+  green). Keep the farmer directly in front of the dropper, with two additional
+  droppers planned to its left in a later pass. No extra producers or purchases
+  are implemented by this visual revision.
 - Milestone 1.4 layout revision (2026-10-21): explicitly approved the entire
   320 × 320 demonstration meadow as one player's kingdom plot, with full-size
   plots duplicated later. One kingdom per player remains. Reserve 216 × 216

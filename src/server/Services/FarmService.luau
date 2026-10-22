@@ -60,9 +60,11 @@ local function assets(kingdom: Model): (Model, BasePart, BasePart, BasePart, Bas
 end
 
 local function publish(farm: Farm): ()
-	farm.Label.Text = string.format("Collect Gold — %d", farm.Ledger.GetBalance())
+	local balance = farm.Ledger.GetBalance()
+	farm.Label.Text = string.format("Collect Gold — %d", balance)
+	farm.Plate.Color = if balance > 0 then Config.PLATES.AVAILABLE_COLOR else Config.PLATES.UNAVAILABLE_COLOR
 	-- Read-only presentation/debugging state; accounting remains in the ledger.
-	farm.Model:SetAttribute("UncollectedGold", farm.Ledger.GetBalance())
+	farm.Model:SetAttribute("UncollectedGold", balance)
 	farm.Model:SetAttribute("ActiveBundleCount", farm.Ledger.GetCount())
 end
 
@@ -122,8 +124,13 @@ function FarmService.TryStart(player: Player): boolean
 	farm.StartPlate.CanTouch = false
 	farm.StartPlate.CanCollide = false
 	farm.StartPlate.Transparency = 1
+	farm.StartPlate.Color = Config.PLATES.UNAVAILABLE_COLOR
 	for _, descendant in farm.StartPlate:GetDescendants() do
-		if descendant:IsA("LayerCollector") then
+		if descendant:IsA("BasePart") then
+			descendant.Transparency = 1
+			descendant.CanCollide = false
+			descendant.CanTouch = false
+		elseif descendant:IsA("LayerCollector") then
 			descendant.Enabled = false
 		end
 	end
@@ -198,6 +205,7 @@ local function prepare(player: Player, kingdom: Model): ()
 	assert(farms[player] == nil, "Player already has a farm")
 	local model, drop, conveyor, pit, plate, label = assets(kingdom)
 	local startPlate = part(kingdom, "FarmStartPlate")
+	startPlate.Color = Config.PLATES.AVAILABLE_COLOR
 	local bundles = Instance.new("Folder")
 	bundles.Name = "ActiveBundles"
 	bundles.Parent = model

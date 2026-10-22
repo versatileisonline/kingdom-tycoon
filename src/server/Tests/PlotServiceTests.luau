@@ -65,11 +65,11 @@ function Tests.Run(): ()
 	local ok, failure = xpcall(function(): string?
 		assert(not PlotService.TryClaim(player :: Player, {}), "Malformed plot argument accepted")
 		nextRequest()
-		character:PivotTo(marker.CFrame + Vector3.new(0, 0, Config.PLOTS.CLAIM_DISTANCE * 3))
+		character:PivotTo(CFrame.new(marker.Position + Vector3.new(0, 0, Config.PLOTS.CLAIM_DISTANCE * 3)))
 		assert(not PlotService.TryClaim(player :: Player, "Plot01"), "Distant claim accepted")
 		nextRequest()
 		-- Within claim distance, but outside the plate so native touches cannot race this suite.
-		character:PivotTo(marker.CFrame + Vector3.new(0, 3, 10))
+		character:PivotTo(CFrame.new(marker.Position + Vector3.new(0, 3, 10)))
 		label.Name = "TemporarilyMissingOwnerLabel"
 		assert(not PlotService.TryClaim(player :: Player, "Plot01"), "Broken template should fail")
 		label.Name = "OwnerLabel"

@@ -88,6 +88,18 @@ Only one full-size site is installed; copy the whole plot and assign unique
 PlotIds later. No Rojo mappings changed. The asset hierarchy, dimensions,
 editing/copying/rollback steps, and verification are in docs/KINGDOM_LAYOUT.md.
 
+Plate/farmer refinement: ClaimMarker, FarmStartPlate, and CollectPlate are
+matching horizontal cylinders, 6 studs in diameter with a 6.6-stud black Outline
+child (anchored, noncolliding, no touch/query). Config.PLATES owns style constants.
+Free available plates are bright green; occupied/unavailable plates are red.
+CollectPlate is red at zero private earnings and green above zero; publish uses
+the private ledger. Starting hides the start plate's Outline as well as its face
+and label. The farmer is aligned with DropPoint toward the front of the rig.
+Additional droppers to the left remain future work. The one-time refinement
+recipe is tools/RefineFarmPlates.luau; it archives the previous template and claim
+plate under ServerStorage.PlateRefinementBackup_20261021 and returns the source
+to ServerStorage. No Rojo mappings or production geometry changed.
+
 ```text
 src/server/init.server.luau                  → ServerScriptService.Server (Script)
 src/server/Services/ExampleService.luau       → Server.Services.ExampleService (ModuleScript)
@@ -262,6 +274,17 @@ is safe in Edit mode; full service tests require the bootstrap's normal Script
 context. Asset setup and hands-on acceptance are in docs/MILESTONE_1_4.md.
 
 ## 12. Status
+
+Plate/farmer refinement (2026-10-21):
+- [x] Matching smaller circular green/red plates with black rims installed;
+  server ledger drives collector color; used start plate hides its rim too.
+- [x] Farmer moved from the left to the front of the dropper; production rig
+  unchanged. No additional droppers built. Pre-refinement assets archived.
+- [x] Formatting, lint, strict Luau checks, and code-only Rojo build pass;
+  installed shape/color/rim/placement checks and visual inspection pass.
+- [ ] Hands-on Play: collector red → green → red, claim/release colors, and no
+  black rim remaining after starting. Save the Studio place to retain assets.
+
 
 Full-platform layout revision (2026-10-21):
 - [x] Approved plan implemented: one 320 × 320 plot, front approach/claim plate,

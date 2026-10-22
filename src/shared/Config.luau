@@ -4,6 +4,15 @@ return table.freeze({
 	MAX_ARMY_SIZE = 10,
 	LOG_PREFIX = "KingdomTycoon",
 	SPAWN_PROTECTION_SECONDS = 5,
+	PLATES = table.freeze({
+		DIAMETER = 6,
+		THICKNESS = 0.4,
+		RIM_WIDTH = 0.3,
+		RIM_DROP = 0.06,
+		AVAILABLE_COLOR = Color3.fromRGB(45, 255, 65),
+		UNAVAILABLE_COLOR = Color3.fromRGB(255, 45, 45),
+		OUTLINE_COLOR = Color3.fromRGB(0, 0, 0),
+	}),
 	CAMERA = table.freeze({
 		SHOULDER_OFFSET = Vector3.new(1.75, 0, 0),
 		MIN_HORIZONTAL_MAGNITUDE = 0.001,
