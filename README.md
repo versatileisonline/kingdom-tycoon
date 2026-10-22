@@ -56,26 +56,34 @@ src/
 │   ├── Services/
 │   │   ├── DataService.luau        # server-only player sessions and validated updates
 │   │   ├── PlotService.luau        # server-authoritative claims, template clones, respawns, cleanup
+│   │   ├── FarmService.luau        # wheat production, pit accounting, owner gold collection, cleanup
 │   │   └── ExampleService.luau     # startup example; no gameplay
 │   ├── Plots/
 │   │   └── PlotRegistry.luau       # non-yielding session ownership and exclusivity
+│   ├── Farms/
+│   │   └── FarmLedger.luau         # private session earnings, cap, expiry, exactly-once bundle credit
 │   └── Tests/
 │       ├── DataLayerTests.luau     # opt-in Studio checks; never runs in published servers
-│       └── PlotServiceTests.luau   # ownership, validation, rollback, clone/release/reclaim checks
+│       ├── PlotServiceTests.luau   # ownership, validation, rollback, clone/release/reclaim checks
+│       └── FarmServiceTests.luau   # standalone accounting and opt-in physical collection checks
 ├── client/                         → StarterPlayer.StarterPlayerScripts.Client (LocalScript)
 │   ├── init.client.luau            # thin client bootstrap
 │   └── Controllers/
 │       ├── PlotController.luau     # claim guidance and server feedback; no authority
+│       ├── CameraController.luau   # Left Shift camera lock, restoration, respawn handling
 │       └── ExampleController.luau  # startup example; no gameplay
 └── shared/                         → ReplicatedStorage.Shared (Folder)
     ├── Config.luau                 # shared constants, including MAX_ARMY_SIZE = 10
+    ├── FarmConfig.luau             # starter farm tuning and opt-in test switch
     ├── Logger.luau                 # typed, scoped Info/Warn logging
     ├── Types.luau                  # Lifecycle and PlayerData type contracts
     └── Hello.luau                  # retained template module; unused
 Packages/                          → ReplicatedStorage.Packages (generated, ignored)
 ServerPackages/                    → ServerScriptService.ServerPackages (generated, ignored)
 tools/BuildPlotScene.luau            # one-time Edit-mode scene builder; not synced or run in-game
+tools/BuildStarterFarm.luau          # approved one-time farm asset recipe; preserves existing art
 docs/MILESTONE_1_3.md                # plot contract, architecture, and verification
+docs/MILESTONE_1_4.md                # farm contract, camera/spawn behavior, tests and acceptance
 ```
 
 `init.*` makes each source directory a script with child folders rather than a plain
@@ -85,8 +93,8 @@ and server-only packages stay on the server.
 
 Each bootstrap requires an explicit ordered list of services/controllers, calls
 all `Init()` functions, then all `Start()` functions in the same order, and logs
-`Ready` only if startup succeeds. Server order is DataService, PlotService, then ExampleService;
-the client contains ExampleController and PlotController. Player profiles load asynchronously, so
+`Ready` only if startup succeeds. Server order is DataService, PlotService, FarmService, then ExampleService;
+the client contains ExampleController, PlotController, and CameraController. Player profiles load asynchronously, so
 server `Ready` does not mean a particular player's data is ready.
 Modules must keep top-level code and `Init()` free of gameplay side effects;
 `Start()` should return promptly. There is no server/client ordering guarantee.
@@ -135,7 +143,10 @@ On Play, expect these lines (server/client pairs may interleave):
 
 Initial player data: `SchemaVersion = 1`, `Gold = 0`, `Rebirths = 0`,
 `PurchasedBuildings = {}` (building ID → boolean). Plots do not change this schema.
-Currency earnings, purchases, the economy HUD, and data remotes are not implemented yet.
+Milestone 1.4 credits collected starter-farm Gold through DataService without a
+schema change. Purchases, the economy HUD, and data remotes remain deferred.
+See [the farm contract and verification guide](docs/MILESTONE_1_4.md) for assets,
+production, collection, camera lock, five-second spawn shields, and test instructions.
 
 Only server services should call `DataService.GetSnapshot(player)` or
 `DataService.Update(player, function(draft) ... end)`. Snapshots are detached;
@@ -203,6 +214,7 @@ depend on that running service context.
   - [x] 1.1 Project setup
   - [x] 1.2 Data layer (mock runtime and durable persistence verified)
   - [x] 1.3 Plot system (single-player and multiplayer verified; see [asset contract and verification](docs/MILESTONE_1_3.md))
+  - [ ] 1.4 Starter farm/dropper loop (implemented; [hands-on Play verification pending](docs/MILESTONE_1_4.md))
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)

@@ -3,6 +3,11 @@
 return table.freeze({
 	MAX_ARMY_SIZE = 10,
 	LOG_PREFIX = "KingdomTycoon",
+	SPAWN_PROTECTION_SECONDS = 5,
+	CAMERA = table.freeze({
+		SHOULDER_OFFSET = Vector3.new(1.75, 0, 0),
+		MIN_HORIZONTAL_MAGNITUDE = 0.001,
+	}),
 	PLOTS = table.freeze({
 		CLAIM_DISTANCE = 12,
 		CLAIM_COOLDOWN_SECONDS = 1,

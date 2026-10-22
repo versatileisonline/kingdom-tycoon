@@ -11,6 +11,7 @@ local logger = Logger.new("ServerBootstrap")
 local services: { Types.Lifecycle } = {
 	require(script.Services.DataService),
 	require(script.Services.PlotService),
+	require(script.Services.FarmService),
 	require(script.Services.ExampleService),
 }
 
@@ -25,6 +26,12 @@ end
 logger.Info("Ready")
 
 local Config = require(Shared:WaitForChild("Config"))
+local FarmConfig = require(Shared:WaitForChild("FarmConfig"))
+if game:GetService("RunService"):IsStudio() and FarmConfig.RUN_TESTS_IN_STUDIO then
+	task.spawn(function(): ()
+		require(script.Tests.FarmServiceTests).Run()
+	end)
+end
 if game:GetService("RunService"):IsStudio() and Config.PLOTS.RUN_TESTS_IN_STUDIO then
 	task.spawn(function(): ()
 		require(script.Tests.PlotServiceTests).Run()

@@ -11,6 +11,7 @@ local logger = Logger.new("ClientBootstrap")
 local controllers: { Types.Lifecycle } = {
 	require(script.Controllers.ExampleController),
 	require(script.Controllers.PlotController),
+	require(script.Controllers.CameraController),
 }
 
 for _, controller in controllers do

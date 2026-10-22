@@ -32,6 +32,35 @@ local plotFolder: Folder? = nil
 local initialized = false
 local started = false
 local closing = false
+type Observer = { Claimed: (Player, Model) -> (), Releasing: (Player, Model) -> () }
+local observers: { [Observer]: boolean } = {}
+
+-- Synchronous server-only callbacks; observers must not yield. Releasing runs
+-- before destroying the clone, including partial-claim rollback.
+function PlotService.ObserveKingdoms(claimed: (Player, Model) -> (), releasing: (Player, Model) -> ()): () -> ()
+	local observer = { Claimed = claimed, Releasing = releasing }
+	observers[observer] = true
+	return function(): ()
+		observers[observer] = nil
+	end
+end
+
+function PlotService.GetKingdom(player: Player): Model?
+	local id = registry.GetPlot(player.UserId)
+	return if id ~= nil then plots[id].Kingdom else nil
+end
+
+local function notifyRelease(player: Player, kingdom: Model): ()
+	for observer in observers do
+		local ok, reason = pcall(function(): string?
+			observer.Releasing(player, kingdom)
+			return nil
+		end)
+		if not ok then
+			logger.Warn("Kingdom release observer failed: " .. tostring(reason))
+		end
+	end
+end
 
 local function publishAvailability(): ()
 	local count = 0
@@ -69,6 +98,10 @@ end
 function PlotService.Release(player: Player): ()
 	local id = registry.Release(player.UserId)
 	if id ~= nil then
+		local kingdom = plots[id].Kingdom
+		if kingdom ~= nil then
+			notifyRelease(player, kingdom)
+		end
 		if arrival ~= nil then
 			player.RespawnLocation = arrival
 		end
@@ -141,10 +174,14 @@ function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string
 		plot.Prompt.Enabled = false
 		player:SetAttribute("KingdomPlotId", plotId)
 		player.RespawnLocation = spawn
+		for observer in observers do
+			observer.Claimed(player, clone)
+		end
 		return nil
 	end)
 	if not ok then
 		if kingdom ~= nil then
+			notifyRelease(player, kingdom)
 			kingdom:Destroy()
 		end
 		registry.Release(player.UserId)
@@ -162,6 +199,7 @@ function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string
 end
 
 local function addPlayer(player: Player): ()
+	player.DevEnableMouseLock = false -- CameraController owns the approved Left Shift toggle.
 	if arrival ~= nil then
 		player.RespawnLocation = arrival
 	end
@@ -200,6 +238,8 @@ function PlotService.Start(): ()
 	local ownerLabel = source:FindFirstChild("OwnerLabel", true)
 	assert(spawn ~= nil and spawn:IsA("SpawnLocation"), "KingdomTemplate requires SpawnPoint (SpawnLocation)")
 	assert(spawn.Enabled and spawn.Neutral and not spawn.AllowTeamChangeOnTouch, "Invalid kingdom spawn settings")
+	spawn.Duration = Config.SPAWN_PROTECTION_SECONDS
+	spawnPoint.Duration = Config.SPAWN_PROTECTION_SECONDS
 	assert(ownerLabel ~= nil and ownerLabel:IsA("TextLabel"), "KingdomTemplate requires OwnerLabel")
 	for _, descendant in source:GetDescendants() do
 		assert(not descendant:IsA("LuaSourceContainer"), "KingdomTemplate must contain no scripts")

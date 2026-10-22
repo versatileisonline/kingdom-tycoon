@@ -75,16 +75,21 @@ src/server/init.server.luau                  → ServerScriptService.Server (Scr
 src/server/Services/ExampleService.luau       → Server.Services.ExampleService (ModuleScript)
 src/server/Services/DataService.luau          → Server.Services.DataService (ModuleScript)
 src/server/Services/PlotService.luau          → Server.Services.PlotService (ModuleScript)
+src/server/Services/FarmService.luau          → Server.Services.FarmService (ModuleScript)
+src/server/Farms/FarmLedger.luau              → Server.Farms.FarmLedger (ModuleScript)
 src/server/Plots/PlotRegistry.luau            → Server.Plots.PlotRegistry (ModuleScript)
 src/server/Data/DataSchema.luau               → Server.Data.DataSchema (ModuleScript)
 src/server/Data/DataMigrations.luau           → Server.Data.DataMigrations (ModuleScript)
 src/server/Tests/DataLayerTests.luau          → Server.Tests.DataLayerTests (ModuleScript)
 src/server/Tests/PlotServiceTests.luau        → Server.Tests.PlotServiceTests (ModuleScript)
+src/server/Tests/FarmServiceTests.luau        → Server.Tests.FarmServiceTests (ModuleScript)
 src/client/init.client.luau                  → StarterPlayer.StarterPlayerScripts.Client (LocalScript)
 src/client/Controllers/ExampleController.luau → Client.Controllers.ExampleController (ModuleScript)
 src/client/Controllers/PlotController.luau   → Client.Controllers.PlotController (ModuleScript)
+src/client/Controllers/CameraController.luau → Client.Controllers.CameraController (ModuleScript)
 src/shared/                                 → ReplicatedStorage.Shared (Folder)
   Config.luau                               # army cap, logging, data/store/test constants
+  FarmConfig.luau                           # production, value, cap, expiry, collection, tests
   Logger.luau                               # typed scoped Info/Warn logger
   Types.luau                                # Lifecycle and PlayerData types
   Hello.luau                                # retained unused starter module
@@ -96,11 +101,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   as children. StarterPlayerScripts clones Client and its descendants into each
   player's PlayerScripts. ReplicatedStorage is visible to clients; do not put
   secrets or authoritative data there.
-- Server startup order: require DataService, PlotService, then ExampleService → call all
+- Server startup order: require DataService, PlotService, FarmService, then ExampleService → call all
   services' Init() → call all services' Start() → log ServerBootstrap Ready.
   DataService loads player profiles asynchronously; Ready is not a data-ready signal.
   The optional Studio-only test switch runs DataLayerTests afterward via task.spawn.
-- Client startup order: require ExampleController, PlotController → call all controllers' Init()
+- Client startup order: require ExampleController, PlotController, CameraController → call all controllers' Init()
   → call all controllers' Start() → log ClientBootstrap Ready.
 - Lists are explicit and ordered. Modules implement typed `Init(): ()` and
   `Start(): ()` functions called with dot syntax. Require/Init must avoid gameplay
@@ -146,6 +151,27 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   template with rollback on error; handles respawn and departure/shutdown cleanup.
   PlotController reads server attributes for guidance and feedback. No data
   schema changes, client request remotes, or economy behavior were added.
+- Milestone 1.4 asset contract: ServerStorage.KingdomTemplate.StarterFarm (Model)
+  has direct anchored DropPoint, Conveyor, CollectionPit, and CollectPlate parts,
+  with a descendant EarningsLabel (TextLabel). Separate ServerStorage.WheatBundle
+  is an archivable, script-free single BasePart. Runtime bundles are movable;
+  conveyor LookVector points toward the pit. Full contract: docs/MILESTONE_1_4.md.
+  Existing arrival/kingdom SpawnLocations use Duration = 5. No Rojo mappings changed.
+- The developer explicitly authorized building the farm assets in this session
+  after the manual tutorial. tools/BuildStarterFarm.luau is the one-time Edit-mode
+  recipe; it refuses populated farms or existing bundle templates. The enlarged
+  kingdom was returned to ServerStorage preserving its approximately 1.7466 scale
+  and pivot. Plot spacing/baseplate adjustments remain deferred; its approximately
+  154-stud width can overlap the existing 140-stud plot-center spacing.
+- FarmService uses PlotService.GetKingdom and synchronous ObserveKingdoms hooks;
+  release observers run before clone destruction. FarmLedger holds private session
+  earnings and registered bundle expiry. Only DataService.Update credits saved Gold.
+  One timed loop queries pit overlaps, expires bundles, and produces at most one
+  bundle per interval. Per-farm cap 12; lifetime 20 seconds. Death preserves earnings;
+  release/departure discards them. No saved schema change or request remotes.
+- CameraController owns Left Shift locking, starts unlocked, suspends during typing,
+  menus and death, and restores normal controls. PlotService disables native mouse
+  lock per player to avoid competing toggles. The render callback is client-only.
 
 ## 11. Commands
 Run project commands from the repository root. Aftman 0.3.0 is already installed
@@ -202,6 +228,14 @@ not a command/plugin context with a separate module cache. For optional durable
 test-store fixtures and cross-Play verification, follow README's Data layer section.
 Do not enable Studio API access or change store names automatically.
 
+Farm verification: keep Mock mode and the data/plot test switches false; enable
+FarmConfig.RUN_TESTS_IN_STUDIO on disk, sync, then Play before claiming. Expect
+`All farm accounting checks passed` and `All farm-service checks passed`, plus an
+intentional rejected-collection warning. The suite restores original Gold and
+position. Reset the switch to false. The accounting-only RunAccounting entry point
+is safe in Edit mode; full service tests require the bootstrap's normal Script
+context. Asset setup and hands-on acceptance are in docs/MILESTONE_1_4.md.
+
 ## 12. Status
 - [x] 1.1 Project setup — scaffold and tool configuration implemented; verification below
 - [x] 1.2 Data layer — implemented; mock runtime and durable persistence verified
@@ -214,6 +248,21 @@ Do not enable Studio API access or change store names automatically.
 - [ ] 1.9 Rebirth
 - [ ] 1.10 Leaderboards
 - [ ] 1.11 Polish + playtest
+
+Milestone 1.4 implementation (2026-10-21):
+- [x] Farm assets added to the existing footprint; enlarged kingdom returned to
+  ServerStorage with scale/pivot preserved. Existing art and mappings preserved.
+- [x] Server farm production, bounded bundle accounting, owner collection through
+  DataService, claim/release hooks, cleanup, camera toggle, and spawn duration implemented.
+- [x] Edit-mode accounting tests pass without player data access.
+- [x] StyLua, Selene (zero errors/warnings), strict Luau-LSP analysis with Roblox
+  definitions, and code-only Rojo build pass. Installed asset contract checks pass.
+- [ ] Hands-on Play checks: physical travel/collection, failure retention, death,
+  departure/reclaim, two farms/visitors, camera toggle, and actual shield timing.
+- [ ] Save the Studio place to retain new assets. Layout spacing remains deferred.
+
+Studio was left in Edit mode; all test switches remain false. The runtime suite
+is supplied for the developer; it has not been run by the agent in this session.
 
 Milestone 1.1 verification (2026-10-05):
 - [x] StyLua formatting check passes.

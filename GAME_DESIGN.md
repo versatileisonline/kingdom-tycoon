@@ -109,6 +109,24 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Milestone 1.4 (2026-10-21): approved interpreting the dropper loop as a free
+  starter farm activated on claim: physical wheat bundles travel by conveyor to
+  a pit, which credits session-only uncollected Gold. Initial tuning is one
+  bundle every three seconds, worth one Gold. The living owner collects the full
+  balance on a plate through DataService; failed updates preserve earnings.
+  Death preserves earnings; departure discards uncollected Gold and bundles.
+  No offline production. Purchases, upgrades, Royal Mint unlocking, and general
+  currency HUD remain later milestones.
+- Milestone 1.4: retain the existing farm footprint while building the loop;
+  the developer enlarged the kingdom, with plot/baseplate layout adjustments
+  deferred. Explicitly authorized the agent to create the farm assets in Studio
+  and return the edited template to ServerStorage, preserving its scale and art.
+  Runtime code only clones templates; the one-time asset recipe is not Rojo-mapped.
+- Milestone 1.4: approved Left Shift third-person camera lock, initially unlocked,
+  with typing-safe toggling and normal controls restored on unlock. Bring native
+  visible five-second arrival/kingdom respawn protection forward into this milestone;
+  custom shield HUD and combat systems remain deferred. Hands-on Play verification
+  remains with the developer.
 - Milestone 1.3 (2026-10-20): use manual entrance claiming, four plots for the
   first demonstration, and session-only plot locations. Saved progression stays
   independent of land assignment. Players respawn in their claimed kingdom;
