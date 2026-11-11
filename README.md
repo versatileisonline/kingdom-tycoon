@@ -57,6 +57,7 @@ src/
 │   │   ├── DataService.luau        # server-only player sessions and validated updates
 │   │   ├── PlotService.luau        # server-authoritative claims, template clones, respawns, cleanup
 │   │   ├── FarmService.luau        # wheat production, pit accounting, owner gold collection, cleanup
+│   │   ├── PurchaseService.luau    # owner-only purchase plates and saved unlocks
 │   │   └── ExampleService.luau     # startup example; no gameplay
 │   ├── Plots/
 │   │   └── PlotRegistry.luau       # non-yielding session ownership and exclusivity
@@ -75,6 +76,7 @@ src/
 └── shared/                         → ReplicatedStorage.Shared (Folder)
     ├── Config.luau                 # shared constants, including MAX_ARMY_SIZE = 10
     ├── FarmConfig.luau             # starter farm tuning and opt-in test switch
+    ├── PurchaseConfig.luau         # prices, prerequisites, and purchase plate settings
     ├── Logger.luau                 # typed, scoped Info/Warn logging
     ├── Types.luau                  # Lifecycle and PlayerData type contracts
     └── Hello.luau                  # retained template module; unused
@@ -96,7 +98,7 @@ and server-only packages stay on the server.
 
 Each bootstrap requires an explicit ordered list of services/controllers, calls
 all `Init()` functions, then all `Start()` functions in the same order, and logs
-`Ready` only if startup succeeds. Server order is DataService, PlotService, FarmService, then ExampleService;
+`Ready` only if startup succeeds. Server order is DataService, PlotService, FarmService, PurchaseService, then ExampleService;
 the client contains ExampleController, PlotController, and CameraController. Player profiles load asynchronously, so
 server `Ready` does not mean a particular player's data is ready.
 Modules must keep top-level code and `Init()` free of gameplay side effects;
@@ -216,8 +218,9 @@ depend on that running service context.
 - [ ] **Layer 1: Core tycoon** (dropper, collector, farms, shop, rebirth, saving, leaderboards)
   - [x] 1.1 Project setup
   - [x] 1.2 Data layer (mock runtime and durable persistence verified)
-  - [x] 1.3 Plot system (original lifecycle verified; [revised full-platform touch acceptance pending](docs/KINGDOM_LAYOUT.md))
-  - [ ] 1.4 Starter farm/dropper loop (front farm and activation plate implemented; [hands-on Play verification pending](docs/KINGDOM_LAYOUT.md))
+  - [x] 1.3 Plot system ([full-platform touch claim, release, and reclaim verified in Studio](docs/KINGDOM_LAYOUT.md))
+  - [x] 1.4 Starter farm/dropper loop ([solo and multiplayer Play acceptance verified in Mock mode](docs/KINGDOM_LAYOUT.md))
+  - [x] 1.5 Purchase buttons (linked purchases verified in Studio with Mock data; live assets pending)
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)

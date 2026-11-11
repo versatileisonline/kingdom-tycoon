@@ -12,6 +12,7 @@ local services: { Types.Lifecycle } = {
 	require(script.Services.DataService),
 	require(script.Services.PlotService),
 	require(script.Services.FarmService),
+	require(script.Services.PurchaseService),
 	require(script.Services.ExampleService),
 }
 

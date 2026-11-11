@@ -247,6 +247,12 @@ function DataService.GetSnapshot(player: Player): (Types.PlayerData?, string?)
 	return DataSchema.Copy(record.Profile.Data), nil
 end
 
+local updated = Instance.new("BindableEvent")
+
+function DataService.ObserveUpdates(callback: (Player) -> ()): RBXScriptConnection
+	return updated.Event:Connect(callback)
+end
+
 function DataService.Update(player: Player, mutate: (Types.PlayerData) -> ()): (boolean, string?)
 	local draft, reason = DataService.GetSnapshot(player)
 	if draft == nil then
@@ -285,6 +291,7 @@ function DataService.Update(player: Player, mutate: (Types.PlayerData) -> ()): (
 	end
 	record.Profile.Data = DataSchema.Copy(draft) -- Detach any reference retained by the callback.
 	record.Revision += 1
+	updated:Fire(player)
 	return true, nil
 end
 

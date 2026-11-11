@@ -106,6 +106,7 @@ src/server/Services/ExampleService.luau       → Server.Services.ExampleService
 src/server/Services/DataService.luau          → Server.Services.DataService (ModuleScript)
 src/server/Services/PlotService.luau          → Server.Services.PlotService (ModuleScript)
 src/server/Services/FarmService.luau          → Server.Services.FarmService (ModuleScript)
+src/server/Services/PurchaseService.luau      → Server.Services.PurchaseService (ModuleScript)
 src/server/Farms/FarmLedger.luau              → Server.Farms.FarmLedger (ModuleScript)
 src/server/Plots/PlotRegistry.luau            → Server.Plots.PlotRegistry (ModuleScript)
 src/server/Data/DataSchema.luau               → Server.Data.DataSchema (ModuleScript)
@@ -120,6 +121,7 @@ src/client/Controllers/CameraController.luau → Client.Controllers.CameraContro
 src/shared/                                 → ReplicatedStorage.Shared (Folder)
   Config.luau                               # army cap, logging, data/store/test constants
   FarmConfig.luau                           # production, value, cap, expiry, collection, tests
+  PurchaseConfig.luau                       # purchase IDs, prices, prerequisites, and touch limits
   Logger.luau                               # typed scoped Info/Warn logger
   Types.luau                                # Lifecycle and PlayerData types
   Hello.luau                                # retained unused starter module
@@ -131,7 +133,7 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   as children. StarterPlayerScripts clones Client and its descendants into each
   player's PlayerScripts. ReplicatedStorage is visible to clients; do not put
   secrets or authoritative data there.
-- Server startup order: require DataService, PlotService, FarmService, then ExampleService → call all
+- Server startup order: require DataService, PlotService, FarmService, PurchaseService, then ExampleService → call all
   services' Init() → call all services' Start() → log ServerBootstrap Ready.
   DataService loads player profiles asynchronously; Ready is not a data-ready signal.
   The optional Studio-only test switch runs DataLayerTests afterward via task.spawn.
@@ -202,6 +204,22 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 - CameraController owns Left Shift locking, starts unlocked, suspends during typing,
   menus and death, and restores normal controls. PlotService disables native mouse
   lock per player to avoid competing toggles. The render callback is client-only.
+- Milestone 1.5 asset contract: optionally add `PurchasePlates` and `PurchaseUnlocks`
+  folders as direct children of `ServerStorage.KingdomTemplate`. Each plate is an
+  anchored, touchable BasePart named for its configured purchase ID, with a
+  descendant TextLabel named `PurchaseLabel`. Use a BillboardGui with room for
+  the name and price on one line and the availability message on a second line.
+  Each matching unlock is a script-free Model with anchored parts at its final
+  position relative to the kingdom pivot. Include a plate and unlock for every
+  prerequisite used on the plot. With both folders absent, kingdoms claim normally.
+- PurchaseService detaches locked unlocks from each claimed plot. It accepts only
+  living owner touches within range, checks prerequisites and saved Gold, and
+  commits both the deduction and the purchased ID through one DataService update.
+  Plates are green when affordable and red when locked or short on Gold. A
+  successful purchase reveals the model and removes its plate. Existing purchases
+  are restored on claim from `PurchasedBuildings` in schema v1. Committed data
+  updates refresh availability without polling. Studio-only entries are removed
+  from runtime plot clones outside Studio.
 
 ## 11. Commands
 
@@ -273,7 +291,34 @@ position. Reset the switch to false. The accounting-only RunAccounting entry poi
 is safe in Edit mode; full service tests require the bootstrap's normal Script
 context. Asset setup and hands-on acceptance are in docs/MILESTONE_1_4.md.
 
+Purchase verification: use a local Studio test copy with Mock mode and the
+purchase asset contract above. The test IDs are `StudioFarmCrates` (3 Gold) and
+`StudioFarmSupplies` (6 Gold, requires Crates). Claim, try both at zero Gold, then
+earn at least six Gold via the farm. Supplies must still show Requires Farm
+Crates. Buy Crates, earn until Supplies turns green, then buy Supplies. Expect
+one `Purchased StudioFarmCrates for 3 Gold` and one
+`Purchased StudioFarmSupplies for 6 Gold` in Output. Visitors should be unable
+to buy. Reclaiming on the same profile should restore both models with the plates
+gone. The published-place template needs authored assets and live purchase IDs
+before players have a purchase to make.
+
 ## 12. Status
+
+Purchase buttons (2026-11-11):
+- [x] StyLua, Selene, Luau-LSP with Roblox definitions, and Rojo build passed.
+- [x] Solo Play on a local copy of the current plot and farm assets: rejected
+  insufficient funds and a missing prerequisite. Gold earned at the farm
+  updated plate colors and labels. Buying Crates and Supplies deducted 3 and
+  6 Gold respectively, removed their plates, and revealed their models.
+  Returning to both positions caused no extra charge. Reclaiming the plot
+  restored the models and remaining Gold from the same Mock profile.
+- [x] Two-player Play: a funded visitor touched each affordable plate and
+  changed neither player's Gold or purchase ownership. The owner bought
+  both, with one purchase log per unlock. Claim and farm activation also
+  passed when both purchase folders were removed in a separate Play run.
+- [ ] Add player-facing purchase IDs and Studio assets. The Crates and Supplies
+  entries are Studio test fixtures. Mock checks did not exercise durable
+  storage across server sessions. The main Studio place was not saved or published.
 
 Plate/farmer refinement (2026-10-21):
 - [x] Matching smaller circular green/red plates with black rims installed;
@@ -282,8 +327,8 @@ Plate/farmer refinement (2026-10-21):
   unchanged. No additional droppers built. Pre-refinement assets archived.
 - [x] Formatting, lint, strict Luau checks, and code-only Rojo build pass;
   installed shape/color/rim/placement checks and visual inspection pass.
-- [ ] Hands-on Play: collector red → green → red, claim/release colors, and no
-  black rim remaining after starting. Save the Studio place to retain assets.
+- [x] Studio Play: collector red → green → red, claim/release colors, and
+  the start plate face, black rim, and label hide on activation.
 
 
 Full-platform layout revision (2026-10-21):
@@ -298,18 +343,31 @@ Full-platform layout revision (2026-10-21):
   template, farm bounds, conveyor direction, spawn facing, and bundle fit.
 - [x] StyLua, Selene (zero errors/warnings), strict Luau-LSP with Roblox types,
   code-only Rojo build, module loading, and Edit-mode accounting checks pass.
-- [ ] Revised native touch, production/collection, death, and multiplayer Play
-  acceptance remain with the developer; historical checks below predate revision.
+- [x] Revised native touch, production/collection, death, and multiplayer Play
+  acceptance verified in Mock mode on 2026-11-11.
 - [ ] Save the Studio place to retain the new assets and backup.
 
-Studio remains in Edit mode, Mock mode and all test switches remain unchanged.
-No runtime Play suite was run during this revision. No commit or push was made.
+Studio verification (2026-11-11):
+- Solo: native claim, start, and collect touches passed. The farm stayed hidden
+  until start. Physical wheat earned Gold, and collection reset the label to
+  zero. Output confirmed `Collected 4 Gold` and `Final save confirmed ... (Mock)`.
+- Death respawned the owner near the kingdom spawn with visible protection
+  that expired at about five seconds. The farm and its earnings carried over.
+- Multiplayer: only one player claimed Plot01. Visitors reached the start and
+  collect plates without activating the farm or taking earnings. Owner
+  departures before and after activation released the plot, removed the
+  kingdom, restored the green claim plate, and allowed a fresh claim.
+- Left Shift toggled camera lock and restored the normal controls. Edit-mode
+  farm accounting checks passed, including retention after a failed ledger credit.
+- Studio returned to Edit mode. The opt-in farm-service suite and simultaneous
+  production on two plots were not run. The current place has one plot.
+  The place was not saved or published during the tests.
 
 - [x] 1.1 Project setup — scaffold and tool configuration implemented; verification below
 - [x] 1.2 Data layer — implemented; mock runtime and durable persistence verified
-- [x] 1.3 Plot system — original lifecycle verified; revised touch acceptance pending
-- [ ] 1.4 Dropper loop
-- [ ] 1.5 Purchase buttons
+- [x] 1.3 Plot system — original lifecycle and revised touch claim/release verified
+- [x] 1.4 Dropper loop — solo and multiplayer Play acceptance verified in Mock mode
+- [x] 1.5 Purchase buttons — linked Studio purchases verified in Mock mode
 - [ ] 1.6 Farms
 - [ ] 1.7 HUD + settings
 - [ ] 1.8 Shop + gamepasses
