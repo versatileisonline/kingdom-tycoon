@@ -100,7 +100,8 @@ for _, item in hopperParts do
 	item.CFrame += starterShift
 end
 
-local farmer = farm.Scenery:FindFirstChild("Farmer")
+local scenery = farm:FindFirstChild("Scenery")
+local farmer = if scenery ~= nil then scenery:FindFirstChild("Farmer") else nil
 assert(farmer ~= nil and farmer:IsA("Model"), "Existing decorative farmer required")
 local farmerPosition = pivot:PointToObjectSpace(farmer:GetPivot().Position)
 farmer:PivotTo(
