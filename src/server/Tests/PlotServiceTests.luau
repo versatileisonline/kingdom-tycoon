@@ -12,6 +12,7 @@ local logger = Logger.new("PlotServiceTests")
 local Tests = {}
 
 function Tests.Run(): ()
+	assert(not require(Shared.PurchaseConfig).RUN_TESTS_IN_STUDIO, "Run purchase tests separately")
 	assert(RunService:IsStudio() and RunService:IsServer(), "Studio server tests only")
 	assert(DataService.GetStorageMode() == "Mock", "Plot tests require Mock mode")
 	local registry = PlotRegistry.new({ "A", "B" })
@@ -62,6 +63,13 @@ function Tests.Run(): ()
 	local function nextRequest(): ()
 		task.wait(Config.PLOTS.CLAIM_COOLDOWN_SECONDS + Config.DATA.WAIT_INTERVAL_SECONDS)
 	end
+	local claimOrder: { number } = {}
+	local stopFirst = PlotService.ObserveKingdoms(function(): ()
+		table.insert(claimOrder, 1)
+	end, function(): () end)
+	local stopSecond = PlotService.ObserveKingdoms(function(): ()
+		table.insert(claimOrder, 2)
+	end, function(): () end)
 	local ok, failure = xpcall(function(): string?
 		assert(not PlotService.TryClaim(player :: Player, {}), "Malformed plot argument accepted")
 		nextRequest()
@@ -80,6 +88,7 @@ function Tests.Run(): ()
 		assert(plot:GetAttribute("OwnerUserId") == nil and marker.CanTouch, "Rollback did not restore plot")
 		nextRequest()
 		assert(PlotService.TryClaim(player :: Player, "Plot01"), "Valid claim failed")
+		assert(claimOrder[1] == 1 and claimOrder[2] == 2, "Claim observers ran out of registration order")
 		assert(PlotService.GetPlotId(player :: Player) == "Plot01", "Registry assignment missing")
 		assert(player:GetAttribute("KingdomPlotId") == "Plot01", "Player ownership attribute missing")
 		assert(plot:GetAttribute("OwnerUserId") == player.UserId and marker.CanTouch, "Plot ownership state incorrect")
@@ -143,6 +152,8 @@ function Tests.Run(): ()
 		logger.Info("Actual character respawn reached its kingdom")
 		return nil
 	end, debug.traceback)
+	stopFirst()
+	stopSecond()
 	label.Name = "OwnerLabel"
 	PlotService.Release(player)
 	local current = player.Character

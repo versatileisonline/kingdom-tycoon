@@ -32,15 +32,18 @@ local initialized = false
 local started = false
 local closing = false
 type Observer = { Claimed: (Player, Model) -> (), Releasing: (Player, Model) -> () }
-local observers: { [Observer]: boolean } = {}
+local observers: { Observer } = {}
 
 -- Synchronous server-only callbacks; observers must not yield. Releasing runs
 -- before destroying the clone, including partial-claim rollback.
 function PlotService.ObserveKingdoms(claimed: (Player, Model) -> (), releasing: (Player, Model) -> ()): () -> ()
 	local observer = { Claimed = claimed, Releasing = releasing }
-	observers[observer] = true
+	table.insert(observers, observer)
 	return function(): ()
-		observers[observer] = nil
+		local index = table.find(observers, observer)
+		if index ~= nil then
+			table.remove(observers, index)
+		end
 	end
 end
 
@@ -50,7 +53,7 @@ function PlotService.GetKingdom(player: Player): Model?
 end
 
 local function notifyRelease(player: Player, kingdom: Model): ()
-	for observer in observers do
+	for _, observer in table.clone(observers) do
 		local ok, reason = pcall(function(): string?
 			observer.Releasing(player, kingdom)
 			return nil
@@ -175,7 +178,7 @@ function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string
 		-- Keep the reusable touch connection alive; ownership gates later touches.
 		player:SetAttribute("KingdomPlotId", plotId)
 		player.RespawnLocation = spawn
-		for observer in observers do
+		for _, observer in table.clone(observers) do
 			observer.Claimed(player, clone)
 		end
 		return nil
