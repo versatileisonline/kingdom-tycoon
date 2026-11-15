@@ -12,6 +12,7 @@ local controllers: { Types.Lifecycle } = {
 	require(script.Controllers.ExampleController),
 	require(script.Controllers.PlotController),
 	require(script.Controllers.CameraController),
+	require(script.Controllers.PurchaseGuidanceController),
 }
 
 for _, controller in controllers do
