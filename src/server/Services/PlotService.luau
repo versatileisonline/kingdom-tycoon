@@ -6,6 +6,7 @@ local RunService = game:GetService("RunService")
 local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.Config)
 local Logger = require(Shared.Logger)
+local PlatePresentation = require(Shared.PlatePresentation)
 local DataService = require(script.Parent.DataService)
 local PlotRegistry = require(script.Parent.Parent.Plots.PlotRegistry)
 local logger = Logger.new("PlotService")
@@ -88,7 +89,8 @@ local function resetPlot(plot: Plot): ()
 		plot.Kingdom = nil
 	end
 	plot.Model:SetAttribute("OwnerUserId", nil)
-	plot.Label.Text = "CLAIM KINGDOM — FREE"
+	plot.Label.Text = "Claim"
+	PlatePresentation.SetVisible(plot.Marker, true)
 	plot.Label.Visible = true
 	plot.Marker.CanTouch = true
 	plot.Marker.Color = Config.PLATES.AVAILABLE_COLOR
@@ -175,6 +177,7 @@ function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string
 		plot.Label.Text = player.DisplayName .. "'s Kingdom"
 		plot.Label.Visible = false -- The kingdom entrance supplies the owner sign.
 		plot.Marker.Color = Config.PLATES.UNAVAILABLE_COLOR
+		PlatePresentation.SetVisible(plot.Marker, false)
 		-- Keep the reusable touch connection alive; ownership gates later touches.
 		player:SetAttribute("KingdomPlotId", plotId)
 		player.RespawnLocation = spawn
@@ -263,6 +266,7 @@ function PlotService.Start(): ()
 		assert(origin ~= nil and origin:IsA("BasePart") and origin.Anchored, "Missing anchored Origin")
 		assert(marker ~= nil and marker:IsA("BasePart") and marker.Anchored, "Missing anchored ClaimMarker")
 		assert(label ~= nil and label:IsA("TextLabel"), "Missing ClaimLabel")
+		PlatePresentation.Style(marker)
 		plots[id] = { Model = model, Origin = origin, Marker = marker, Label = label, Kingdom = nil }
 		table.insert(ids, id)
 	end

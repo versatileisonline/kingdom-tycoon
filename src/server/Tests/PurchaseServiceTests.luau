@@ -68,28 +68,71 @@ function Tests.Run(): ()
 			draft.PurchasedBuildings = {}
 		end))
 		local kingdom = claim()
+		local plates = kingdom:FindFirstChild("PurchasePlates")
+		assert(plates ~= nil, "Missing purchase plates")
+		local marker = workspace.Plots.Plot01.ClaimMarker :: BasePart
+		assert(
+			marker.Transparency == 1 and (marker:FindFirstChild("Outline") :: BasePart).Transparency == 1,
+			"Used claim plate remains visible"
+		)
 		assert(FarmService.HasProducer(owner, "FarmDropper04"), "Install all three producer models")
 		setGold(100)
-		assert(not attempt(kingdom, "FarmDropper02"), "Bought before Start Farm")
+		assert(not PurchaseService.TryPurchase(owner, "FarmDropper02"), "Bought before Start Farm")
+		assert(#plates:GetChildren() == 0, "Purchases shown before farm activation")
 		local start = kingdom:FindFirstChild("FarmStartPlate") :: BasePart
 		character:PivotTo(CFrame.new(start.Position + Vector3.new(0, 3, 0)))
 		assert(FarmService.TryStart(owner), "Start failed")
 		local farm = kingdom:FindFirstChild("StarterFarm") :: Model
 		local producers = farm:FindFirstChild("Producers") :: Folder
 		assert(#producers:GetChildren() == 0, "Locked producers visible")
-		assert(not attempt(kingdom, "FarmDropper03"), "Skipped prerequisite")
+		assert(not PurchaseService.TryPurchase(owner, "FarmDropper03"), "Skipped prerequisite")
+		local revealDeadline = os.clock() + Config.DATA.TEST_TIMEOUT_SECONDS
+		while #plates:GetChildren() == 0 and os.clock() < revealDeadline do
+			task.wait(Config.DATA.WAIT_INTERVAL_SECONDS)
+		end
+		local visible = plates:GetChildren()
+		assert(#visible == 1 and visible[1].Name == "FarmDropper02", "Future purchases are visible")
+		assert(
+			start.Transparency == 1 and (start:FindFirstChild("Outline") :: BasePart).Transparency == 1,
+			"Used start plate remains visible"
+		)
 		setGold(0)
 		task.wait(Settings.TOUCH_COOLDOWN_SECONDS + FarmSettings.TICK_SECONDS)
 		assert(not attempt(kingdom, "FarmDropper02"), "Insufficient funds accepted")
+		assert(
+			(plates:FindFirstChild("FarmDropper02") :: BasePart).Color == Config.PLATES.UNAVAILABLE_COLOR,
+			"Unaffordable next plate not red"
+		)
 		setGold(100)
 		character:PivotTo(original)
 		task.wait(Settings.TOUCH_COOLDOWN_SECONDS + FarmSettings.TICK_SECONDS)
 		local remaining = 100
+		local expectedNext = 2
 		for _, entry in Settings.PURCHASES do
 			if not entry.FarmDropper then
 				continue
 			end
+			assert(#plates:GetChildren() == 1, "More than the next purchase is visible")
+			local nextPlate = plates:FindFirstChild(entry.Id)
+			assert(
+				nextPlate ~= nil and nextPlate:IsA("BasePart") and nextPlate.Color == Config.PLATES.AVAILABLE_COLOR,
+				"Funded next plate not green"
+			)
+			assert(
+				(nextPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text == "Dropper " .. expectedNext,
+				"Label contains excessive copy"
+			)
+			local label = nextPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel
+			assert(label.Parent ~= nil and label.Parent:IsA("BillboardGui"), "Label is not hovering over the plate")
+			assert(
+				label.BackgroundTransparency == 1
+					and label.Font == Enum.Font.GothamBold
+					and label.TextSize == Config.PLATES.LABEL_SIZE,
+				"Label style regressed"
+			)
+			assert(nextPlate.Size.Y == Config.PLATES.DIAMETER, "Plate is not compact")
 			assert(attempt(kingdom, entry.Id), "Valid purchase rejected")
+			expectedNext += 1
 			remaining -= entry.Price
 			local after = DataService.GetSnapshot(owner)
 			assert(
@@ -132,7 +175,9 @@ function Tests.Run(): ()
 			(farm:GetAttribute("UncollectedGold") :: number) >= earningsBefore + 4 * FarmSettings.BUNDLE_VALUE,
 			"Upgraded physical production did not reach shared collector"
 		)
+		assert(#plates:GetChildren() == 0, "Completed chain left a purchase plate")
 		PlotService.Release(owner)
+		assert(marker.Transparency == 0, "Released claim plate did not return")
 		assert(producers.Parent == nil and bundles.Parent == nil, "Release leaked assets")
 		task.wait(Config.PLOTS.CLAIM_COOLDOWN_SECONDS + FarmSettings.TICK_SECONDS)
 		kingdom = claim()

@@ -11,17 +11,17 @@ export type Purchase = {
 
 -- Prerequisites must appear before the purchases that require them.
 local purchases: { Purchase } = {
-	table.freeze({ Id = "FarmDropper02", Name = "Farm Dropper 2", Price = 6, FarmDropper = true }),
+	table.freeze({ Id = "FarmDropper02", Name = "Dropper 2", Price = 6, FarmDropper = true }),
 	table.freeze({
 		Id = "FarmDropper03",
-		Name = "Farm Dropper 3",
+		Name = "Dropper 3",
 		Price = 12,
 		Requires = "FarmDropper02",
 		FarmDropper = true,
 	}),
 	table.freeze({
 		Id = "FarmDropper04",
-		Name = "Farm Dropper 4",
+		Name = "Dropper 4",
 		Price = 24,
 		Requires = "FarmDropper03",
 		FarmDropper = true,

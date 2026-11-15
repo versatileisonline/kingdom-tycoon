@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.Config)
 local Logger = require(Shared.Logger)
+local PlatePresentation = require(Shared.PlatePresentation)
 local Settings = require(Shared.PurchaseConfig)
 local Types = require(Shared.Types)
 local DataService = require(script.Parent.DataService)
@@ -19,11 +20,13 @@ type Slot = {
 	Label: TextLabel,
 	Unlock: Model?,
 	Shown: boolean,
+	Visible: boolean,
 	Connection: RBXScriptConnection?,
 	LastTouch: number,
 }
 type KingdomPurchases = {
 	Kingdom: Model,
+	Plates: Folder,
 	Unlocks: Folder?,
 	StartConnection: RBXScriptConnection?,
 	Slots: { Slot },
@@ -31,6 +34,7 @@ type KingdomPurchases = {
 
 local PurchaseService = {}
 local definitions: { [string]: Purchase } = {}
+local definitionOrder: { [string]: number } = {}
 local kingdoms: { [Player]: KingdomPurchases } = {}
 local unsubscribe: (() -> ())? = nil
 local updatedConnection: RBXScriptConnection? = nil
@@ -75,12 +79,30 @@ local function refresh(player: Player): ()
 					unlock.Parent = state.Unlocks
 				end
 			end
-		elseif not slot.Shown then
-			local reason = getUnavailableReason(player, data, purchase)
-			slot.Plate.Color = if reason == nil then Config.PLATES.AVAILABLE_COLOR else Config.PLATES.UNAVAILABLE_COLOR
-			slot.Label.Text =
-				string.format("%s • %d Gold\n%s", purchase.Name, purchase.Price, reason or "Step to buy")
 		end
+	end
+	-- A single frontier: the earliest unfinished configured purchase is the only offer.
+	local nextSlot: Slot? = nil
+	for _, slot in state.Slots do
+		if not slot.Shown then
+			nextSlot = slot
+			break
+		end
+	end
+	for _, slot in state.Slots do
+		if slot.Shown then
+			continue
+		end
+		local purchase = slot.Definition
+		local requirement = purchase.Requires
+		slot.Visible = slot == nextSlot
+			and (requirement == nil or data.PurchasedBuildings[requirement] == true)
+			and (not purchase.FarmDropper or FarmService.IsStarted(player))
+		slot.Label.Text = purchase.Name
+		slot.Plate.Color = if getUnavailableReason(player, data, purchase) == nil
+			then Config.PLATES.AVAILABLE_COLOR
+			else Config.PLATES.UNAVAILABLE_COLOR
+		slot.Plate.Parent = if slot.Visible then state.Plates else nil
 	end
 end
 
@@ -88,6 +110,7 @@ local function purchaseOnTouch(player: Player, state: KingdomPurchases, slot: Sl
 	local character = player.Character
 	if
 		slot.Shown
+		or not slot.Visible
 		or character == nil
 		or not hit:IsDescendantOf(character)
 		or player.Parent ~= Players
@@ -147,6 +170,7 @@ local function release(player: Player): ()
 		state.StartConnection:Disconnect()
 	end
 	for _, slot in state.Slots do
+		slot.Plate:Destroy()
 		if slot.Connection ~= nil then
 			slot.Connection:Disconnect()
 		end
@@ -192,6 +216,7 @@ local function prepare(player: Player, kingdom: Model): ()
 			Label = label,
 			Unlock = unlock :: Model?,
 			Shown = false,
+			Visible = false,
 			Connection = nil,
 			LastTouch = -math.huge,
 		})
@@ -205,7 +230,11 @@ local function prepare(player: Player, kingdom: Model): ()
 		assert(seen[unlock.Name], "Purchase unlock needs a matching plate: " .. unlock.Name)
 		seen[unlock.Name] = nil -- Also reject duplicate unlock models.
 	end
-	local state: KingdomPurchases = { Kingdom = kingdom, Unlocks = unlocks, Slots = {}, StartConnection = nil }
+	table.sort(slots, function(a: Slot, b: Slot): boolean
+		return definitionOrder[a.Definition.Id] < definitionOrder[b.Definition.Id]
+	end)
+	local state: KingdomPurchases =
+		{ Kingdom = kingdom, Plates = plates, Unlocks = unlocks, Slots = {}, StartConnection = nil }
 	kingdoms[player] = state
 	for _, slot in slots do
 		if slot.Definition.StudioOnly and not RunService:IsStudio() then
@@ -214,6 +243,7 @@ local function prepare(player: Player, kingdom: Model): ()
 				slot.Unlock:Destroy()
 			end
 		else
+			PlatePresentation.Style(slot.Plate)
 			table.insert(state.Slots, slot)
 			if slot.Unlock ~= nil then
 				slot.Unlock.Parent = nil
@@ -250,7 +280,7 @@ end
 
 function PurchaseService.Init(): ()
 	assert(RunService:IsServer(), "PurchaseService is server-only")
-	for _, definition in Settings.PURCHASES do
+	for index, definition in Settings.PURCHASES do
 		local id, price, requirement = definition.Id, definition.Price, definition.Requires
 		assert(#id > 0 and #id <= Config.DATA.MAX_BUILDING_ID_LENGTH and definitions[id] == nil, "Invalid purchase ID")
 		assert(price > 0 and price <= Config.DATA.MAX_SAFE_INTEGER and price % 1 == 0, "Invalid purchase price: " .. id)
@@ -263,6 +293,7 @@ function PurchaseService.Init(): ()
 			)
 		end
 		definitions[id] = definition
+		definitionOrder[id] = index
 	end
 end
 
