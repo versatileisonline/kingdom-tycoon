@@ -16,9 +16,10 @@ Instructions for AI coding agents working in this repo. Read this file and `GAME
 
 ## 3. Workflow rules
 1. Work on **one milestone at a time** (see roadmap in `GAME_DESIGN.md`). Do not implement future milestones or "helpful extras".
+   Before beginning a new milestone, **create and switch to a new dedicated Git branch before editing any files**, then verify the branch name. Do not reuse the previous milestone's branch. Preserve existing work; never discard unrelated changes to switch branches. Do not push unless explicitly requested.
 2. **Plan first.** Before editing, list the files you will create or change and your assumptions. Wait for my go-ahead on any non-trivial change.
 3. Keep changes small and reviewable. Do not rewrite unrelated files.
-4. Do not run `git commit` or `git push` unless I ask. Suggest a commit message (Conventional Commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`).
+4. **Commit all authorized work in small, modular commits as you go.** Each commit must represent one coherent change, including its relevant tests, and use a descriptive Conventional Commit message (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`). Do not wait for a separate request to commit, leave completed work uncommitted, or combine unrelated changes into one catch-all commit. Stage only task-owned changes; preserve unrelated user work. Verify each change before committing, and report any remaining verification limits. Do not run `git push` unless I explicitly ask.
 5. Never delete or overwrite my files without asking.
 6. End every task with: what changed, how to verify it (what I should see in Studio's Output), and anything I should double-check.
 
