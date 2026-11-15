@@ -74,6 +74,7 @@ function Tests.RunAccounting(): ()
 end
 
 function Tests.Run(): ()
+	assert(not require(Shared.PurchaseConfig).RUN_TESTS_IN_STUDIO, "Run purchase tests separately")
 	assert(RunService:IsStudio() and RunService:IsServer(), "Studio server tests only")
 	assert(not Config.PLOTS.RUN_TESTS_IN_STUDIO and not Config.DATA.RUN_TESTS_IN_STUDIO, "Run farm tests separately")
 	Tests.RunAccounting()

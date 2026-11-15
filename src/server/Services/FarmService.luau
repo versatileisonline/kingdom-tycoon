@@ -9,10 +9,16 @@ local Settings = require(Shared.FarmConfig)
 local Logger = require(Shared.Logger)
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
+local ProducerScheduler = require(script.Parent.Parent.Farms.ProducerScheduler)
 local FarmLedger = require(script.Parent.Parent.Farms.FarmLedger)
 local logger = Logger.new("FarmService")
 
+type Producer = { Model: Model?, Drop: BasePart, PurchaseId: string }
+
 type Farm = {
+	Producers: { Producer },
+	Scheduler: ProducerScheduler.Scheduler,
+	ProducerFolder: Folder?,
 	Kingdom: Model,
 	Model: Model,
 	Drop: BasePart,
@@ -29,7 +35,6 @@ type Farm = {
 	StartPlate: BasePart,
 	Started: boolean,
 	LastStart: number,
-	NextDrop: number,
 	LastCollect: number,
 }
 
@@ -39,6 +44,7 @@ local template: BasePart? = nil
 local unsubscribe: (() -> ())? = nil
 local running = false
 local initialized = false
+local updatedConnection: RBXScriptConnection? = nil
 
 local function part(model: Model, name: string): BasePart
 	local found = model:FindFirstChild(name)
@@ -85,6 +91,46 @@ local function isNearPlate(player: Player, plate: BasePart, distance: number): b
 	return (localPosition - nearest).Magnitude <= distance
 end
 
+-- All effects come from committed server data, never presentation attributes.
+local function refreshProducers(player: Player): ()
+	local farm = farms[player]
+	local data = DataService.GetSnapshot(player)
+	if farm == nil or data == nil then
+		return
+	end
+	local activeCount = 0
+	for index, producer in farm.Producers do
+		local owned = producer.PurchaseId == "" or data.PurchasedBuildings[producer.PurchaseId] == true
+		local model = producer.Model
+		if model ~= nil then
+			model.Parent = if owned then farm.ProducerFolder else nil
+		end
+		farm.Scheduler.SetEnabled(index, farm.Started and owned, os.clock())
+		if farm.Started and owned then
+			activeCount += 1
+		end
+	end
+	farm.Model:SetAttribute("ActiveProducerCount", activeCount)
+end
+
+function FarmService.IsStarted(player: Player): boolean
+	local farm = farms[player]
+	return farm ~= nil and farm.Started and PlotService.GetKingdom(player) == farm.Kingdom
+end
+
+function FarmService.HasProducer(player: Player, purchaseId: string): boolean
+	local farm = farms[player]
+	if farm == nil then
+		return false
+	end
+	for _, producer in farm.Producers do
+		if producer.PurchaseId == purchaseId then
+			return true
+		end
+	end
+	return false
+end
+
 function FarmService.TryStart(player: Player): boolean
 	local farm = farms[player]
 	if
@@ -107,7 +153,7 @@ function FarmService.TryStart(player: Player): boolean
 	end
 	-- Non-yielding: reserve once before revealing or connecting collection.
 	farm.Started = true
-	farm.NextDrop = now + Settings.PRODUCTION_SECONDS
+	refreshProducers(player)
 	farm.Model.Parent = farm.Kingdom
 	farm.Conveyor.AssemblyLinearVelocity = farm.Conveyor.CFrame.LookVector * Settings.CONVEYOR_SPEED
 	farm.Plate.CanTouch = true
@@ -190,6 +236,11 @@ local function release(player: Player, _kingdom: Model): ()
 	end
 	farm.Conveyor.AssemblyLinearVelocity = Vector3.zero
 	farm.Bundles:Destroy()
+	for _, producer in farm.Producers do
+		if producer.Model ~= nil then
+			producer.Model:Destroy()
+		end
+	end
 	table.clear(farm.Expires)
 	farm.Ledger.Clear()
 	-- Includes the unparented, not-yet-started model retained by this farm record.
@@ -206,6 +257,21 @@ local function prepare(player: Player, kingdom: Model): ()
 	local model, drop, conveyor, pit, plate, label = assets(kingdom)
 	local startPlate = part(kingdom, "FarmStartPlate")
 	startPlate.Color = Config.PLATES.AVAILABLE_COLOR
+	local producerFolder = model:FindFirstChild("Producers")
+	local producers: { Producer } = { { Model = nil, Drop = drop, PurchaseId = "" } }
+	if producerFolder ~= nil then
+		assert(producerFolder:IsA("Folder"), "StarterFarm.Producers must be a Folder")
+		assert(#producerFolder:GetChildren() == #Settings.PRODUCERS - 1, "Provide all three paid producers")
+		for index = 2, #Settings.PRODUCERS do
+			local definition = Settings.PRODUCERS[index]
+			local producer = producerFolder:FindFirstChild(definition.Name)
+			assert(producer ~= nil and producer:IsA("Model"), "Missing producer " .. definition.Name)
+			table.insert(
+				producers,
+				{ Model = producer, Drop = part(producer, "DropPoint"), PurchaseId = definition.PurchaseId }
+			)
+		end
+	end
 	local bundles = Instance.new("Folder")
 	bundles.Name = "ActiveBundles"
 	bundles.Parent = model
@@ -214,6 +280,9 @@ local function prepare(player: Player, kingdom: Model): ()
 	overlap.FilterDescendantsInstances = { bundles }
 	local farm: Farm = {
 		Kingdom = kingdom,
+		Producers = producers,
+		ProducerFolder = producerFolder :: Folder?,
+		Scheduler = ProducerScheduler.new(#Settings.PRODUCERS, Settings.PRODUCTION_SECONDS),
 		Model = model,
 		Drop = drop,
 		Conveyor = conveyor,
@@ -234,10 +303,10 @@ local function prepare(player: Player, kingdom: Model): ()
 		StartPlate = startPlate,
 		Started = false,
 		LastStart = -math.huge,
-		NextDrop = os.clock() + Settings.PRODUCTION_SECONDS,
 		LastCollect = -math.huge,
 	}
 	farms[player] = farm
+	refreshProducers(player)
 	conveyor.AssemblyLinearVelocity = Vector3.zero
 	pit.CanCollide = false
 	pit.CanQuery = true
@@ -257,17 +326,19 @@ local function prepare(player: Player, kingdom: Model): ()
 	logger.Info(string.format("Starter farm awaiting activation for %d", player.UserId))
 end
 
-local function dropBundle(farm: Farm, now: number): ()
+local function dropBundle(farm: Farm, drop: BasePart, now: number): ()
 	local source = template
 	if source == nil or farm.Ledger.GetCount() >= Settings.MAX_BUNDLES then
 		return
 	end
 	local bundle = source:Clone()
 	bundle.Name = "WheatBundle"
+	local dropParent = drop.Parent
+	bundle:SetAttribute("ProducerId", if dropParent ~= nil then dropParent.Name else "")
 	bundle.Anchored = false
 	bundle.CanCollide = true
 	bundle.CanQuery = true
-	bundle.CFrame = farm.Drop.CFrame
+	bundle.CFrame = drop.CFrame
 	bundle.Parent = farm.Bundles
 	local ok, reason = pcall(function(): string?
 		-- nil makes the server own physics, preventing client-controlled arrivals.
@@ -301,9 +372,8 @@ local function tickFarm(farm: Farm, now: number): ()
 			bundle:Destroy()
 		end
 	end
-	if now >= farm.NextDrop then
-		farm.NextDrop = now + Settings.PRODUCTION_SECONDS -- No catch-up/offline bursts.
-		dropBundle(farm, now)
+	for _, index in farm.Scheduler.TakeDue(now, Settings.MAX_BUNDLES - farm.Ledger.GetCount()) do
+		dropBundle(farm, farm.Producers[index].Drop, now)
 	end
 	publish(farm)
 end
@@ -336,6 +406,7 @@ function FarmService.Start(): ()
 	template = source
 	running = true
 	unsubscribe = PlotService.ObserveKingdoms(prepare, release)
+	updatedConnection = DataService.ObserveUpdates(refreshProducers)
 	for _, player in Players:GetPlayers() do
 		local assigned = PlotService.GetKingdom(player)
 		if assigned ~= nil then
@@ -366,6 +437,10 @@ end
 
 function FarmService.Shutdown(): ()
 	running = false
+	if updatedConnection ~= nil then
+		updatedConnection:Disconnect()
+		updatedConnection = nil
+	end
 	if unsubscribe ~= nil then
 		unsubscribe()
 		unsubscribe = nil

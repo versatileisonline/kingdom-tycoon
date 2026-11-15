@@ -2,6 +2,12 @@
 
 return table.freeze({
 	PRODUCTION_SECONDS = 3,
+	PRODUCERS = table.freeze({
+		table.freeze({ Name = "Starter", PurchaseId = "" }),
+		table.freeze({ Name = "Dropper02", PurchaseId = "FarmDropper02" }),
+		table.freeze({ Name = "Dropper03", PurchaseId = "FarmDropper03" }),
+		table.freeze({ Name = "Dropper04", PurchaseId = "FarmDropper04" }),
+	}),
 	BUNDLE_VALUE = 1,
 	MAX_BUNDLES = 12,
 	BUNDLE_LIFETIME_SECONDS = 20,

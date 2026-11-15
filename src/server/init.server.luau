@@ -44,3 +44,10 @@ if game:GetService("RunService"):IsStudio() and Config.DATA.RUN_TESTS_IN_STUDIO 
 		require(script.Tests.DataLayerTests).Run()
 	end)
 end
+
+local PurchaseConfig = require(Shared:WaitForChild("PurchaseConfig"))
+if game:GetService("RunService"):IsStudio() and PurchaseConfig.RUN_TESTS_IN_STUDIO then
+	task.spawn(function(): ()
+		require(script.Tests.PurchaseServiceTests).Run()
+	end)
+end

@@ -9,6 +9,7 @@ local Settings = require(Shared.PurchaseConfig)
 local Types = require(Shared.Types)
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
+local FarmService = require(script.Parent.FarmService)
 local logger = Logger.new("PurchaseService")
 
 type Purchase = Settings.Purchase
@@ -16,14 +17,15 @@ type Slot = {
 	Definition: Purchase,
 	Plate: BasePart,
 	Label: TextLabel,
-	Unlock: Model,
+	Unlock: Model?,
 	Shown: boolean,
 	Connection: RBXScriptConnection?,
 	LastTouch: number,
 }
 type KingdomPurchases = {
 	Kingdom: Model,
-	Unlocks: Folder,
+	Unlocks: Folder?,
+	StartConnection: RBXScriptConnection?,
 	Slots: { Slot },
 }
 
@@ -33,7 +35,15 @@ local kingdoms: { [Player]: KingdomPurchases } = {}
 local unsubscribe: (() -> ())? = nil
 local updatedConnection: RBXScriptConnection? = nil
 
-local function getUnavailableReason(data: Types.PlayerData, purchase: Purchase): string?
+local function getUnavailableReason(player: Player, data: Types.PlayerData, purchase: Purchase): string?
+	if purchase.FarmDropper then
+		if not FarmService.HasProducer(player, purchase.Id) then
+			return "Farm dropper unavailable"
+		end
+		if not FarmService.IsStarted(player) then
+			return "Start your farm first"
+		end
+	end
 	local requirement = purchase.Requires
 	if requirement ~= nil and data.PurchasedBuildings[requirement] ~= true then
 		return "Requires " .. definitions[requirement].Name
@@ -60,10 +70,13 @@ local function refresh(player: Player): ()
 				slot.Shown = true
 				slot.Plate:Destroy()
 				slot.Connection = nil
-				slot.Unlock.Parent = state.Unlocks
+				local unlock = slot.Unlock
+				if unlock ~= nil then
+					unlock.Parent = state.Unlocks
+				end
 			end
 		elseif not slot.Shown then
-			local reason = getUnavailableReason(data, purchase)
+			local reason = getUnavailableReason(player, data, purchase)
 			slot.Plate.Color = if reason == nil then Config.PLATES.AVAILABLE_COLOR else Config.PLATES.UNAVAILABLE_COLOR
 			slot.Label.Text =
 				string.format("%s • %d Gold\n%s", purchase.Name, purchase.Price, reason or "Step to buy")
@@ -71,7 +84,7 @@ local function refresh(player: Player): ()
 	end
 end
 
-local function purchaseOnTouch(player: Player, state: KingdomPurchases, slot: Slot, hit: BasePart): ()
+local function purchaseOnTouch(player: Player, state: KingdomPurchases, slot: Slot, hit: BasePart): boolean
 	local character = player.Character
 	if
 		slot.Shown
@@ -80,11 +93,11 @@ local function purchaseOnTouch(player: Player, state: KingdomPurchases, slot: Sl
 		or player.Parent ~= Players
 		or PlotService.GetKingdom(player) ~= state.Kingdom
 	then
-		return
+		return false
 	end
 	local now = os.clock()
 	if now - slot.LastTouch < Settings.TOUCH_COOLDOWN_SECONDS then
-		return
+		return false
 	end
 	slot.LastTouch = now
 	local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -95,20 +108,20 @@ local function purchaseOnTouch(player: Player, state: KingdomPurchases, slot: Sl
 		or root == nil
 		or (root.Position - slot.Plate.Position).Magnitude > Settings.TOUCH_DISTANCE
 	then
-		return
+		return false
 	end
 	local definition = slot.Definition
 	local data = DataService.GetSnapshot(player)
 	if
 		data == nil
 		or data.PurchasedBuildings[definition.Id] == true
-		or getUnavailableReason(data, definition) ~= nil
+		or getUnavailableReason(player, data, definition) ~= nil
 	then
-		return
+		return false
 	end
 	local success, reason = DataService.Update(player, function(draft): ()
 		assert(draft.PurchasedBuildings[definition.Id] ~= true, "Already purchased")
-		assert(getUnavailableReason(draft, definition) == nil, "Purchase is unavailable")
+		assert(getUnavailableReason(player, draft, definition) == nil, "Purchase is unavailable")
 		draft.Gold -= definition.Price
 		draft.PurchasedBuildings[definition.Id] = true
 	end)
@@ -120,6 +133,8 @@ local function purchaseOnTouch(player: Player, state: KingdomPurchases, slot: Sl
 	else
 		logger.Warn(string.format("Purchase %s rejected for %d: %s", definition.Id, player.UserId, tostring(reason)))
 	end
+
+	return success
 end
 
 local function release(player: Player): ()
@@ -128,11 +143,14 @@ local function release(player: Player): ()
 	if state == nil then
 		return
 	end
+	if state.StartConnection ~= nil then
+		state.StartConnection:Disconnect()
+	end
 	for _, slot in state.Slots do
 		if slot.Connection ~= nil then
 			slot.Connection:Disconnect()
 		end
-		if not slot.Shown then
+		if not slot.Shown and slot.Unlock ~= nil then
 			slot.Unlock:Destroy()
 		end
 	end
@@ -140,29 +158,39 @@ end
 
 local function prepare(player: Player, kingdom: Model): ()
 	local plates = kingdom:FindFirstChild("PurchasePlates")
-	local unlocks = kingdom:FindFirstChild("PurchaseUnlocks")
-	if plates == nil and unlocks == nil then
+	local found = kingdom:FindFirstChild("PurchaseUnlocks")
+	local unlocks: Folder? = nil
+	if found ~= nil then
+		assert(found:IsA("Folder"), "PurchaseUnlocks must be a Folder")
+		unlocks = found
+	end
+	if plates == nil then
+		assert(unlocks == nil, "PurchaseUnlocks requires PurchasePlates")
 		return
 	end
-	assert(plates and plates:IsA("Folder"), "PurchasePlates must be a Folder")
-	assert(unlocks and unlocks:IsA("Folder"), "PurchaseUnlocks must be a Folder")
+	assert(plates:IsA("Folder"), "PurchasePlates must be a Folder")
 	local slots: { Slot } = {}
 	local seen: { [string]: boolean } = {}
 	for _, plate in plates:GetChildren() do
 		local id = plate.Name
 		local definition = definitions[id]
-		local unlock = unlocks:FindFirstChild(id)
+		local unlock = if unlocks ~= nil then unlocks:FindFirstChild(id) else nil
 		local label = plate:FindFirstChild("PurchaseLabel", true)
 		assert(definition ~= nil and not seen[id], "Unknown or duplicate purchase plate " .. id)
 		assert(plate:IsA("BasePart") and plate.CanTouch, "Purchase plate must support touch: " .. id)
-		assert(unlock ~= nil and unlock:IsA("Model"), "Purchase unlock must be a Model: " .. id)
+		if definition.FarmDropper then
+			assert(unlock == nil, "Farm dropper models belong in StarterFarm.Producers: " .. id)
+			assert(FarmService.HasProducer(player, id), "Missing farm producer for plate " .. id)
+		else
+			assert(unlock ~= nil and unlock:IsA("Model"), "Purchase unlock must be a Model: " .. id)
+		end
 		assert(label ~= nil and label:IsA("TextLabel"), "Missing PurchaseLabel for " .. id)
 		seen[id] = true
 		table.insert(slots, {
 			Definition = definition,
 			Plate = plate,
 			Label = label,
-			Unlock = unlock,
+			Unlock = unlock :: Model?,
 			Shown = false,
 			Connection = nil,
 			LastTouch = -math.huge,
@@ -172,25 +200,52 @@ local function prepare(player: Player, kingdom: Model): ()
 		local requirement = slot.Definition.Requires
 		assert(requirement == nil or seen[requirement], "Missing prerequisite plate for " .. slot.Definition.Id)
 	end
-	for _, unlock in unlocks:GetChildren() do
+	local unlockChildren: { Instance } = if unlocks ~= nil then unlocks:GetChildren() else {}
+	for _, unlock in unlockChildren do
 		assert(seen[unlock.Name], "Purchase unlock needs a matching plate: " .. unlock.Name)
 		seen[unlock.Name] = nil -- Also reject duplicate unlock models.
 	end
-	local state: KingdomPurchases = { Kingdom = kingdom, Unlocks = unlocks, Slots = {} }
+	local state: KingdomPurchases = { Kingdom = kingdom, Unlocks = unlocks, Slots = {}, StartConnection = nil }
 	kingdoms[player] = state
 	for _, slot in slots do
 		if slot.Definition.StudioOnly and not RunService:IsStudio() then
 			slot.Plate:Destroy()
-			slot.Unlock:Destroy()
+			if slot.Unlock ~= nil then
+				slot.Unlock:Destroy()
+			end
 		else
 			table.insert(state.Slots, slot)
-			slot.Unlock.Parent = nil
+			if slot.Unlock ~= nil then
+				slot.Unlock.Parent = nil
+			end
 			slot.Connection = slot.Plate.Touched:Connect(function(hit: BasePart): ()
 				purchaseOnTouch(player, state, slot, hit)
 			end)
 		end
 	end
+	state.StartConnection = player:GetAttributeChangedSignal("StarterFarmStarted"):Connect(function(): ()
+		refresh(player)
+	end)
 	refresh(player)
+end
+
+-- Server-only integration entry point; normal play uses the same validated touch path.
+function PurchaseService.TryPurchase(player: Player, purchaseId: unknown): boolean
+	if typeof(purchaseId) ~= "string" then
+		return false
+	end
+	local state = kingdoms[player]
+	local character = player.Character
+	local root = if character ~= nil then character:FindFirstChild("HumanoidRootPart") else nil
+	if state == nil or root == nil or not root:IsA("BasePart") then
+		return false
+	end
+	for _, slot in state.Slots do
+		if slot.Definition.Id == purchaseId then
+			return purchaseOnTouch(player, state, slot, root)
+		end
+	end
+	return false
 end
 
 function PurchaseService.Init(): ()

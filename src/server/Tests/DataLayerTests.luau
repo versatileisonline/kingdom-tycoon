@@ -235,6 +235,7 @@ function Tests.RunStorage(persistent: boolean, existingKey: string?): string
 end
 
 function Tests.Run(): ()
+	assert(not require(Shared.PurchaseConfig).RUN_TESTS_IN_STUDIO, "Run purchase tests separately")
 	Tests.RunSchema()
 	Tests.RunService()
 	Tests.RunStorage(false)
