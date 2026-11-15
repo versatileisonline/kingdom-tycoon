@@ -109,6 +109,18 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Milestone 1.6 outside farm (2026-11-15): approved one farm with one decorative
+  farmer and a fixed conveyor sized for four droppers from the outset. Start with
+  one free producer; buy FarmDropper02, 03, and 04 sequentially for 6, 12, and
+  24 Gold. Each produces one Gold every three seconds into one shared collector.
+  Keep the free Start Farm interaction on every claim; restore owned droppers
+  without repurchase. Extend the existing farm system rather than building a
+  general production engine. All four droppers precede initial walls, then more
+  valuable indoor production with higher prices. Target 2–3 minutes to the first
+  indoor dropper, subject to later pricing and playtesting. This supersedes the
+  earlier two-additional-dropper note. Walls, indoor production, and visual/layout
+  changes are separate tasks; farm activation and uncollected earnings retain
+  their existing session-only behavior.
 - Milestone 1.4 plate/farmer refinement (2026-10-21): requested smaller matching
   circular plates with black outlines, bright green when available and red when
   unavailable. Collector color follows uncollected earnings (zero red, positive

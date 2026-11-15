@@ -72,6 +72,21 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Milestone 1.6 code revision (2026-11-15): see docs/MILESTONE_1_6.md for the new
+optional StarterFarm.Producers folder and live farm purchase plates. One farm
+supports four equal droppers and a shared collector. ProducerScheduler owns
+bounded, rotating-priority timers; FarmService owns retained producer models and
+committed-data effects. PurchaseService farm entries need no PurchaseUnlocks model;
+ordinary model entries retain their existing contract. Plot claim/release callbacks
+now follow service registration order. No schema or Rojo mapping changes. The
+starter-only template remains supported. Additional Studio assets remain a separate
+task; milestone acceptance is pending.
+
+New modules: src/server/Farms/ProducerScheduler.luau,
+src/server/Tests/ProductionTests.luau, src/server/Tests/PurchaseServiceTests.luau.
+PurchaseConfig.RUN_TESTS_IN_STUDIO is false by default. Run purchase tests alone
+through the bootstrap in Mock mode after authoring the 1.6 assets.
+
 Current layout revision (2026-10-21): `docs/KINGDOM_LAYOUT.md` supersedes the
 original 1.3/1.4 layout and immediate-activation descriptions below. One complete
 320 × 320 platform is Plot01. Touch ClaimMarker to claim, then FarmStartPlate
@@ -224,6 +239,12 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Milestone 1.6 verification: follow docs/MILESTONE_1_6.md. Enable only
+PurchaseConfig.RUN_TESTS_IN_STUDIO for its opt-in suite; reset it afterward.
+Expect `All producer scheduling checks passed` and
+`All farm purchase-service checks passed`. The existing farm suite still covers
+accounting/failure retention. Full suites require normal server Script context.
+
 Current layout acceptance: use docs/KINGDOM_LAYOUT.md. Claims are touch-based,
 and claiming must not activate the farm. The free farm-start plate is separate.
 The optional farm/plot suites use this new contract; native touch interactions
@@ -304,6 +325,19 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Milestone 1.6 outside farm (2026-11-15):
+- [x] Four-producer scheduling, saved sequential purchases (6/12/24 Gold), shared
+  collection, start gating/restoration, and explicit model cleanup implemented.
+- [x] Local scheduler tests, existing ledger accounting tests, formatting, lint,
+  strict Roblox type analysis, Luau compilation, and code-only Rojo build passed.
+- [x] Separate branch: feat/farm-dropper-progression. Work recorded in focused
+  Conventional Commits; no push performed.
+- [ ] Author the three producer models, four-position conveyor, and live plates
+  in the separate Studio asset task; existing starter-only setup remains usable.
+- [ ] Run opt-in Studio suites and hands-on physical production, visitor, death,
+  multiplayer, and durable ownership reload acceptance. Studio tools rejected access.
+- [ ] Validate pacing including later walls/indoor production. Milestone 1.6 stays pending.
 
 Purchase buttons (2026-11-11):
 - [x] StyLua, Selene, Luau-LSP with Roblox definitions, and Rojo build passed.

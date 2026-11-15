@@ -62,10 +62,13 @@ src/
 │   ├── Plots/
 │   │   └── PlotRegistry.luau       # non-yielding session ownership and exclusivity
 │   ├── Farms/
+│   │   ├── ProducerScheduler.luau  # bounded multi-dropper timers and fair capacity sharing
 │   │   └── FarmLedger.luau         # private session earnings, cap, expiry, exactly-once bundle credit
 │   └── Tests/
 │       ├── DataLayerTests.luau     # opt-in Studio checks; never runs in published servers
 │       ├── PlotServiceTests.luau   # ownership, validation, rollback, clone/release/reclaim checks
+│       ├── ProductionTests.luau    # pure scheduler checks
+│       ├── PurchaseServiceTests.luau # opt-in authored farm progression checks
 │       └── FarmServiceTests.luau   # standalone accounting and opt-in physical collection checks
 ├── client/                         → StarterPlayer.StarterPlayerScripts.Client (LocalScript)
 │   ├── init.client.luau            # thin client bootstrap
@@ -221,6 +224,7 @@ depend on that running service context.
   - [x] 1.3 Plot system ([full-platform touch claim, release, and reclaim verified in Studio](docs/KINGDOM_LAYOUT.md))
   - [x] 1.4 Starter farm/dropper loop ([solo and multiplayer Play acceptance verified in Mock mode](docs/KINGDOM_LAYOUT.md))
   - [x] 1.5 Purchase buttons (linked purchases verified in Studio with Mock data; live assets pending)
+  - [ ] 1.6 Farms ([four-dropper code implemented; Studio assets and runtime acceptance pending](docs/MILESTONE_1_6.md))
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)
