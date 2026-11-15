@@ -72,6 +72,18 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Milestone 1.6 visual revision (2026-11-15): one farm retains its 112 × 48
+reservation, with a fixed 32-stud conveyor and four hopper/drop positions at local
+Z 137/129/121/113. Starter machinery remains direct children; three new script-free
+models live under StarterFarm.Producers.Dropper02–Dropper04, each with direct
+DropPoint. PurchasePlates.FarmDropper02–04 are styled floor plates with descendant
+PurchaseLabel; no PurchaseUnlocks models are needed for these farm purchases.
+One decorative farmer and the existing crop beds/shed/fences remain. Collector
+is shared. tools/BuildFourDropperFarm.luau is the approved one-time Edit recipe,
+not Rojo-mapped. Original template is retained intact under
+ServerStorage.FarmProgressionBackup_20261115. Refuses a second installation.
+Full geometry, contract, and rollback: docs/MILESTONE_1_6.md.
+
 Milestone 1.6 code revision (2026-11-15): see docs/MILESTONE_1_6.md for the new
 optional StarterFarm.Producers folder and live farm purchase plates. One farm
 supports four equal droppers and a shared collector. ProducerScheduler owns
@@ -79,8 +91,8 @@ bounded, rotating-priority timers; FarmService owns retained producer models and
 committed-data effects. PurchaseService farm entries need no PurchaseUnlocks model;
 ordinary model entries retain their existing contract. Plot claim/release callbacks
 now follow service registration order. No schema or Rojo mapping changes. The
-starter-only template remains supported. Additional Studio assets remain a separate
-task; milestone acceptance is pending.
+starter-only template remains supported. The four-slot Studio revision is now
+installed and saved; remaining milestone acceptance is described in section 12.
 
 New modules: src/server/Farms/ProducerScheduler.luau,
 src/server/Tests/ProductionTests.luau, src/server/Tests/PurchaseServiceTests.luau.
@@ -326,6 +338,22 @@ before players have a purchase to make.
 
 ## 12. Status
 
+Milestone 1.6 Studio integration (2026-11-15):
+- [x] Four-position fixed belt, three paid droppers and purchase plates installed
+  in cloud Kingdom Tycoon place 77311816657817; original template archived intact.
+- [x] Visual viewport review and bounds/anchoring checks passed (212 farm parts).
+- [x] Normal-bootstrap purchase suite passed: activation/prerequisite/funds gates,
+  charges 6/12/24, four-source production, shared physical earnings/cap, cleanup,
+  and saved ownership restoration on reclaim. Farm accounting/service suite also
+  passed, including collection and failed-credit retention on the revised belt.
+- [x] Studio returned to Edit; all test switches false, Mock mode, no previews or
+  active kingdoms. Final mock save confirmed. Cloud place saved as version 57.
+  This was a save, not a publish. Rojo mappings unchanged.
+- [ ] Four-dropper visitor/death/multiple-owned-plot and durable reload acceptance
+  remain unverified; full milestone 1.6 stays pending.
+- Existing scene emits an asset-type warning for rbxassetid://203785492; no related
+  scene assets were modified.
+
 Milestone 1.6 outside farm (2026-11-15):
 - [x] Four-producer scheduling, saved sequential purchases (6/12/24 Gold), shared
   collection, start gating/restoration, and explicit model cleanup implemented.
@@ -333,10 +361,10 @@ Milestone 1.6 outside farm (2026-11-15):
   strict Roblox type analysis, Luau compilation, and code-only Rojo build passed.
 - [x] Separate branch: feat/farm-dropper-progression. Work recorded in focused
   Conventional Commits; no push performed.
-- [ ] Author the three producer models, four-position conveyor, and live plates
-  in the separate Studio asset task; existing starter-only setup remains usable.
-- [ ] Run opt-in Studio suites and hands-on physical production, visitor, death,
-  multiplayer, and durable ownership reload acceptance. Studio tools rejected access.
+- [x] Three producer models, four-position conveyor, and live plates installed
+  and saved in the subsequent Studio integration; starter-only setup remains usable.
+- [x] Opt-in purchase and farm suites passed in the subsequent Studio integration.
+- [ ] Visitor, death, multiplayer, and durable ownership reload acceptance for four droppers.
 - [ ] Validate pacing including later walls/indoor production. Milestone 1.6 stays pending.
 
 Purchase buttons (2026-11-11):

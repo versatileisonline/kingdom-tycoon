@@ -109,6 +109,11 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Milestone 1.6 visual integration (2026-11-15): explicitly requested implementing
+  and saving the previously specified four-dropper farm visuals in the cloud
+  Kingdom Tycoon place. Reuse the existing machinery and plate style, retain one
+  decorative farmer, shared collector, fixed farm boundary and wall reservations.
+  Archive the original template before applying the one-time Studio Edit recipe.
 - Milestone 1.6 outside farm (2026-11-15): approved one farm with one decorative
   farmer and a fixed conveyor sized for four droppers from the outset. Start with
   one free producer; buy FarmDropper02, 03, and 04 sequentially for 6, 12, and

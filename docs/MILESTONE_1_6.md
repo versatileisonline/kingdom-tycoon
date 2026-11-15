@@ -1,8 +1,8 @@
 # Milestone 1.6: Outside farm progression
 
-Code implemented; Studio asset integration and runtime acceptance pending.
-The current starter-only template remains supported. No place assets, mappings,
-walls, indoor droppers, or HUD visuals were changed by this implementation.
+Code and four-dropper Studio assets installed. The current starter-only template
+remains supported. No mappings, walls, indoor droppers, or HUD visuals changed.
+See the installed revision and verification results below.
 
 ## Approved behavior
 
@@ -25,7 +25,7 @@ production; this milestone alone cannot establish that timing. Initial farm pric
 imply 18, 18, and 24 seconds of ideal production between purchases, excluding
 walking, collection, and wheat travel/loss. Tune only after hands-on checks.
 
-## Studio asset contract (separate task)
+## Studio asset contract
 
 Preserve every existing direct-child starter machinery contract from
 KINGDOM_LAYOUT.md, including DropPoint, Conveyor, CollectionPit, CollectPlate,
@@ -56,7 +56,7 @@ and anchored, with its DropPoint aimed/positioned to place the existing WheatBun
 on the belt. Check all four trajectories into the same pit without jams or clipping.
 Use one farmer for decoration; additional producer models contain no farmer logic.
 The conveyor never expands at runtime. Existing footprint and wall reservations
-stay fixed; exact geometry and placement belong to the separate layout task.
+stay fixed; installed geometry is recorded below.
 
 Farm purchase plates do not have matching PurchaseUnlocks models: FarmService owns
 their producer models. PurchaseUnlocks is optional for a farm-only template;
@@ -113,6 +113,51 @@ Hands-on acceptance still required:
    servers use the live store automatically; no live-store testing was performed.
 7. Recheck ordinary Studio model purchases and the starter-only template separately.
 
-No runtime Studio suites were run during implementation: Studio tool access was
-rejected. Formatting, lint, type analysis, compilation, and build are distinct
-from physics, native touch, visitor, death, and durable-save acceptance.
+The original code-only implementation could not access Studio. The later visual
+integration ran the purchase suite through the normal bootstrap successfully.
+Visitor, death, multiple simultaneously owned plots, and durable-save acceptance
+remain separate checks.
+
+
+## Installed visual revision (2026-11-15)
+
+Installed in cloud-backed Kingdom Tycoon, place 77311816657817 / experience
+10769565462. One-time `tools/BuildFourDropperFarm.luau` clones the existing
+machinery, builds the replacement off-tree, validates it, and archives the intact
+original template under ServerStorage.FarmProgressionBackup_20261115. It refuses
+repeat installation, existing producer layouts, or existing purchase plates.
+The recipe is not Rojo-mapped and never runs during gameplay.
+
+All coordinates below are local to KingdomTemplate's unchanged pivot:
+
+- Conveyor: original width/height, fixed length 32, center Z 124 (Z 108–140).
+- Foundation: original width/height, length 40, aligned with the belt at Z 124.
+- Four drop points: original X approximately -42.271, Z 137, 129, 121, 113.
+- Existing shared pit moves to Z 106.2. Rails and legs support the full belt.
+- One decorative farmer stays in front at Z 145, aligned with the starter.
+- Purchase plates: X -30, Z 134 / 124 / 114, with the existing circular black-rim
+  style, name/price, and availability labels. Shared collect plate: X -30, Z 104.
+- Crop beds, shed, fencing, claim/start plates, wall reservations, and the rest of
+  the map are preserved. The entire farm remains within its 112 × 48 reservation.
+
+Viewport inspection of a temporary all-droppers preview passed. The preview was
+removed before Play. Bounds/anchoring checks passed for all 212 farm parts. Runtime
+purchase-suite Output confirmed all three charges (6/12/24), four-source spawning,
+shared physical earnings/cap, cleanup, and reclaim restoration. Data mode was Mock;
+no live player data was tested. A pre-existing content-type warning references
+rbxassetid://203785492; resolving unrelated scene assets is outside this revision.
+
+Rollback: stop Play, archive the revised template separately, then restore the
+original KingdomTemplate from FarmProgressionBackup_20261115 to ServerStorage.
+Do not delete the backup or overwrite a same-named model. The current runtime code
+supports that original starter-only template. Place saving is required independently
+of Git commits, since Rojo builds do not include map assets.
+
+
+The existing farm accounting and full farm-service suite also passed through the
+normal bootstrap on the revised belt, including activation, physical collection,
+failed-credit retention, cleanup, and reclaim. Stop confirmed the final Mock save.
+Both switches were restored to false and synced before saving. The place was saved
+to Roblox (TeamCreate), version **57**; it was not published. Studio was left in Edit
+mode with no preview or active kingdom clones. Geometry/docs/recipe changes are
+committed separately on feat/farm-dropper-progression; no Git push performed.

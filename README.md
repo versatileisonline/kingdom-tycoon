@@ -92,6 +92,8 @@ tools/RefineFarmPlates.luau          # circular plate style and front farmer; ar
 docs/KINGDOM_LAYOUT.md              # current plot/farm contract, activation, copying and verification
 docs/MILESTONE_1_3.md                # plot contract, architecture, and verification
 docs/MILESTONE_1_4.md                # farm contract, camera/spawn behavior, tests and acceptance
+tools/BuildFourDropperFarm.luau      # one-time four-slot farm revision; archives original template
+docs/MILESTONE_1_6.md                # four-droppers, shared collection, installed geometry and checks
 ```
 
 `init.*` makes each source directory a script with child folders rather than a plain
@@ -224,7 +226,7 @@ depend on that running service context.
   - [x] 1.3 Plot system ([full-platform touch claim, release, and reclaim verified in Studio](docs/KINGDOM_LAYOUT.md))
   - [x] 1.4 Starter farm/dropper loop ([solo and multiplayer Play acceptance verified in Mock mode](docs/KINGDOM_LAYOUT.md))
   - [x] 1.5 Purchase buttons (linked purchases verified in Studio with Mock data; live assets pending)
-  - [ ] 1.6 Farms ([four-dropper code implemented; Studio assets and runtime acceptance pending](docs/MILESTONE_1_6.md))
+  - [ ] 1.6 Farms ([four-dropper assets installed and saved; purchase/farm suites passed; broader acceptance pending](docs/MILESTONE_1_6.md))
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)

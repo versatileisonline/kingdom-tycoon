@@ -1,5 +1,12 @@
 # Full-platform kingdom and front farm
 
+The 2026-11-15 four-dropper revision in [MILESTONE_1_6.md](MILESTONE_1_6.md)
+supersedes the single-dropper machinery geometry below. The 112 × 48 farm and
+216 × 216 wall reservations remain unchanged. Three purchased droppers share the
+fixed 32-stud belt and collector; one decorative farmer remains. Original template
+is archived in ServerStorage.FarmProgressionBackup_20261115. Cloud place saved
+as version 57 after purchase/farm service suites passed in Mock mode.
+
 Approved revision, 2026-10-21. The entire 320 × 320 grass platform is now one
 player's kingdom plot. Step on Claim Kingdom, then Start Farm — FREE. One player
 can own one kingdom at a time. Activation is session-only for milestone 1.4;
