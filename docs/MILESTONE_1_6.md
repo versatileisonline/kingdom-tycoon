@@ -161,3 +161,51 @@ Both switches were restored to false and synced before saving. The place was sav
 to Roblox (TeamCreate), version **57**; it was not published. Studio was left in Edit
 mode with no preview or active kingdom clones. Geometry/docs/recipe changes are
 committed separately on feat/farm-dropper-progression; no Git push performed.
+
+
+## Compact progression guidance (2026-11-15)
+
+Only the next unfinished configured purchase plate is in Workspace. Before farm
+activation, no paid farm plate is offered. After starting, only Dropper 2 appears;
+it is red below 6 Gold and green at 6 or more. Buying it removes its plate and
+reveals Dropper 3, then Dropper 4. Purchased models remain; future unowned models
+remain hidden. General model purchases use the same single-next-action rule in
+PurchaseConfig order. There are no price, missing-prerequisite, or instruction
+paragraphs on plate labels.
+
+All interaction plates now have 4-stud colored faces and 4.4-stud black rims.
+`PlatePresentation` styles their labels as 14px GothamBold in a 128 × 40
+BillboardGui at a centered world offset (0, 2, 0). White text has a light outline
+for contrast and no background. These are hovering labels, not writing on the
+plate surface. Dropper labels say only Dropper 2 / Dropper 3 / Dropper 4. The
+shared collector displays `Collect` and the amount on a second line. A 24px,
+partly transparent client-only arrow points down to the owner's Dropper 2 plate;
+it disappears after that purchase and does not move to later purchases.
+
+The used claim plate, rim, and label hide until the plot is released. Farm start
+already hides its face/rim/label on activation. Collectors remain usable. Retained
+future plates have no Workspace presence and fail server purchase validation.
+All retained plates/models/connections are cleaned on release. Arrow updates are
+event-driven and respawn-safe, with streaming removal handled explicitly.
+
+`tools/RefinePurchaseGuidance.luau` is the one-time Edit styling recipe; it archives
+the source template and claim plate in ServerStorage.PlateGuidanceBackup_20261115.
+Do not rerun after that backup exists. Earlier farm machinery/backups remain intact.
+Runtime styling also covers other plots and generic model purchases without changing
+Rojo mappings. The client arrow controller is mapped automatically under Client.Controllers.
+
+The expanded purchase suite checks claim/start disappearance, only-next visibility,
+red/green affordability, compact label names/style, future purchase rejection,
+plate consumption, and claim restoration, alongside all previous accounting and
+producer checks. Test switches must return to false before saving.
+
+
+Refinement verification: expanded purchase suite passed in Mock mode with hovering
+bold labels and next-only visibility. Native touch checks also passed: claim/start
+hide, collect 10 earned Gold with `Collect\n10`, buy Dropper 2, show only Dropper 3,
+and remove the introductory arrow. Death before the first purchase preserved the
+arrow and the running farm. Client inspection confirmed centered (0, 2, 0) label
+offsets, 14px GothamBold, transparent backgrounds, and first-purchase-only guidance.
+
+Refined place saved to Roblox (TeamCreate), version **61**, with tests disabled,
+Mock mode, Edit mode, and no temporary clones. No publishing or Git push occurred.

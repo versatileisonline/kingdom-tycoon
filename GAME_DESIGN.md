@@ -109,6 +109,15 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Purchase presentation refinement (2026-11-15): approved progressive disclosure
+  for all purchase progression: only the next purchase plate appears; buying
+  removes it and reveals the next, red when unaffordable and green when affordable.
+  Hide future unowned producers; keep purchased ones. Hide claim/start plates after
+  use. Use smaller 4-stud plates and small bold text-only labels hovering over each
+  plate's center, with no background box or surface text. Name paid farm purchases
+  Dropper 2/3/4, with one light introductory arrow only over Dropper 2. Collector
+  label is Collect followed by its amount on a new line. This supersedes earlier
+  verbose name/price/reason purchase labels; prices and server validation stay unchanged.
 - Milestone 1.6 visual integration (2026-11-15): explicitly requested implementing
   and saving the previously specified four-dropper farm visuals in the cloud
   Kingdom Tycoon place. Reuse the existing machinery and plate style, retain one

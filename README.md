@@ -74,12 +74,14 @@ src/
 │   ├── init.client.luau            # thin client bootstrap
 │   └── Controllers/
 │       ├── PlotController.luau     # claim guidance and server feedback; no authority
+│       ├── PurchaseGuidanceController.luau # owner-only introductory purchase arrow
 │       ├── CameraController.luau   # Left Shift camera lock, restoration, respawn handling
 │       └── ExampleController.luau  # startup example; no gameplay
 └── shared/                         → ReplicatedStorage.Shared (Folder)
     ├── Config.luau                 # shared constants, including MAX_ARMY_SIZE = 10
     ├── FarmConfig.luau             # starter farm tuning and opt-in test switch
     ├── PurchaseConfig.luau         # prices, prerequisites, and purchase plate settings
+    ├── PlatePresentation.luau      # compact plates and centered hovering text labels
     ├── Logger.luau                 # typed, scoped Info/Warn logging
     ├── Types.luau                  # Lifecycle and PlayerData type contracts
     └── Hello.luau                  # retained template module; unused
