@@ -7,6 +7,7 @@ local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.Config)
 local Settings = require(Shared.FarmConfig)
 local Logger = require(Shared.Logger)
+local PlatePresentation = require(Shared.PlatePresentation)
 local DataService = require(script.Parent.DataService)
 local PlotService = require(script.Parent.PlotService)
 local ProducerScheduler = require(script.Parent.Parent.Farms.ProducerScheduler)
@@ -67,7 +68,7 @@ end
 
 local function publish(farm: Farm): ()
 	local balance = farm.Ledger.GetBalance()
-	farm.Label.Text = string.format("Collect Gold — %d", balance)
+	farm.Label.Text = string.format("Collect\n%d", balance)
 	farm.Plate.Color = if balance > 0 then Config.PLATES.AVAILABLE_COLOR else Config.PLATES.UNAVAILABLE_COLOR
 	-- Read-only presentation/debugging state; accounting remains in the ledger.
 	farm.Model:SetAttribute("UncollectedGold", balance)
@@ -256,6 +257,8 @@ local function prepare(player: Player, kingdom: Model): ()
 	assert(farms[player] == nil, "Player already has a farm")
 	local model, drop, conveyor, pit, plate, label = assets(kingdom)
 	local startPlate = part(kingdom, "FarmStartPlate")
+	PlatePresentation.Style(startPlate)
+	PlatePresentation.Style(plate)
 	startPlate.Color = Config.PLATES.AVAILABLE_COLOR
 	local producerFolder = model:FindFirstChild("Producers")
 	local producers: { Producer } = { { Model = nil, Drop = drop, PurchaseId = "" } }
