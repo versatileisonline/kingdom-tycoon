@@ -2,6 +2,7 @@
 local Players = game:GetService("Players")
 local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.Config)
+local SettingsController = require(script.Parent.SettingsController)
 local Controller = {}
 local connections: { RBXScriptConnection } = {}
 local gui: BillboardGui? = nil
@@ -50,8 +51,16 @@ function Controller.Start(): ()
 		end
 		-- Engine permits clearing Adornee; current definitions type its setter as nonoptional.
 		(arrow :: any).Adornee = target
-		arrow.Enabled = target ~= nil
+		arrow.Enabled = target ~= nil and SettingsController.Get("HelperArrow") == true
 	end
+	table.insert(
+		connections,
+		SettingsController.Observe(function(key: string): ()
+			if key == "HelperArrow" then
+				refresh()
+			end
+		end)
+	)
 	gui = arrow
 	arrow.Parent = player:WaitForChild("PlayerGui")
 	table.insert(
