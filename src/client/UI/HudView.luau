@@ -63,7 +63,7 @@ function View.new(parent: Instance, settings: any)
 	badge.Parent = screen
 	round(badge, 16)
 	stroke(badge)
-	local coin = text(badge, "Coin", "●", 32)
+	local coin = text(badge, "Coin", Config.GOLD_ICON, 32)
 	coin.Position = UDim2.fromOffset(15, 0)
 	coin.Size = UDim2.fromOffset(38, 52)
 	coin.TextColor3 = color(C.Gold)

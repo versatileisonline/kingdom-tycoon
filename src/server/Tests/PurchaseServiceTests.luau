@@ -21,6 +21,7 @@ function Tests.Run(): ()
 			and not FarmSettings.RUN_TESTS_IN_STUDIO,
 		"Run purchase tests separately"
 	)
+	require(script.Parent.PlatePresentationTests).Run()
 	require(script.Parent.ProductionTests).Run()
 	local deadline = os.clock() + Config.DATA.TEST_TIMEOUT_SECONDS
 	local player: Player? = nil
@@ -123,8 +124,9 @@ function Tests.Run(): ()
 				"Funded next plate not green"
 			)
 			assert(
-				(nextPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text == "Dropper " .. expectedNext,
-				"Label contains excessive copy"
+				(nextPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text
+					== string.format('Dropper %d\n%d <font color="#E7B84B">●</font>', expectedNext, entry.Price),
+				"Purchase name/price/icon incorrect"
 			)
 			local label = nextPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel
 			assert(label.Parent ~= nil and label.Parent:IsA("BillboardGui"), "Label is not hovering over the plate")
@@ -185,7 +187,8 @@ function Tests.Run(): ()
 			"Walls not offered after Dropper 4"
 		)
 		assert(
-			(wallPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text == "Wooden Walls",
+			(wallPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text
+				== 'Wooden Walls\n40 <font color="#E7B84B">●</font>',
 			"Wrong wall label"
 		)
 		setGold(39)

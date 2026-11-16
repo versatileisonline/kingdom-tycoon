@@ -1,5 +1,6 @@
 --!strict
 return table.freeze({
+	GOLD_ICON = "●",
 	DEFAULTS = table.freeze({
 		Music = 0.25,
 		WorldSounds = 1,

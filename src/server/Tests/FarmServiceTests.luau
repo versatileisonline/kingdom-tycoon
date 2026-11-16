@@ -157,6 +157,12 @@ function Tests.Run(): ()
 		until (farm:GetAttribute("UncollectedGold") :: number) >= 2 * Settings.BUNDLE_VALUE
 			or os.clock() >= productionDeadline
 		local balance = farm:GetAttribute("UncollectedGold") :: number
+		local earningsLabel = farm:FindFirstChild("EarningsLabel", true) :: TextLabel
+		assert(
+			earningsLabel.RichText
+				and earningsLabel.Text == string.format('Collect:\n%d <font color="#E7B84B">●</font>', balance),
+			"Collector label differs from private ledger"
+		)
 		assert(balance >= 2 * Settings.BUNDLE_VALUE, "Bundles failed to travel to pit before timeout")
 		assert(#bundles:GetChildren() <= Settings.MAX_BUNDLES, "Active bundle cap exceeded")
 		local plateExtent = math.max(plate.Size.X, plate.Size.Y, plate.Size.Z)
@@ -180,6 +186,10 @@ function Tests.Run(): ()
 		assert(
 			success and amount == expected and farm:GetAttribute("UncollectedGold") == 0,
 			"Full balance not collected"
+		)
+		assert(
+			earningsLabel.Text == 'Collect:\n0 <font color="#E7B84B">●</font>',
+			"Collected label did not reset to zero"
 		)
 		local after = DataService.GetSnapshot(owner)
 		assert(after ~= nil and after.Gold == before.Gold + amount, "Saved Gold differs from collected amount")

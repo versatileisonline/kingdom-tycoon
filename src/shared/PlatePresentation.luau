@@ -1,5 +1,6 @@
 --!strict
 local Config = require(script.Parent.Config)
+local HudConfig = require(script.Parent.HudConfig)
 local settings = Config.PLATES
 local PlatePresentation = {}
 
@@ -41,7 +42,13 @@ function PlatePresentation.Style(plate: BasePart): ()
 		billboard.Parent = plate
 	end
 	billboard.Size = UDim2.fromOffset(settings.LABEL_WIDTH, settings.LABEL_HEIGHT)
-	billboard.StudsOffsetWorldSpace = Vector3.new(0, settings.LABEL_OFFSET, 0)
+	billboard.Adornee = plate
+	-- Camera-relative up keeps screen X centered even with an oblique camera.
+	billboard.StudsOffset = Vector3.new(0, settings.LABEL_OFFSET, 0)
+	billboard.StudsOffsetWorldSpace = Vector3.zero
+	billboard.ExtentsOffset = Vector3.zero
+	billboard.ExtentsOffsetWorldSpace = Vector3.zero
+	billboard.SizeOffset = Vector2.zero
 	billboard.MaxDistance = settings.LABEL_DISTANCE
 	billboard.AlwaysOnTop = true
 	label.Parent = billboard
@@ -49,8 +56,8 @@ function PlatePresentation.Style(plate: BasePart): ()
 		oldGui:Destroy()
 	end
 	label.Size = UDim2.fromScale(1, 1)
-	label.Position = UDim2.fromScale(0, 0)
-	label.AnchorPoint = Vector2.zero
+	label.Position = UDim2.fromScale(0.5, 0.5)
+	label.AnchorPoint = Vector2.new(0.5, 0.5)
 	label.Rotation = 0
 	label.BackgroundTransparency = 1
 	label.BorderSizePixel = 0
@@ -62,6 +69,14 @@ function PlatePresentation.Style(plate: BasePart): ()
 	label.TextYAlignment = Enum.TextYAlignment.Center
 	label.TextColor3 = Color3.fromRGB(255, 255, 255)
 	label.TextStrokeTransparency = 0.4
+end
+
+-- Only monetary labels enable RichText; player-authored owner labels remain plain text.
+function PlatePresentation.SetAmount(label: TextLabel, title: string, amount: number): ()
+	local escaped = title:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")
+	label.RichText = true
+	label.Text =
+		string.format('%s\n%d <font color="#%s">%s</font>', escaped, amount, HudConfig.COLORS.Gold, HudConfig.GOLD_ICON)
 end
 
 function PlatePresentation.SetVisible(plate: BasePart, visible: boolean): ()

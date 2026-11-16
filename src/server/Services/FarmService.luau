@@ -68,7 +68,7 @@ end
 
 local function publish(farm: Farm): ()
 	local balance = farm.Ledger.GetBalance()
-	farm.Label.Text = string.format("Collect\n%d", balance)
+	PlatePresentation.SetAmount(farm.Label, "Collect:", balance)
 	farm.Plate.Color = if balance > 0 then Config.PLATES.AVAILABLE_COLOR else Config.PLATES.UNAVAILABLE_COLOR
 	-- Read-only presentation/debugging state; accounting remains in the ledger.
 	farm.Model:SetAttribute("UncollectedGold", balance)

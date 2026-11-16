@@ -98,7 +98,7 @@ local function refresh(player: Player): ()
 		slot.Visible = slot == nextSlot
 			and (requirement == nil or data.PurchasedBuildings[requirement] == true)
 			and (not purchase.FarmDropper or FarmService.IsStarted(player))
-		slot.Label.Text = purchase.Name
+		PlatePresentation.SetAmount(slot.Label, purchase.Name, purchase.Price)
 		slot.Plate.Color = if getUnavailableReason(player, data, purchase) == nil
 			then Config.PLATES.AVAILABLE_COLOR
 			else Config.PLATES.UNAVAILABLE_COLOR
