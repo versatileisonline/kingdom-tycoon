@@ -73,6 +73,18 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Milestone 1.7 HUD/settings (2026-11-16): server PresentationService derives public
+Gold/GoldReady attributes from DataService availability and committed-update events.
+No schema migration/remotes. Shared HudConfig owns palette, session defaults and
+music candidates. Client SettingsController + HudController/UI.HudView/UI.HudState
+build the compact brown/gold interface. PlotController now supplies brief HUD hints.
+AudioController and GraphicsController apply reversible client preferences.
+CameraController uses the built-in MouseLockedCursor.png through UserInputService.MouseIcon
+and suspends for Settings, restoring the original cursor on release.
+PurchaseGuidanceController obeys HelperArrow. Native UI needs no external art asset.
+Music contract: free APMOfficial Medieval Castle, 1839906422; runtime local looping
+Sound named KingdomBackgroundMusic under SoundService. See docs/MILESTONE_1_7.md.
+
 Compact plate guidance (2026-11-15) supersedes earlier 6-stud plates and verbose
 purchase labels: diameter 4 with 4.4-stud black rim; PlatePresentation applies the
 shared style. Labels are 14px GothamBold, background-free, centered in a 128 × 40
@@ -267,6 +279,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+HUD checks: enable only HudConfig.RUN_TESTS_IN_STUDIO in Mock mode and Play after
+Rojo sync. Expect All HUD presentation checks passed, All HUD client checks passed,
+and AudioController Music loaded: 1839906422. Reset the switch afterward. All other
+suites must be disabled to avoid concurrent test data changes.
+
 Milestone 1.6 verification: follow docs/MILESTONE_1_6.md. Enable only
 PurchaseConfig.RUN_TESTS_IN_STUDIO for its opt-in suite; reset it afterward.
 Expect `All producer scheduling checks passed` and
@@ -353,6 +370,22 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Milestone 1.7 initial HUD/settings template (2026-11-16):
+- [x] Soft rounded brown/gold Gold HUD, compact contextual hints, Settings music/
+  world volume sliders, helper toggle and reversible low graphics implemented.
+- [x] Pure state checks, normal-bootstrap HUD presentation/client suites, existing
+  data-layer, farm accounting/service and purchase suites passed separately in Mock.
+  Authored SoundGroup gain/effects remain intact under World Sounds scaling.
+- [x] Desktop screenshots and native Settings open/close + graphics toggle verified;
+  APMOfficial Medieval Castle 1839906422 loaded and played. Defaults session-only.
+- [x] Creator confirmed Shift toggles; initial overlay centering concern fixed by
+  native MouseLockedCursor.png via UserInputService.MouseIcon. Texture preload passed.
+- [x] Formatting, lint, strict Roblox types, code-only build pass. Cloud saved as
+  version 70, Edit mode, all tests false; device simulator reset to default.
+- [ ] Final native cursor centering/typing/menu/death and keyboard/touch slider
+  acceptance remain hands-on checks. This is an initial demo template, not a claim
+  that all device/input acceptance is finished. Still one playable plot.
 
 Compact purchase guidance (2026-11-15):
 - [x] 4-stud plates, centered hovering bold 14px labels without boxes, and

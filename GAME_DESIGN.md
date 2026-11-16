@@ -109,6 +109,16 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Milestone 1.7 (2026-11-16): approved a sparse rounded brown/gold HUD template
+  inspired by the supplied reference, with a playful but restrained feel. Gold badge
+  lower left and Settings upper right. Session-only music/world volume, helper-arrow
+  and low-graphics preferences; defaults 25%/100%/on/off. Free Creator Store medieval
+  music may be selected by the agent. Replace the large instruction card with brief
+  contextual hints. Shift lock uses a circle with four short cardinal ticks while
+  active, restoring the native pointer in menus. The creator requested replacing
+  the initial custom overlay with Roblox's built-in locked cursor to resolve centering.
+  No camera zoom/FOV change. Approved
+  feature-branch pushes followed by verified integration and push to main.
 - Purchase presentation refinement (2026-11-15): approved progressive disclosure
   for all purchase progression: only the next purchase plate appears; buying
   removes it and reveals the next, red when unaffordable and green when affordable.

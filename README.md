@@ -54,6 +54,7 @@ src/
 │   │   ├── DataSchema.luau         # defaults, validation, detached copies
 │   │   └── DataMigrations.luau     # versioned preparation; sequential migration registry
 │   ├── Services/
+│   │   ├── PresentationService.luau # Gold/GoldReady presentation from server data
 │   │   ├── DataService.luau        # server-only player sessions and validated updates
 │   │   ├── PlotService.luau        # server-authoritative claims, template clones, respawns, cleanup
 │   │   ├── FarmService.luau        # wheat production, pit accounting, owner gold collection, cleanup
@@ -74,10 +75,15 @@ src/
 │   ├── init.client.luau            # thin client bootstrap
 │   └── Controllers/
 │       ├── PlotController.luau     # claim guidance and server feedback; no authority
+│       ├── HudController.luau       # compact Gold display and Settings view
+│       ├── SettingsController.luau  # session preferences
+│       ├── AudioController.luau     # music/world volume
+│       ├── GraphicsController.luau  # reversible local quality reduction
 │       ├── PurchaseGuidanceController.luau # owner-only introductory purchase arrow
 │       ├── CameraController.luau   # Left Shift camera lock, restoration, respawn handling
 │       └── ExampleController.luau  # startup example; no gameplay
 └── shared/                         → ReplicatedStorage.Shared (Folder)
+    ├── HudConfig.luau              # HUD palette, session defaults, music IDs
     ├── Config.luau                 # shared constants, including MAX_ARMY_SIZE = 10
     ├── FarmConfig.luau             # starter farm tuning and opt-in test switch
     ├── PurchaseConfig.luau         # prices, prerequisites, and purchase plate settings
@@ -229,6 +235,7 @@ depend on that running service context.
   - [x] 1.4 Starter farm/dropper loop ([solo and multiplayer Play acceptance verified in Mock mode](docs/KINGDOM_LAYOUT.md))
   - [x] 1.5 Purchase buttons (linked purchases verified in Studio with Mock data; live assets pending)
   - [ ] 1.6 Farms ([four-dropper assets installed and saved; purchase/farm suites passed; broader acceptance pending](docs/MILESTONE_1_6.md))
+  - [ ] 1.7 HUD + settings ([implemented; focused cursor/touch acceptance pending](docs/MILESTONE_1_7.md))
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)
