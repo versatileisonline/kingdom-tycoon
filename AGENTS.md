@@ -73,6 +73,15 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Wooden walls (2026-11-16): PurchaseConfig adds WoodenWalls for 40 Gold after
+FarmDropper04; existing PurchaseService model-unlock path handles it without new
+remotes/schema/mappings. Template contract: PurchasePlates.WoodenWalls with
+PurchaseLabel; PurchaseUnlocks.WoodenWalls is an anchored script-free enclosure.
+One 216 × 216 timber palisade, 16 high, open 24-stud entrance, 630 static parts.
+Plate local (0, 0.4, 92). tools/BuildWoodenWalls.luau is the approved one-time
+Edit recipe; original preserved in ServerStorage.WoodenWallsBackup_20261116.
+See docs/WOODEN_WALLS.md for installation, rollback, performance and acceptance.
+
 Milestone 1.7 HUD/settings (2026-11-16): server PresentationService derives public
 Gold/GoldReady attributes from DataService availability and committed-update events.
 No schema migration/remotes. Shared HudConfig owns palette, session defaults and
@@ -279,6 +288,12 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Wooden-wall checks: enable only PurchaseConfig.RUN_TESTS_IN_STUDIO in Mock mode,
+sync and Play. Expect All wooden-wall purchase checks passed plus existing farm
+purchase/scheduler success messages. Reset switch afterward. Durable isolated
+fixture helper: DataLayerTests.RunStorage(true, nil, true), then after restarting
+Play RunStorage(true, returnedKey, true). Uses test-store Verify_ keys only.
+
 HUD checks: enable only HudConfig.RUN_TESTS_IN_STUDIO in Mock mode and Play after
 Rojo sync. Expect All HUD presentation checks passed, All HUD client checks passed,
 and AudioController Music loaded: 1839906422. Reset the switch afterward. All other
@@ -370,6 +385,18 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Wooden kingdom walls (2026-11-16):
+- [x] One 40-Gold WoodenWalls purchase after Dropper 4; full timber enclosure,
+  24-stud open entrance, preserved farm/layout, backed-up one-time Studio recipe.
+- [x] Expanded normal-bootstrap Mock purchase suite, separate farm accounting/
+  service and data suites, formatting, lint, strict Roblox types and build pass.
+- [x] Visual Edit preview, 630-part anchored/script-free audit and durable isolated
+  wall ownership fixture reload across Play sessions passed; see docs/WOODEN_WALLS.md.
+- [x] Review corner seams corrected; final bounds/entrance clearance checks pass.
+  Saved cloud place version 73, Edit mode, all test switches false; no publish/push.
+- [ ] Native visitor/death/walking acceptance, full Persistent player rejoin and pacing.
+
 
 Milestone 1.7 initial HUD/settings template (2026-11-16):
 - [x] Soft rounded brown/gold Gold HUD, compact contextual hints, Settings music/

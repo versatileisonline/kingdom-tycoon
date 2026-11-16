@@ -46,6 +46,8 @@ More help: [Rojo documentation](https://rojo.space/docs).
 
 ## Project structure
 
+Wooden wall asset contract and verification: [docs/WOODEN_WALLS.md](docs/WOODEN_WALLS.md).
+
 ```text
 src/
 ├── server/                         → ServerScriptService.Server (Script)

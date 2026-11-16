@@ -109,6 +109,13 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Wooden walls (2026-11-16): prioritize completing the initial tycoon before
+  shop/gamepasses. After FarmDropper04, buy the entire timber palisade for 40 Gold
+  within the existing 216 × 216 interior reservation; preserve the outside farm
+  and open 24-stud entrance. Approved a one-time backed-up Studio asset recipe.
+  Later stone walls, defensive posts/towers, defenders and decorations build on
+  this progression; defensive additions are visual for now. Later wall materials
+  remain undecided. Indoor production and all later upgrades are separate tasks.
 - Milestone 1.7 (2026-11-16): approved a sparse rounded brown/gold HUD template
   inspired by the supplied reference, with a playful but restrained feel. Gold badge
   lower left and Settings upper right. Session-only music/world volume, helper-arrow
