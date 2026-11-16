@@ -11,6 +11,8 @@ local logger = Logger.new("ClientBootstrap")
 local controllers: { Types.Lifecycle } = {
 	require(script.Controllers.SettingsController),
 	require(script.Controllers.HudController),
+	require(script.Controllers.AudioController),
+	require(script.Controllers.GraphicsController),
 	require(script.Controllers.ExampleController),
 	require(script.Controllers.PlotController),
 	require(script.Controllers.CameraController),
@@ -26,3 +28,9 @@ for _, controller in controllers do
 end
 
 logger.Info("Ready")
+
+if game:GetService("RunService"):IsStudio() and require(Shared.HudConfig).RUN_TESTS_IN_STUDIO then
+	task.spawn(function(): ()
+		require(script.UI.HudClientTests).Run(require(script.Controllers.SettingsController))
+	end)
+end
