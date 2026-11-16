@@ -23,6 +23,7 @@ return table.freeze({
 	}),
 	CAMERA = table.freeze({
 		SHOULDER_OFFSET = Vector3.new(1.75, 0, 0),
+		CURSOR_ICON = "rbxasset://textures/MouseLockedCursor.png",
 		MIN_HORIZONTAL_MAGNITUDE = 0.001,
 	}),
 	PLOTS = table.freeze({
