@@ -51,6 +51,7 @@ local mode = "Uninitialized"
 local initialized = false
 local started = false
 local closing = false
+local availability = Instance.new("BindableEvent")
 
 local function disconnectAll(list: { Connection }): ()
 	for _, connection in list do
@@ -73,6 +74,7 @@ local function release(player: Player): ()
 	local record = records[player]
 	if record ~= nil and not record.Ending then
 		record.Ending = true
+		availability:Fire(player)
 		record.ExpectedRelease = true
 		pendingSaves[record] = true
 		record.Profile:EndSession()
@@ -141,6 +143,7 @@ local function loadPlayer(player: Player): ()
 			profile.OnLastSave:Connect(function(): ()
 				record.Ending = true
 				record.FinalRequested = true
+				availability:Fire(player)
 				pendingSaves[record] = true
 			end)
 		)
@@ -149,6 +152,7 @@ local function loadPlayer(player: Player): ()
 			profile.OnSessionEnd:Connect(function(): ()
 				record.Ending = true
 				records[player] = nil
+				availability:Fire(player)
 				pendingSaves[record] = true
 				if not record.ExpectedRelease then
 					kick(player, "Your data session ended. Please rejoin.")
@@ -172,6 +176,7 @@ local function loadPlayer(player: Player): ()
 				end
 			end)
 		)
+		availability:Fire(player)
 		logger.Info(string.format("Profile loaded for %d (schema %d, %s)", player.UserId, prepared.SchemaVersion, mode))
 		return nil
 	end)
@@ -248,6 +253,10 @@ function DataService.GetSnapshot(player: Player): (Types.PlayerData?, string?)
 end
 
 local updated = Instance.new("BindableEvent")
+
+function DataService.ObserveAvailability(callback: (Player) -> ()): RBXScriptConnection
+	return availability.Event:Connect(callback)
+end
 
 function DataService.ObserveUpdates(callback: (Player) -> ()): RBXScriptConnection
 	return updated.Event:Connect(callback)
