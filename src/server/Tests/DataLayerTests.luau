@@ -194,7 +194,7 @@ end
 
 -- Uses a unique non-player key in the TEST store only. An existing key performs
 -- a read-only verification, allowing a second Play session to check persistence.
-function Tests.RunStorage(persistent: boolean, existingKey: string?): string
+function Tests.RunStorage(persistent: boolean, existingKey: string?, wallFixture: boolean?): string
 	assertStudio()
 	assert(type(persistent) == "boolean", "Choose mock or persistent storage explicitly")
 	waitUntil(function(): boolean
@@ -211,6 +211,10 @@ function Tests.RunStorage(persistent: boolean, existingKey: string?): string
 		local profile = target:StartSessionAsync(key, {})
 		assert(profile ~= nil, "Test session failed to start")
 		profile.Data.Gold = DATA.TEST_GOLD
+		if wallFixture then
+			profile.Data.PurchasedBuildings =
+				{ FarmDropper02 = true, FarmDropper03 = true, FarmDropper04 = true, WoodenWalls = true }
+		end
 		local saved = false
 		local connection = profile.OnAfterSave:Connect(function(data: any): ()
 			saved = data.Gold == DATA.TEST_GOLD
@@ -230,6 +234,10 @@ function Tests.RunStorage(persistent: boolean, existingKey: string?): string
 	local prepared, reason = DataMigrations.Prepare(loaded.Data)
 	assert(prepared ~= nil, reason)
 	assert(prepared.Gold == DATA.TEST_GOLD, "Saved test balance did not survive reload")
+	if wallFixture then
+		assert(prepared.PurchasedBuildings.WoodenWalls == true, "Saved wall ownership did not survive reload")
+		assert(prepared.PurchasedBuildings.FarmDropper04 == true, "Saved wall prerequisite did not survive reload")
+	end
 	logger.Info(string.format("%s storage verification passed: %s", if persistent then "Persistent" else "Mock", key))
 	return key
 end
