@@ -9,6 +9,8 @@ local logger = Logger.new("ClientBootstrap")
 
 -- Require and run controllers in this explicit order. Add controllers as milestones land.
 local controllers: { Types.Lifecycle } = {
+	require(script.Controllers.SettingsController),
+	require(script.Controllers.HudController),
 	require(script.Controllers.ExampleController),
 	require(script.Controllers.PlotController),
 	require(script.Controllers.CameraController),

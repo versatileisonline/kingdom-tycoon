@@ -1,91 +1,65 @@
 --!strict
-
 local Players = game:GetService("Players")
 local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.Config)
-
-local PlotController = {}
+local Hud = require(script.Parent.HudController)
+local Controller = {}
 local connections: { RBXScriptConnection } = {}
-local gui: ScreenGui? = nil
-local generation = 0
-
-function PlotController.Init(): () end
-
-function PlotController.Start(): ()
-	if gui ~= nil then
+local started = false
+function Controller.Init(): () end
+function Controller.Start(): ()
+	if started then
 		return
 	end
+	started = true
 	local player = Players.LocalPlayer
-	local screen = Instance.new("ScreenGui")
-	screen.Name = "KingdomClaim"
-	screen.ResetOnSpawn = false
-	screen.DisplayOrder = 5
-	local card = Instance.new("Frame")
-	card.AnchorPoint = Vector2.new(0.5, 1)
-	card.Position = UDim2.new(0.5, 0, 1, -30)
-	card.Size = UDim2.new(0.88, 0, 0, 94)
-	card.BackgroundColor3 = Color3.fromRGB(28, 33, 30)
-	card.BackgroundTransparency = 0.08
-	card.BorderSizePixel = 0
-	card.Parent = screen
-	local constraint = Instance.new("UISizeConstraint")
-	constraint.MaxSize = Vector2.new(480, 94)
-	constraint.Parent = card
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 8)
-	corner.Parent = card
-	local stroke = Instance.new("UIStroke")
-	stroke.Color = Color3.fromRGB(175, 146, 85)
-	stroke.Transparency = 0.3
-	stroke.Parent = card
-	local title = Instance.new("TextLabel")
-	title.Size = UDim2.new(1, -32, 0, 24)
-	title.Position = UDim2.fromOffset(16, 12)
-	title.BackgroundTransparency = 1
-	title.Font = Enum.Font.GothamBold
-	title.TextSize = 15
-	title.TextColor3 = Color3.fromRGB(232, 205, 144)
-	title.Parent = card
-	local detail = Instance.new("TextLabel")
-	detail.Size = UDim2.new(1, -32, 0, 42)
-	detail.Position = UDim2.fromOffset(16, 39)
-	detail.BackgroundTransparency = 1
-	detail.Font = Enum.Font.Gotham
-	detail.TextSize = 14
-	detail.TextWrapped = true
-	detail.TextColor3 = Color3.fromRGB(237, 238, 222)
-	detail.Parent = card
 	local plots = workspace:WaitForChild("Plots", Config.PLOTS.CHARACTER_TIMEOUT_SECONDS)
-	if plots == nil then
-		screen:Destroy()
+	if not plots then
 		return
 	end
+	local generation = 0
+	local collected = false
+	local initialGold = player:GetAttribute("Gold")
+	local previousGold: number? = if player:GetAttribute("GoldReady") == true
+			and typeof(initialGold) == "number"
+		then initialGold
+		else nil
 	local function render(): ()
-		if player:GetAttribute("KingdomPlotId") ~= nil then
-			title.Text = "YOUR KINGDOM"
-			detail.Text = if player:GetAttribute("StarterFarmStarted") == true
-				then "Your farm is producing wheat. Step onto its gold plate to collect earnings."
-				else "Your land is claimed. Step onto Start Farm — FREE beside the entrance path."
-			return
-		end
-		local available = plots:GetAttribute("AvailablePlotCount")
-		if typeof(available) ~= "number" then
-			title.Text = "THE KINGDOM GROUNDS"
-			detail.Text = "Checking available land..."
-			return
-		end
-		title.Text = if available > 0 then "FOUND YOUR KINGDOM" else "ALL LAND IS CLAIMED"
-		detail.Text = if available > 0
-			then "Step onto an open kingdom's Claim Kingdom plate to make the whole plot yours."
-			else "Explore the grounds. A plot becomes available when its owner leaves."
-	end
-	local function refresh(): ()
 		generation += 1
-		render()
+		if player:GetAttribute("KingdomPlotId") ~= nil then
+			Hud.SetHint(
+				if player:GetAttribute("StarterFarmStarted") ~= true
+					then "Start your farm"
+					elseif not collected then "Collect your wheat"
+					else ""
+			)
+		else
+			collected = false
+			local available = plots:GetAttribute("AvailablePlotCount")
+			Hud.SetHint(
+				if typeof(available) == "number" and available == 0 then "Waiting for land" else "Claim your kingdom"
+			)
+		end
 	end
-	table.insert(connections, plots:GetAttributeChangedSignal("AvailablePlotCount"):Connect(refresh))
-	table.insert(connections, player:GetAttributeChangedSignal("KingdomPlotId"):Connect(refresh))
-	table.insert(connections, player:GetAttributeChangedSignal("StarterFarmStarted"):Connect(refresh))
+	for _, attribute in { "KingdomPlotId", "StarterFarmStarted" } do
+		table.insert(connections, player:GetAttributeChangedSignal(attribute):Connect(render))
+	end
+	table.insert(connections, plots:GetAttributeChangedSignal("AvailablePlotCount"):Connect(render))
+	table.insert(
+		connections,
+		player:GetAttributeChangedSignal("Gold"):Connect(function(): ()
+			local gold = player:GetAttribute("Gold")
+			if typeof(gold) == "number" then
+				if previousGold and gold > previousGold then
+					collected = true
+				end
+				previousGold = gold
+			else
+				previousGold = nil
+			end
+			render()
+		end)
+	)
 	table.insert(
 		connections,
 		player:GetAttributeChangedSignal("PlotMessageSerial"):Connect(function(): ()
@@ -93,10 +67,10 @@ function PlotController.Start(): ()
 			local current = generation
 			local message = player:GetAttribute("PlotMessage")
 			if typeof(message) == "string" then
-				detail.Text = message
+				Hud.SetHint(message)
 			end
 			task.delay(Config.PLOTS.FEEDBACK_SECONDS, function(): ()
-				if gui ~= nil and generation == current then
+				if started and current == generation then
 					render()
 				end
 			end)
@@ -104,18 +78,14 @@ function PlotController.Start(): ()
 	)
 	table.insert(
 		connections,
-		screen.Destroying:Connect(function(): ()
-			generation += 1
-			for _, connection in connections do
-				connection:Disconnect()
+		script.Destroying:Connect(function(): ()
+			started = false
+			for _, c in connections do
+				c:Disconnect()
 			end
 			table.clear(connections)
-			gui = nil
 		end)
 	)
-	gui = screen
 	render()
-	screen.Parent = player:WaitForChild("PlayerGui")
 end
-
-return PlotController
+return Controller
