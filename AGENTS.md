@@ -73,6 +73,15 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Centered priced plate labels (2026-11-16) supersede earlier name-only labels.
+PlatePresentation explicitly adorns each plate, clears inherited offsets and uses
+camera-relative vertical offset so the text stays above the projected plate center.
+PurchaseService and FarmService use SetAmount for name/price and Collect:/balance
+on two lines. RichText colors only the shared HudConfig.GOLD_ICON (●) with
+HudConfig.COLORS.Gold, matching HudView. No external asset, remotes, schema or
+Rojo changes. src/server/Tests/PlatePresentationTests.luau runs with purchase tests.
+See docs/PLATE_LABELS.md for verification and native visual acceptance limits.
+
 Wooden walls (2026-11-16): PurchaseConfig adds WoodenWalls for 40 Gold after
 FarmDropper04; existing PurchaseService model-unlock path handles it without new
 remotes/schema/mappings. Template contract: PurchasePlates.WoodenWalls with
@@ -288,6 +297,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Centered-label checks: enable only PurchaseConfig.RUN_TESTS_IN_STUDIO in Mock
+mode, sync and Play. Expect All centered plate presentation checks passed plus
+existing purchase success logs. Separately enable only FarmConfig tests for live
+collector amount/reset assertions. Reset both switches afterward.
+
 Wooden-wall checks: enable only PurchaseConfig.RUN_TESTS_IN_STUDIO in Mock mode,
 sync and Play. Expect All wooden-wall purchase checks passed plus existing farm
 purchase/scheduler success messages. Reset switch afterward. Durable isolated
@@ -385,6 +399,16 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Centered priced plate labels (2026-11-16):
+- [x] Shared HUD gold ●, configured purchase prices, Collect:/live balance, explicit
+  centered adornment and camera-relative hover implemented.
+- [x] Normal-bootstrap plate/purchase and separate farm suites pass. Formatting,
+  lint, strict Roblox types and code-only build pass. Independent review clean.
+- [x] Saved cloud place version 75, Edit mode, all tests false; no publish/push.
+- [ ] Native visual acceptance from multiple camera angles: the MCP captures did
+  not render BillboardGui text reliably, so no screenshot-based success is claimed.
+
 
 Wooden kingdom walls (2026-11-16):
 - [x] One 40-Gold WoodenWalls purchase after Dropper 4; full timber enclosure,

@@ -109,6 +109,10 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Plate label revision (2026-11-16): approved centered hovering two-line labels:
+  purchase name then configured price with the HUD's gold-colored ●; collector
+  Collect: then current amount with the same ●. Supersedes the prior name-only
+  purchase text and bare collector amount. Existing prices stay unchanged.
 - Wooden walls (2026-11-16): prioritize completing the initial tycoon before
   shop/gamepasses. After FarmDropper04, buy the entire timber palisade for 40 Gold
   within the existing 216 × 216 interior reservation; preserve the outside farm
