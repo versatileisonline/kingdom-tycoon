@@ -84,8 +84,8 @@ local ok, reason = xpcall(function()
 	run("FrontLeft", Vector3.new(-60, 0, 74), 96, 0)
 	run("FrontRight", Vector3.new(60, 0, 74), 96, 0)
 	run("Back", Vector3.new(0, 0, -138), 216, math.pi)
-	run("Left", Vector3.new(-106, 0, -32), 208, math.pi / 2)
-	run("Right", Vector3.new(106, 0, -32), 208, -math.pi / 2)
+	run("Left", Vector3.new(-106, 0, -32), 210, math.pi / 2)
+	run("Right", Vector3.new(106, 0, -32), 210, -math.pi / 2)
 	for _, x in { -14, 14 } do
 		part("Part", "EntrancePost", Vector3.new(4, 16, 4), CFrame.new(x, 8, 74), dark)
 	end
