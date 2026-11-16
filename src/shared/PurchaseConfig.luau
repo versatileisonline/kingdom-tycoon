@@ -26,6 +26,7 @@ local purchases: { Purchase } = {
 		Requires = "FarmDropper03",
 		FarmDropper = true,
 	}),
+	table.freeze({ Id = "WoodenWalls", Name = "Wooden Walls", Price = 40, Requires = "FarmDropper04" }),
 	table.freeze({ Id = "StudioFarmCrates", Name = "Farm Crates", Price = 3, StudioOnly = true }),
 	table.freeze({
 		Id = "StudioFarmSupplies",

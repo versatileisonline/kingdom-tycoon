@@ -1,5 +1,5 @@
 --!strict
--- Requires the authored 1.6 assets and the normal server bootstrap, never plugin require.
+-- Requires the authored farm and wooden-wall assets and the normal server bootstrap, never plugin require.
 local Players = game:GetService("Players")
 local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.Config)
@@ -70,6 +70,10 @@ function Tests.Run(): ()
 		local kingdom = claim()
 		local plates = kingdom:FindFirstChild("PurchasePlates")
 		assert(plates ~= nil, "Missing purchase plates")
+		local unlocks = kingdom:FindFirstChild("PurchaseUnlocks")
+		assert(unlocks ~= nil, "Install wooden-wall unlock folder")
+		assert(unlocks:FindFirstChild("WoodenWalls") == nil, "Unowned walls visible")
+		assert(not PurchaseService.TryPurchase(owner, "WoodenWalls"), "Bought walls before farm upgrades")
 		local marker = workspace.Plots.Plot01.ClaimMarker :: BasePart
 		assert(
 			marker.Transparency == 1 and (marker:FindFirstChild("Outline") :: BasePart).Transparency == 1,
@@ -175,15 +179,59 @@ function Tests.Run(): ()
 			(farm:GetAttribute("UncollectedGold") :: number) >= earningsBefore + 4 * FarmSettings.BUNDLE_VALUE,
 			"Upgraded physical production did not reach shared collector"
 		)
+		local wallPlate = plates:FindFirstChild("WoodenWalls")
+		assert(
+			#plates:GetChildren() == 1 and wallPlate ~= nil and wallPlate:IsA("BasePart"),
+			"Walls not offered after Dropper 4"
+		)
+		assert(
+			(wallPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text == "Wooden Walls",
+			"Wrong wall label"
+		)
+		setGold(39)
+		character:PivotTo(original)
+		task.wait(Settings.TOUCH_COOLDOWN_SECONDS + FarmSettings.TICK_SECONDS)
+		assert(wallPlate.Color == Config.PLATES.UNAVAILABLE_COLOR, "39 Gold wall plate not red")
+		assert(not attempt(kingdom, "WoodenWalls"), "Walls accepted 39 Gold")
+		local rejected = DataService.GetSnapshot(owner)
+		assert(
+			rejected ~= nil and rejected.Gold == 39 and not rejected.PurchasedBuildings.WoodenWalls,
+			"Rejected walls changed saved data"
+		)
+		character:PivotTo(original)
+		setGold(40)
+		task.wait(Settings.TOUCH_COOLDOWN_SECONDS + FarmSettings.TICK_SECONDS)
+		assert(wallPlate.Color == Config.PLATES.AVAILABLE_COLOR, "40 Gold wall plate not green")
+		assert(not PurchaseService.TryPurchase(owner, "WoodenWalls"), "Distant wall purchase accepted")
+		task.wait(Settings.TOUCH_COOLDOWN_SECONDS + FarmSettings.TICK_SECONDS)
+		assert(attempt(kingdom, "WoodenWalls"), "Valid wall purchase rejected")
+		remaining = 0
+		local bought = DataService.GetSnapshot(owner)
+		assert(
+			bought ~= nil and bought.Gold == 0 and bought.PurchasedBuildings.WoodenWalls == true,
+			"Incorrect wall charge/ownership"
+		)
+		assert(not PurchaseService.TryPurchase(owner, "WoodenWalls"), "Duplicate wall purchase accepted")
+		local walls = unlocks:FindFirstChild("WoodenWalls")
+		assert(walls ~= nil and walls:IsA("Model"), "Purchased walls not revealed")
 		assert(#plates:GetChildren() == 0, "Completed chain left a purchase plate")
 		PlotService.Release(owner)
 		assert(marker.Transparency == 0, "Released claim plate did not return")
-		assert(producers.Parent == nil and bundles.Parent == nil, "Release leaked assets")
+		assert(producers.Parent == nil and bundles.Parent == nil and walls.Parent == nil, "Release leaked assets")
 		task.wait(Config.PLOTS.CLAIM_COOLDOWN_SECONDS + FarmSettings.TICK_SECONDS)
 		kingdom = claim()
 		assert(
 			not FarmService.IsStarted(owner) and kingdom:FindFirstChild("StarterFarm") == nil,
 			"Reclaim auto-started"
+		)
+		local restoredUnlocks = kingdom:FindFirstChild("PurchaseUnlocks")
+		assert(
+			restoredUnlocks ~= nil and restoredUnlocks:FindFirstChild("WoodenWalls") ~= nil,
+			"Saved walls not restored before farm activation"
+		)
+		assert(
+			(kingdom:FindFirstChild("PurchasePlates") :: Folder):FindFirstChild("WoodenWalls") == nil,
+			"Owned wall plate restored"
 		)
 		start = kingdom:FindFirstChild("FarmStartPlate") :: BasePart
 		character:PivotTo(CFrame.new(start.Position + Vector3.new(0, 3, 0)))
@@ -202,6 +250,7 @@ function Tests.Run(): ()
 	end))
 	assert(ok, reason)
 	Logger.new("PurchaseServiceTests").Info("All farm purchase-service checks passed")
+	Logger.new("PurchaseServiceTests").Info("All wooden-wall purchase checks passed")
 end
 
 return Tests
