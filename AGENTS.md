@@ -406,8 +406,9 @@ Centered priced plate labels (2026-11-16):
 - [x] Normal-bootstrap plate/purchase and separate farm suites pass. Formatting,
   lint, strict Roblox types and code-only build pass. Independent review clean.
 - [x] Saved cloud place version 75, Edit mode, all tests false; no publish/push.
-- [ ] Native visual acceptance from multiple camera angles: the MCP captures did
-  not render BillboardGui text reliably, so no screenshot-based success is claimed.
+- [x] Creator accepted the label revision and requested integration/push to main
+  (2026-11-16). MCP captures did not render BillboardGui text reliably, so automated
+  screenshot-based acceptance is not claimed. Studio save confirmed no unsaved changes.
 
 
 Wooden kingdom walls (2026-11-16):
