@@ -40,9 +40,9 @@ local unsubscribe: (() -> ())? = nil
 local updatedConnection: RBXScriptConnection? = nil
 
 local function getUnavailableReason(player: Player, data: Types.PlayerData, purchase: Purchase): string?
-	if purchase.FarmDropper then
+	if purchase.FarmDropper or purchase.ProductionSite ~= nil then
 		if not FarmService.HasProducer(player, purchase.Id) then
-			return "Farm dropper unavailable"
+			return "Producer unavailable"
 		end
 		if not FarmService.IsStarted(player) then
 			return "Start your farm first"
@@ -97,7 +97,7 @@ local function refresh(player: Player): ()
 		local requirement = purchase.Requires
 		slot.Visible = slot == nextSlot
 			and (requirement == nil or data.PurchasedBuildings[requirement] == true)
-			and (not purchase.FarmDropper or FarmService.IsStarted(player))
+			and ((not purchase.FarmDropper and purchase.ProductionSite == nil) or FarmService.IsStarted(player))
 		PlatePresentation.SetAmount(slot.Label, purchase.Name, purchase.Price)
 		slot.Plate.Color = if getUnavailableReason(player, data, purchase) == nil
 			then Config.PLATES.AVAILABLE_COLOR
@@ -202,9 +202,13 @@ local function prepare(player: Player, kingdom: Model): ()
 		local label = plate:FindFirstChild("PurchaseLabel", true)
 		assert(definition ~= nil and not seen[id], "Unknown or duplicate purchase plate " .. id)
 		assert(plate:IsA("BasePart") and plate.CanTouch, "Purchase plate must support touch: " .. id)
-		if definition.FarmDropper then
-			assert(unlock == nil, "Farm dropper models belong in StarterFarm.Producers: " .. id)
-			assert(FarmService.HasProducer(player, id), "Missing farm producer for plate " .. id)
+		if definition.FarmDropper or definition.ProductionSite ~= nil then
+			assert(FarmService.HasProducer(player, id), "Missing producer for plate " .. id)
+			if definition.ProductionSite == "RoyalMint" and id == "RoyalMint" then
+				assert(unlock ~= nil and unlock:IsA("Model"), "RoyalMint requires the whole Mint unlock")
+			else
+				assert(unlock == nil, "Producer models belong inside their production site: " .. id)
+			end
 		else
 			assert(unlock ~= nil and unlock:IsA("Model"), "Purchase unlock must be a Model: " .. id)
 		end
