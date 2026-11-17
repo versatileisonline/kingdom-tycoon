@@ -1,11 +1,13 @@
 --!strict
 local Players = game:GetService("Players")
 local DataService = require(script.Parent.DataService)
+local TutorialProgress = require(script.Parent.Parent.Presentation.TutorialProgress)
 local Service = {}
 local connections: { RBXScriptConnection } = {}
 local started = false
 local function refresh(player: Player): ()
 	local data = DataService.GetSnapshot(player)
+	TutorialProgress.Publish(player, data)
 	if data == nil then
 		player:SetAttribute("GoldReady", false)
 		player:SetAttribute("Gold", nil)
@@ -32,6 +34,7 @@ function Service.Start(): ()
 		end
 		table.clear(connections)
 		for _, player in Players:GetPlayers() do
+			TutorialProgress.Publish(player, nil)
 			player:SetAttribute("GoldReady", false)
 			player:SetAttribute("Gold", nil)
 		end

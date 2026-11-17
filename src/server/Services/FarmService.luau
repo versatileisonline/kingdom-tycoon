@@ -15,6 +15,7 @@ local PlotService = require(script.Parent.PlotService)
 local ProducerScheduler = require(script.Parent.Parent.Farms.ProducerScheduler)
 local FarmLedger = require(script.Parent.Parent.Farms.FarmLedger)
 local SessionEarnings = require(script.Parent.Parent.Farms.SessionEarnings)
+local TutorialProgress = require(script.Parent.Parent.Presentation.TutorialProgress)
 local UpgraderCrossing = require(script.Parent.Parent.Farms.UpgraderCrossing)
 local logger = Logger.new("FarmService")
 
@@ -136,7 +137,7 @@ local function refreshProducers(player: Player): ()
 		return
 	end
 	for _, site in state.Sites do
-		site.Active = state.Started and (site.Id == "StarterFarm" or data.PurchasedBuildings.RoyalMint == true)
+		site.Active = state.Started and (site.Id == "StarterFarm" or data.PurchasedBuildings[site.Id] == true)
 		local activeCount = 0
 		for index, producer in site.Producers do
 			local owned = producer.PurchaseId == "" or data.PurchasedBuildings[producer.PurchaseId] == true
@@ -300,6 +301,7 @@ function FarmService.TryCollect(player: Player, siteId: string?): (boolean, numb
 		return updated
 	end)
 	if success then
+		TutorialProgress.MarkCollected(player, selected.Id)
 		publish(state)
 		logger.Info(string.format("Collected %d Gold for %d", amount, player.UserId))
 	end
@@ -340,6 +342,7 @@ local function release(player: Player, _kingdom: Model): ()
 		end
 	end
 	state.Account.Clear()
+	TutorialProgress.ResetCollections(player)
 	player:SetAttribute("StarterFarmStarted", nil)
 	logger.Info(string.format("Cleaned up farm for %d (uncollected Gold discarded)", player.UserId))
 end
@@ -352,7 +355,7 @@ local function createSite(
 	account: SessionEarnings.Account
 ): Site
 	validateModel(model)
-	if id == "RoyalMint" then
+	if id ~= "StarterFarm" then
 		-- Only the belt and explicitly authored guides contact coins. Players,
 		-- decorative machine geometry and other coins cannot kick them off course.
 		for _, item in model:GetDescendants() do
@@ -390,7 +393,7 @@ local function createSite(
 	local overlap = OverlapParams.new()
 	overlap.FilterType = Enum.RaycastFilterType.Include
 	overlap.FilterDescendantsInstances = { bundles }
-	if id == "RoyalMint" then
+	if id ~= "StarterFarm" then
 		overlap.CollisionGroup = MintSettings.TRACK_COLLISION_GROUP
 	end
 	local site: Site = {
@@ -433,6 +436,7 @@ local function prepare(player: Player, kingdom: Model): ()
 		return
 	end
 	assert(productions[player] == nil, "Player already has production")
+	TutorialProgress.ResetCollections(player)
 	local source = template
 	assert(source ~= nil, "WheatBundle unavailable")
 	local model = farmAssets(kingdom)
@@ -453,16 +457,19 @@ local function prepare(player: Player, kingdom: Model): ()
 	productions[player] = state
 	table.insert(state.Sites, createSite(model, "StarterFarm", Settings, source, account))
 	local unlocks = kingdom:FindFirstChild("PurchaseUnlocks")
-	local mint = if unlocks ~= nil then unlocks:FindFirstChild("RoyalMint") else nil
-	if mint ~= nil then
-		assert(mint:IsA("Model"), "RoyalMint must be a Model")
-		local coin = mintTemplate
-		assert(coin ~= nil, "RoyalMint requires ServerStorage.RoyalMintCoin")
-		table.insert(state.Sites, createSite(mint, "RoyalMint", MintSettings, coin, account))
+
+	for _, siteId in { "RoyalMint", "RoyalMint02" } do
+		local mint = if unlocks ~= nil then unlocks:FindFirstChild(siteId) else nil
+		if mint ~= nil then
+			assert(mint:IsA("Model"), siteId .. " must be a Model")
+			local coin = mintTemplate
+			assert(coin ~= nil, "Mint requires ServerStorage.RoyalMintCoin")
+			table.insert(state.Sites, createSite(mint, siteId, MintSettings.SITES[siteId], coin, account))
+		end
 	end
 	for _, site in state.Sites do
-		if site.Id == "RoyalMint" and unlocks ~= nil then
-			for _, definition in MintSettings.UPGRADERS do
+		if site.Id ~= "StarterFarm" and unlocks ~= nil then
+			for _, definition in MintSettings.SITES[site.Id].UPGRADERS do
 				local asset = unlocks:FindFirstChild(definition.Id)
 				if asset ~= nil then
 					assert(asset:IsA("Model"), "Upgrader must be a Model")
@@ -515,13 +522,13 @@ local function dropBundle(site: Site, drop: BasePart, now: number): ()
 		return
 	end
 	local bundle = site.Source:Clone()
-	bundle.Name = if site.Id == "RoyalMint" then "RoyalMintCoin" else "WheatBundle"
+	bundle.Name = if site.Id ~= "StarterFarm" then "RoyalMintCoin" else "WheatBundle"
 	local dropParent = drop.Parent
 	bundle:SetAttribute("ProducerId", if dropParent ~= nil then dropParent.Name else "")
 	bundle.Anchored = false
 	bundle.CanCollide = true
 	bundle.CanQuery = true
-	if site.Id == "RoyalMint" then
+	if site.Id ~= "StarterFarm" then
 		bundle.CollisionGroup = MintSettings.COIN_COLLISION_GROUP
 	end
 	bundle.CFrame = drop.CFrame

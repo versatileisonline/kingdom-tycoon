@@ -255,3 +255,5 @@ depend on that running service context.
 ## License
 
 TBD
+
+Second Royal Mint lane: [asset contract, economy and verification](docs/SECOND_ROYAL_MINT.md).

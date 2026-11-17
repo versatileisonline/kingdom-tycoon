@@ -215,7 +215,7 @@ local function prepare(player: Player, kingdom: Model): ()
 		assert(plate:IsA("BasePart") and plate.CanTouch, "Purchase plate must support touch: " .. id)
 		if definition.FarmDropper or definition.ProductionSite ~= nil then
 			assert(FarmService.HasProducer(player, id), "Missing producer for plate " .. id)
-			if definition.ProductionSite == "RoyalMint" and id == "RoyalMint" then
+			if definition.ProductionSite ~= nil and id == definition.ProductionSite then
 				assert(unlock ~= nil and unlock:IsA("Model"), "RoyalMint requires the whole Mint unlock")
 			else
 				assert(unlock == nil, "Producer models belong inside their production site: " .. id)

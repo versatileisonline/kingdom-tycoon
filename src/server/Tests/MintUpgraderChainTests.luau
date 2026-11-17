@@ -174,7 +174,7 @@ function Tests.Run(): ()
 		move(part(k, "FarmStartPlate"))
 		assert(Farms.TryStart(player), "Owned chain restart failed")
 		character:PivotTo(original)
-		assert(#plates:GetChildren() == 0, "Completed chain left plates")
+		assert(#plates:GetChildren() == 1 and plates:FindFirstChild("RoyalMint02"), "Second-lane frontier missing")
 		local mint = unlocks:FindFirstChild("RoyalMint") :: Model
 		local farm = k:FindFirstChild("StarterFarm") :: Model
 		local bundles = mint:FindFirstChild("ActiveBundles") :: Folder

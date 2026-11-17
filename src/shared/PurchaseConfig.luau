@@ -7,8 +7,8 @@ export type Purchase = {
 	Requires: string?,
 	StudioOnly: boolean?,
 	FarmDropper: boolean?,
-	ProductionSite: "RoyalMint"?,
-	UpgraderSite: "RoyalMint"?,
+	ProductionSite: ("RoyalMint" | "RoyalMint02")?,
+	UpgraderSite: ("RoyalMint" | "RoyalMint02")?,
 }
 
 -- Prerequisites must appear before the purchases that require them.
@@ -150,6 +150,35 @@ local purchases: { Purchase } = {
 		StudioOnly = true,
 	}),
 }
+
+local secondPrices =
+	{ 12000, 12200, 12400, 12600, 12800, 13000, 13200, 13400, 13600, 13800, 14000, 14200, 14500, 15000, 16500, 19500 }
+local previous = "RoyalMintUpgrader08"
+-- Insert before Studio-only fixtures so the live frontier remains contiguous.
+local insertion = #purchases - 1
+for index, price in secondPrices do
+	local id = if index == 1
+		then "RoyalMint02"
+		elseif index <= 8 then string.format("RoyalMint02Dropper%02d", index)
+		else string.format("RoyalMint02Upgrader%02d", index - 8)
+	local entry: Purchase = {
+		Id = id,
+		Name = if index == 1
+			then "Royal Mint 2"
+			elseif index <= 8 then string.format("Mint 2 Dropper %d", index)
+			else string.format("Mint 2 Upgrader %d", index - 8),
+		Price = price,
+		Requires = previous,
+	}
+	if index <= 8 then
+		entry.ProductionSite = "RoyalMint02"
+	else
+		entry.UpgraderSite = "RoyalMint02"
+	end
+	table.insert(purchases, insertion, table.freeze(entry))
+	insertion += 1
+	previous = id
+end
 
 return table.freeze({
 	PURCHASES = table.freeze(purchases),
