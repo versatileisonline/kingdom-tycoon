@@ -7,6 +7,8 @@ local FarmLedger = {}
 
 export type Ledger = {
 	Register: (token: any, now: number) -> boolean,
+	ApplyUpgrade: (token: any, upgraderId: string, multiplier: number, now: number) -> boolean,
+	GetValue: (token: any) -> number?,
 	Remove: (token: any, now: number, arrived: boolean) -> boolean,
 	Collect: (commit: (number) -> boolean) -> (boolean, number),
 	GetBalance: () -> number,
@@ -21,7 +23,7 @@ function FarmLedger.new(
 	maxBalance: number,
 	sharedAccount: SessionEarnings.Account?
 ): Ledger
-	local bundles: { [any]: number } = {}
+	local bundles: { [any]: { Expires: number, Value: number, Applied: { [string]: boolean } } } = {}
 	local count = 0
 	local account = sharedAccount or SessionEarnings.new(maxBalance)
 	return {
@@ -29,18 +31,41 @@ function FarmLedger.new(
 			if count >= cap or bundles[token] ~= nil then
 				return false
 			end
-			bundles[token] = now + lifetime
+			bundles[token] = { Expires = now + lifetime, Value = value, Applied = {} }
 			count += 1
 			return true
 		end,
+		ApplyUpgrade = function(token: any, upgraderId: string, multiplier: number, now: number): boolean
+			local record = bundles[token]
+			if
+				record == nil
+				or now ~= now
+				or now >= record.Expires
+				or #upgraderId == 0
+				or record.Applied[upgraderId]
+				or multiplier ~= multiplier
+				or multiplier <= 1
+				or multiplier % 1 ~= 0
+				or record.Value > maxBalance / multiplier
+			then
+				return false
+			end
+			record.Value *= multiplier
+			record.Applied[upgraderId] = true
+			return true
+		end,
+		GetValue = function(token: any): number?
+			local record = bundles[token]
+			return if record then record.Value else nil
+		end,
 		Remove = function(token: any, now: number, arrived: boolean): boolean
-			local expires = bundles[token]
-			if expires == nil then
+			local record = bundles[token]
+			if record == nil then
 				return false
 			end
 			bundles[token] = nil -- Consume before crediting; repeated pit contacts are harmless.
 			count -= 1
-			if arrived and now < expires and account.Credit(value) then
+			if arrived and now < record.Expires and account.Credit(record.Value) then
 				return true
 			end
 			return false
