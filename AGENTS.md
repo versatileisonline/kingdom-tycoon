@@ -82,7 +82,6 @@ tools/DecorateMintCoin.luau attaches two Decals without physics changes and back
 up the source in RoyalHudCoinBackup_20261117. No mappings/remotes/schema changes.
 Contract, rollback, parallel-work boundaries and checks: docs/ROYAL_HUD_REFRESH.md.
 
-
 Full Mint chain supersedes prototype-only config: RoyalMintUpgrader01–08 share
 identical arch/UpgradeZone contracts. GoldHologram is a translucent Neon plane,
 noncolliding/non-touching/non-queryable, purely visual. tools/ExpandMintUpgraders.luau
@@ -351,6 +350,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   from runtime plot clones outside Studio.
 
 ## 11. Commands
+
+Royal HUD checks (2026-11-17): HUD, centered plate/purchase, and sustained Mint
+containment suites passed separately in normal Mock Play. Artwork fetch succeeded.
+All test switches reset; native desktop appearance reviewed. Narrow-screen and
+upgraded coin rim appearance remain hands-on checks. See docs/ROYAL_HUD_REFRESH.md.
 
 Eight-arch checks: enable only MintConfig.RUN_UPGRADER_CHAIN_TESTS_IN_STUDIO in
 Mock, sync and Play before claiming. Expect All eight Mint upgrader chain checks

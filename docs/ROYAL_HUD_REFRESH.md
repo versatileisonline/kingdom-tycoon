@@ -66,8 +66,20 @@ then restore the backup coin; revert HUD source commits together if desired.
 Never replace KingdomTemplate for this task.
 
 Source checks: formatting, lint, Luau compilation and code-only Rojo build pass.
-Native rendering, uploaded-image availability and Studio suites remain pending.
+Native desktop capture verified the Settings banner, four gold corners, clear
+controls and new coin badge at 1914 x 780. ContentProvider reported Success for
+all three UI images and the decorated coin face. Initial coin representation
+warnings resolved on a subsequent preload. The Editor's old module cache initially
+ran stale plate code; the fresh Server context passed the current plate suite.
+Normal-bootstrap Mock HUD suites and the full purchase suite passed, including
+centered labels, scheduling, farm purchases and wooden-wall purchases.
+Narrow/short viewport hands-on acceptance remains for the creator.
 Final acceptance requires separate Mock HUD/purchase suites, Studio visual checks
 at narrow/short viewports, and existing Mint containment/upgrader checks after the
 source coin is decorated. Expected logs: `All HUD presentation checks passed`,
 `All HUD client checks passed`, `All centered plate presentation checks passed`.
+
+Final native Mint verification with the decorated source passed: `All sustained
+Mint coin containment checks passed` and `All Royal Mint checks passed`. All test
+switches were reset. Combined source is integrated on feat/mint-upgrader-chain;
+HUD commits preserve the other session's upgrader commits and changes.
