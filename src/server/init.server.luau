@@ -70,3 +70,9 @@ if game:GetService("RunService"):IsStudio() and require(Shared.MintConfig).RUN_U
 		require(script.Tests.MintUpgraderTests).Run()
 	end)
 end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.MintConfig).RUN_UPGRADER_CHAIN_TESTS_IN_STUDIO then
+	task.spawn(function(): ()
+		require(script.Tests.MintUpgraderChainTests).Run()
+	end)
+end
