@@ -1,7 +1,7 @@
 --!strict
 -- Read-only UI presentation. These attributes never authorize gameplay actions.
 local Progress = {}
-local ownedAttributes = {
+local ownedAttributes: { [string]: string } = {
 	WoodenWalls = "TutorialWoodenWallsOwned",
 	RoyalMint = "TutorialRoyalMintOwned",
 	RoyalMintDropper02 = "TutorialMintDropper02Owned",
