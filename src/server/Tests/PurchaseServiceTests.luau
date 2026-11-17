@@ -125,7 +125,11 @@ function Tests.Run(): ()
 			)
 			assert(
 				(nextPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text
-					== string.format('Dropper %d\n%d <font color="#E7B84B">●</font>', expectedNext, entry.Price),
+						== string.format("Dropper %d", expectedNext)
+					and (
+							(nextPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).CurrencyRow.Amount :: TextLabel
+						).Text
+						== tostring(entry.Price),
 				"Purchase name/price/icon incorrect"
 			)
 			local label = nextPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel
@@ -187,8 +191,9 @@ function Tests.Run(): ()
 			"Walls not offered after Dropper 4"
 		)
 		assert(
-			(wallPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text
-				== 'Wooden Walls\n40 <font color="#E7B84B">●</font>',
+			(wallPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).Text == "Wooden Walls"
+				and ((wallPlate:FindFirstChild("PurchaseLabel", true) :: TextLabel).CurrencyRow.Amount :: TextLabel).Text
+					== "40",
 			"Wrong wall label"
 		)
 		setGold(39)

@@ -66,17 +66,49 @@ function PlatePresentation.Style(plate: BasePart): ()
 	label.TextWrapped = false
 	label.Font = Enum.Font.GothamBold
 	label.TextXAlignment = Enum.TextXAlignment.Center
-	label.TextYAlignment = Enum.TextYAlignment.Center
+	label.TextYAlignment = if label:FindFirstChild("CurrencyRow")
+		then Enum.TextYAlignment.Top
+		else Enum.TextYAlignment.Center
 	label.TextColor3 = Color3.fromRGB(255, 255, 255)
 	label.TextStrokeTransparency = 0.4
 end
 
--- Only monetary labels enable RichText; player-authored owner labels remain plain text.
+-- Native image/text composition keeps the entire price row centered at any amount.
 function PlatePresentation.SetAmount(label: TextLabel, title: string, amount: number): ()
-	local escaped = title:gsub("&", "&amp;"):gsub("<", "&lt;"):gsub(">", "&gt;")
-	label.RichText = true
-	label.Text =
-		string.format('%s\n%d <font color="#%s">%s</font>', escaped, amount, HudConfig.COLORS.Gold, HudConfig.GOLD_ICON)
+	label.RichText = false
+	label.Text = title
+	label.TextYAlignment = Enum.TextYAlignment.Top
+	local row = label:FindFirstChild("CurrencyRow") :: Frame?
+	if row == nil then
+		row = Instance.new("Frame")
+		row.Name = "CurrencyRow"
+		row.BackgroundTransparency = 1
+		row.AnchorPoint = Vector2.new(0.5, 1)
+		row.Position = UDim2.fromScale(0.5, 1)
+		row.Parent = label
+		local value = Instance.new("TextLabel")
+		value.Name = "Amount"
+		value.BackgroundTransparency = 1
+		value.Font = label.Font
+		value.TextSize = label.TextSize
+		value.TextColor3 = label.TextColor3
+		value.TextStrokeTransparency = label.TextStrokeTransparency
+		value.Parent = row
+		local coin = Instance.new("ImageLabel")
+		coin.Name = "Coin"
+		coin.BackgroundTransparency = 1
+		coin.Image = HudConfig.ART.Coin
+		coin.Size = UDim2.fromOffset(HudConfig.UI.CoinSize, HudConfig.UI.CoinSize)
+		coin.AnchorPoint = Vector2.new(1, 0.5)
+		coin.Position = UDim2.fromScale(1, 0.5)
+		coin.Parent = row
+	end
+	local value = row:FindFirstChild("Amount") :: TextLabel
+	value.Text = string.format("%d", amount)
+	local width = game:GetService("TextService")
+		:GetTextSize(value.Text, label.TextSize, label.Font, Vector2.new(10000, 100)).X
+	row.Size = UDim2.fromOffset(width + HudConfig.UI.CoinGap + HudConfig.UI.CoinSize, settings.LABEL_HEIGHT / 2)
+	value.Size = UDim2.new(0, width, 1, 0)
 end
 
 function PlatePresentation.SetVisible(plate: BasePart, visible: boolean): ()

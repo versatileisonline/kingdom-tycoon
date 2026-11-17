@@ -159,9 +159,9 @@ function Tests.Run(): ()
 		local balance = farm:GetAttribute("UncollectedGold") :: number
 		local earningsLabel = farm:FindFirstChild("EarningsLabel", true) :: TextLabel
 		assert(
-			earningsLabel.RichText
-				and earningsLabel.Text
-					== string.format('Collect Total\n%d <font color="#E7B84B">●</font>', balance),
+			not earningsLabel.RichText
+				and earningsLabel.Text == "Collect Total"
+				and (earningsLabel.CurrencyRow.Amount :: TextLabel).Text == tostring(balance),
 			"Collector label differs from private ledger"
 		)
 		assert(balance >= 2 * Settings.BUNDLE_VALUE, "Bundles failed to travel to pit before timeout")
@@ -188,10 +188,7 @@ function Tests.Run(): ()
 			success and amount == expected and farm:GetAttribute("UncollectedGold") == 0,
 			"Full balance not collected"
 		)
-		assert(
-			earningsLabel.Text == 'Collect Total\n0 <font color="#E7B84B">●</font>',
-			"Collected label did not reset to zero"
-		)
+		assert((earningsLabel.CurrencyRow.Amount :: TextLabel).Text == "0", "Collected label did not reset to zero")
 		local after = DataService.GetSnapshot(owner)
 		assert(after ~= nil and after.Gold == before.Gold + amount, "Saved Gold differs from collected amount")
 		assert(not FarmService.TryCollect(owner), "Repeated collection accepted")

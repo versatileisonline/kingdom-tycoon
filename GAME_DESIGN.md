@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Royal HUD refresh (2026-11-17): approved royal blue banner headings, sculpted
+  antique gold corners outside dark panels, brass controls and a prominent coin
+  badge. Approved custom transparent artwork and its resulting coin/corner/banner
+  images before Roblox import. Reuse the coin in HUD, purchase/collector labels
+  and Mint faces; farm wheat stays. Combine with the concurrent upgrader work for
+  viewing; preserve progression, economics, settings behavior and session defaults.
 - Full Mint upgrader chain (2026-11-17): creator accepted prototype and requested
   a gold holographic laser curtain through each opening, then all eight arches.
   Confirmed curve 250/300/400/600/1000/1900/3800/7500, sequential after all droppers.

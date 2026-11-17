@@ -73,6 +73,16 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Royal HUD refresh (2026-11-17): approved assets/hud sources map through
+HudConfig.ART to Coin 94873438043725, Corner 81173608072407, Banner 100935518284790.
+Client UI.RoyalStyle supplies decorative art and bounded button feedback; HudView
+uses blue headings/gold corners/dark panels. PlatePresentation.SetAmount retains
+its API but uses a plain-text title and centered CurrencyRow.Amount/Coin children.
+tools/DecorateMintCoin.luau attaches two Decals without physics changes and backs
+up the source in RoyalHudCoinBackup_20261117. No mappings/remotes/schema changes.
+Contract, rollback, parallel-work boundaries and checks: docs/ROYAL_HUD_REFRESH.md.
+
+
 Full Mint chain supersedes prototype-only config: RoyalMintUpgrader01–08 share
 identical arch/UpgradeZone contracts. GoldHologram is a translucent Neon plane,
 noncolliding/non-touching/non-queryable, purely visual. tools/ExpandMintUpgraders.luau

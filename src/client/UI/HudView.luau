@@ -1,6 +1,7 @@
 --!strict
 local UIS = game:GetService("UserInputService")
 local Config = require(game:GetService("ReplicatedStorage").Shared.HudConfig)
+local Style = require(script.Parent.RoyalStyle)
 local C = Config.COLORS
 local View = {}
 local function color(hex: string): Color3
@@ -15,7 +16,7 @@ local function stroke(item: GuiObject): ()
 	local s = Instance.new("UIStroke")
 	s.Color = color(C.Border)
 	s.Transparency = 0.25
-	s.Thickness = 1
+	s.Thickness = 2
 	s.Parent = item
 end
 local function text(parent: Instance, name: string, content: string, size: number): TextLabel
@@ -56,26 +57,31 @@ function View.new(parent: Instance, settings: any)
 	local badge = Instance.new("Frame")
 	badge.Name = "GoldBadge"
 	badge.AnchorPoint = Vector2.new(0, 1)
-	badge.Position = UDim2.new(0, 20, 1, -20)
-	badge.Size = UDim2.fromOffset(190, 52)
+	badge.Position = UDim2.new(0, 28, 1, -28)
+	badge.Size = UDim2.fromOffset(220, 58)
 	badge.BackgroundColor3 = color(C.Panel)
 	badge.BorderSizePixel = 0
 	badge.Parent = screen
 	round(badge, 16)
 	stroke(badge)
-	local coin = text(badge, "Coin", Config.GOLD_ICON, 32)
-	coin.Position = UDim2.fromOffset(15, 0)
-	coin.Size = UDim2.fromOffset(38, 52)
-	coin.TextColor3 = color(C.Gold)
+	Style.Gradient(badge, "313039", "141720")
+	Style.Corners(badge, 42, 2)
+	local coin = Style.Image(badge, "Coin", Config.ART.Coin, 3)
+	coin.Position = UDim2.fromOffset(-12, -5)
+	coin.Size = UDim2.fromOffset(68, 68)
 	local gold = text(badge, "Gold", "—", 20)
 	gold.Font = Enum.Font.GothamBold
 	gold.TextColor3 = color(C.Gold)
-	gold.Position = UDim2.fromOffset(56, 0)
-	gold.Size = UDim2.new(1, -66, 1, 0)
+	gold.Position = UDim2.fromOffset(64, 0)
+	gold.Size = UDim2.new(1, -76, 1, 0)
+	gold.ZIndex = 3
 	local open = button(screen, "SettingsButton", "⚙")
+	open.TextSize = 27
 	open.AnchorPoint = Vector2.new(1, 0)
 	open.Position = UDim2.new(1, -20, 0, game:GetService("GuiService"):GetGuiInset().Y + 16)
-	open.Size = UDim2.fromOffset(48, 48)
+	open.Size = UDim2.fromOffset(52, 52)
+	Style.Corners(open, 30, 2)
+	Style.Feedback(open, connections)
 	stroke(open)
 	local hint = text(screen, "Hint", "", 13)
 	hint.AnchorPoint = Vector2.new(0.5, 1)
@@ -101,7 +107,16 @@ function View.new(parent: Instance, settings: any)
 	local camera = workspace.CurrentCamera
 	local function fit(): ()
 		if camera then
-			panelScale.Scale = math.min(1, math.max(0.1, (camera.ViewportSize.Y - 32) / 354))
+			panelScale.Scale = math.min(
+				1,
+				math.max(
+					0.1,
+					math.min(
+						(camera.ViewportSize.Y - 2 * Config.UI.Margin) / Config.UI.PanelHeight,
+						(camera.ViewportSize.X - 2 * Config.UI.Margin) / Config.UI.PanelWidth
+					)
+				)
+			)
 		end
 	end
 	if camera then
@@ -110,40 +125,47 @@ function View.new(parent: Instance, settings: any)
 	fit()
 	panel.AnchorPoint = Vector2.new(0.5, 0.5)
 	panel.Position = UDim2.fromScale(0.5, 0.5)
-	panel.Size = UDim2.new(1, -32, 0, 354)
+	panel.Size = UDim2.fromOffset(Config.UI.PanelWidth, Config.UI.PanelHeight)
 	panel.BackgroundColor3 = color(C.Panel)
 	panel.BorderSizePixel = 0
 	panel.ZIndex = 11
 	panel.Parent = shade
 	round(panel, 20)
 	stroke(panel)
-	local constraint = Instance.new("UISizeConstraint")
-	constraint.MaxSize = Vector2.new(420, 354)
-	constraint.Parent = panel
+	Style.Gradient(panel, "333039", "141821")
+	Style.Corners(panel, Config.UI.OrnamentSize, 14)
+	local banner = Style.Image(panel, "RoyalBanner", Config.ART.Banner, 15)
+	banner.AnchorPoint = Vector2.new(0.5, 0)
+	banner.Position = UDim2.new(0.5, 0, 0, -24)
+	banner.Size = UDim2.new(1, -64, 0, 108)
 	local title = text(panel, "Title", "Settings", 25)
-	title.Font = Enum.Font.GothamBold
-	title.Position = UDim2.fromOffset(24, 18)
-	title.Size = UDim2.new(1, -100, 0, 38)
-	title.ZIndex = 12
+	title.Font = Enum.Font.Fondamento
+	title.Position = UDim2.fromOffset(72, 2)
+	title.Size = UDim2.new(1, -144, 0, 48)
+	title.TextXAlignment = Enum.TextXAlignment.Center
+	title.TextStrokeTransparency = 0.6
+	title.ZIndex = 16
 	local close = button(panel, "Close", "×")
-	close.Position = UDim2.new(1, -58, 0, 18)
+	close.Position = UDim2.new(1, -44, 0, -6)
 	close.Size = UDim2.fromOffset(34, 34)
-	close.ZIndex = 12
+	close.ZIndex = 17
+	stroke(close)
+	Style.Feedback(close, connections)
 	local renderers: { () -> () } = {}
 	local function slider(key: string, label: string, y: number): ()
 		local caption = text(panel, key .. "Label", label, 15)
-		caption.Position = UDim2.fromOffset(24, y)
+		caption.Position = UDim2.fromOffset(40, y)
 		caption.Size = UDim2.new(1, -100, 0, 24)
 		caption.ZIndex = 12
 		local value = text(panel, key .. "Value", "", 13)
-		value.Position = UDim2.new(1, -84, 0, y)
+		value.Position = UDim2.new(1, -100, 0, y)
 		value.Size = UDim2.fromOffset(60, 24)
 		value.TextXAlignment = Enum.TextXAlignment.Right
 		value.TextColor3 = color(C.Muted)
 		value.ZIndex = 12
 		local track = button(panel, key .. "Slider", "")
-		track.Position = UDim2.fromOffset(24, y + 30)
-		track.Size = UDim2.new(1, -48, 0, 22)
+		track.Position = UDim2.fromOffset(40, y + 30)
+		track.Size = UDim2.new(1, -80, 0, 22)
 		track.BackgroundColor3 = color(C.Track)
 		track.ZIndex = 12
 		local fill = Instance.new("Frame")
@@ -157,7 +179,8 @@ function View.new(parent: Instance, settings: any)
 		knob.Name = "Knob"
 		knob.Size = UDim2.fromOffset(22, 22)
 		knob.AnchorPoint = Vector2.new(0.5, 0)
-		knob.BackgroundColor3 = color(C.Text)
+		knob.BackgroundColor3 = color(C.Gold)
+		stroke(knob)
 		knob.BorderSizePixel = 0
 		knob.ZIndex = 14
 		knob.Parent = track
@@ -223,13 +246,15 @@ function View.new(parent: Instance, settings: any)
 	end
 	local function toggle(key: string, label: string, y: number): ()
 		local caption = text(panel, key .. "Label", label, 15)
-		caption.Position = UDim2.fromOffset(24, y)
+		caption.Position = UDim2.fromOffset(40, y)
 		caption.Size = UDim2.new(1, -130, 0, 40)
 		caption.ZIndex = 12
 		local b = button(panel, key .. "Toggle", "")
-		b.Position = UDim2.new(1, -96, 0, y)
+		b.Position = UDim2.new(1, -112, 0, y)
 		b.Size = UDim2.fromOffset(72, 36)
 		b.ZIndex = 12
+		stroke(b)
+		Style.Feedback(b, connections)
 		table.insert(
 			connections,
 			b.Activated:Connect(function(): ()
@@ -242,10 +267,22 @@ function View.new(parent: Instance, settings: any)
 			b.TextColor3 = if on then color(C.Gold) else color(C.Muted)
 		end)
 	end
-	slider("Music", "Music", 78)
-	slider("WorldSounds", "World sounds", 150)
-	toggle("HelperArrow", "Helper arrow", 224)
-	toggle("LowGraphics", "Low graphics", 278)
+	slider("Music", "Music", 112)
+	slider("WorldSounds", "World sounds", 188)
+	toggle("HelperArrow", "Helper arrow", 276)
+	toggle("LowGraphics", "Low graphics", 330)
+	local subtitle = text(panel, "Subtitle", "MAKE YOURSELF AT HOME", 11)
+	subtitle.TextColor3 = color(C.Muted)
+	subtitle.TextXAlignment = Enum.TextXAlignment.Center
+	subtitle.Position = UDim2.fromOffset(40, 76)
+	subtitle.Size = UDim2.new(1, -80, 0, 20)
+	subtitle.ZIndex = 12
+	local footnote = text(panel, "Footnote", "Preferences apply to this session", 11)
+	footnote.TextColor3 = color(C.Muted)
+	footnote.TextXAlignment = Enum.TextXAlignment.Center
+	footnote.Position = UDim2.fromOffset(40, 394)
+	footnote.Size = UDim2.new(1, -80, 0, 20)
+	footnote.ZIndex = 12
 	local function refresh(): ()
 		shade.Visible = settings.Get("MenuOpen") == true
 		for _, render in renderers do
