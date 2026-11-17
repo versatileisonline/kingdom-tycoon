@@ -1,30 +1,16 @@
 --!strict
 local Tests = {}
 function Tests.RunMath(View: any): ()
-	local layout = View.CalculateLayout(100, 200, 500, 200, 800, 600)
-	assert(layout ~= nil and layout.TipX > layout.StartX, "Forward arrow missing")
-	assert(
-		math.abs(layout.TipY - 200) < 0.001 and layout.TipX < 500 and layout.StartX > 100,
-		"Arrow covered character/plate endpoints"
-	)
-	local reversed = View.CalculateLayout(500, 200, 100, 200, 800, 600)
-	assert(reversed ~= nil and reversed.TipX < reversed.StartX, "Reverse screen direction failed")
-	local clipped = View.CalculateLayout(400, 300, 2000, 300, 800, 600)
-	assert(clipped ~= nil and clipped.TipX <= 776 and clipped.TipX > 400, "Offscreen target was not clipped")
-	local diagonal = View.CalculateLayout(400, 300, 2000, -2000, 800, 600)
-	assert(
-		diagonal ~= nil
-			and diagonal.TipX >= 24
-			and diagonal.TipX <= 776
-			and diagonal.TipY >= 24
-			and diagonal.TipY <= 576,
-		"Diagonal clipping escaped viewport"
-	)
-	assert(View.CalculateLayout(100, 200, 101, 200, 800, 600) == nil, "Short arrow shown")
-	assert(View.CalculateLayout(-1, 200, 500, 200, 800, 600) == nil, "Offscreen character arrow shown")
-	assert(View.CalculateLayout(100, 200, 500, 200, 0, 600) == nil, "Empty viewport arrow shown")
-	assert(View.CalculateLayout(0 / 0, 200, 500, 200, 800, 600) == nil, "NaN geometry accepted")
-	assert(View.CalculateLayout(100, 200, 1e308, 200, 800, 600) == nil, "Overflowing projection accepted")
+	local distances = View.CalculateDistances(20)
+	assert(#distances > 3 and distances[1] > 0 and distances[#distances] < 20, "Repeated trail/end gaps missing")
+	for index = 2, #distances do
+		assert(distances[index] > distances[index - 1], "Trail reversed")
+	end
+	assert(#View.CalculateDistances(10000) <= 64, "Unbounded marker count")
+	assert(#View.CalculateDistances(1) == 0, "Near-target trail shown")
+	assert(#View.CalculateDistances(0 / 0) == 0 and #View.CalculateDistances(math.huge) == 0, "Invalid length accepted")
+	assert(View.Pulse(0, 0) > View.Pulse(2, 0), "No translucent brightness wave")
+	assert(math.abs(View.Pulse(0, 0) - View.Pulse(5, 1)) < 0.001, "Pulse does not flow toward objective")
 	print("All tutorial arrow layout checks passed")
 end
 function Tests.Run(View: any): ()

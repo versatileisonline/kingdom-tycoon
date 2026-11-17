@@ -2,18 +2,6 @@
 local Config = require(game:GetService("ReplicatedStorage").Shared.TutorialConfig)
 local Style = Config.STYLE
 local View = {}
-export type Layout = {
-	StartX: number,
-	StartY: number,
-	TipX: number,
-	TipY: number,
-	ShaftX: number,
-	ShaftY: number,
-	LeftX: number,
-	LeftY: number,
-	RightX: number,
-	RightY: number,
-}
 export type Arrow = {
 	Gui: ScreenGui,
 	Update: (Vector3, Vector3, Camera) -> boolean,
@@ -23,100 +11,56 @@ export type Arrow = {
 local function finite(value: number): boolean
 	return value == value and math.abs(value) ~= math.huge
 end
-
--- Work in viewport pixels so thickness remains readable as the camera moves.
--- Positive-depth offscreen targets are clipped along the same character/plate ray.
-function View.CalculateLayout(x0: number, y0: number, x1: number, y1: number, width: number, height: number): Layout?
-	for _, value in { x0, y0, x1, y1, width, height } do
-		if not finite(value) then
-			return nil
-		end
+-- Bounded marker count, even for targets across the kingdom. No server work.
+function View.CalculateDistances(distance: number): { number }
+	if not finite(distance) or distance <= Style.StartGap + Style.EndGap then
+		return {}
 	end
-	local inset = Style.Inset
-	if width <= inset * 2 or height <= inset * 2 or x0 < 0 or x0 > width or y0 < 0 or y0 > height then
-		return nil
+	local available = distance - Style.StartGap - Style.EndGap
+	local count = math.min(Style.MaxMarkers, math.floor(available / Style.Spacing) + 1)
+	local step = if count > 1 then available / (count - 1) else 0
+	local result: { number } = {}
+	for index = 1, count do
+		result[index] = Style.StartGap + (index - 1) * step
 	end
-	local dx, dy = x1 - x0, y1 - y0
-	local distance = math.sqrt(dx * dx + dy * dy)
-	if not finite(distance) or distance < Style.MinPixels then
-		return nil
-	end
-	local t = 1
-	if dx > 0 and x1 > width - inset then
-		t = math.min(t, (width - inset - x0) / dx)
-	elseif dx < 0 and x1 < inset then
-		t = math.min(t, (inset - x0) / dx)
-	end
-	if dy > 0 and y1 > height - inset then
-		t = math.min(t, (height - inset - y0) / dy)
-	elseif dy < 0 and y1 < inset then
-		t = math.min(t, (inset - y0) / dy)
-	end
-	local length = distance * t - Style.EndpointGap * 2
-	if t <= 0 or length < Style.MinPixels then
-		return nil
-	end
-	local ux, uy = dx / distance, dy / distance
-	local startX, startY = x0 + ux * Style.EndpointGap, y0 + uy * Style.EndpointGap
-	local tipX, tipY = x0 + dx * t - ux * Style.EndpointGap, y0 + dy * t - uy * Style.EndpointGap
-	local head = math.min(Style.HeadLength, length * Style.MaxHeadFraction)
-	local baseX, baseY = tipX - ux * head, tipY - uy * head
-	return {
-		StartX = startX,
-		StartY = startY,
-		TipX = tipX,
-		TipY = tipY,
-		ShaftX = tipX - ux * head * Style.NeckFraction,
-		ShaftY = tipY - uy * head * Style.NeckFraction,
-		LeftX = baseX - uy * head * Style.HeadSpread,
-		LeftY = baseY + ux * head * Style.HeadSpread,
-		RightX = baseX + uy * head * Style.HeadSpread,
-		RightY = baseY - ux * head * Style.HeadSpread,
-	}
+	return result
 end
-
+function View.Pulse(distance: number, elapsed: number): number
+	-- A crest moves toward increasing world distance (the objective).
+	local phase = (distance - elapsed * Style.FlowSpeed) / Style.Wavelength
+	return (0.5 + 0.5 * math.cos(phase * math.pi * 2)) ^ 3
+end
 function View.new(parent: Instance): Arrow
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "FirstPurchaseArrow"
 	gui.ResetOnSpawn = false
 	gui.IgnoreGuiInset = true
 	gui.DisplayOrder = Style.DisplayOrder
-	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	gui.Enabled = false
-	local gold = Color3.fromHex(Style.Gold)
-	local outline = Color3.fromHex(Style.OutlineColor)
-	local function makeBar(name: string): Frame
-		local bar = Instance.new("Frame")
-		bar.Name = name
-		bar.AnchorPoint = Vector2.new(0.5, 0.5)
-		bar.BackgroundColor3 = gold
-		bar.BorderSizePixel = 0
-		bar.Active = false
-		bar.Selectable = false
-		bar.ZIndex = 2
-		local stroke = Instance.new("UIStroke")
-		stroke.Color = outline
-		stroke.Thickness = Style.Outline
-		stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		stroke.LineJoinMode = Enum.LineJoinMode.Round
-		stroke.Parent = bar
-		bar.Parent = gui
-		return bar
+	local markers: { TextLabel } = {}
+	for index = 1, Style.MaxMarkers do
+		local marker = Instance.new("TextLabel")
+		marker.Name = "Arrowhead" .. index
+		marker.AnchorPoint = Vector2.new(0.5, 0.5)
+		marker.BackgroundTransparency = 1
+		marker.BorderSizePixel = 0
+		marker.Text = "▲"
+		marker.Font = Enum.Font.GothamBold
+		marker.TextScaled = true
+		marker.TextColor3 = Color3.fromHex(Style.Gold)
+		marker.TextStrokeColor3 = Color3.fromHex(Style.OutlineColor)
+		marker.TextStrokeTransparency = 0.7
+		marker.Active = false
+		marker.Selectable = false
+		marker.Visible = false
+		marker.Parent = gui
+		markers[index] = marker
 	end
-	local shaft = makeBar("Shaft")
-	local left = makeBar("ArrowheadLeft")
-	local right = makeBar("ArrowheadRight")
 	local destroyed = false
 	local function hide(): ()
 		if not destroyed then
 			gui.Enabled = false
 		end
-	end
-	local function barBetween(bar: Frame, x0: number, y0: number, x1: number, y1: number): ()
-		local dx, dy = x1 - x0, y1 - y0
-		bar.Position = UDim2.fromOffset((x0 + x1) / 2, (y0 + y1) / 2)
-		bar.Size = UDim2.fromOffset(math.sqrt(dx * dx + dy * dy), Style.Thickness)
-		bar.Rotation = math.deg(math.atan2(dy, dx))
 	end
 	gui.Parent = parent
 	return {
@@ -125,36 +69,51 @@ function View.new(parent: Instance): Arrow
 			if destroyed then
 				return false
 			end
-			if
-				not (
-					finite(from.X)
-					and finite(from.Y)
-					and finite(from.Z)
-					and finite(to.X)
-					and finite(to.Y)
-					and finite(to.Z)
-				)
-			then
+			for _, value in { from.X, from.Y, from.Z, to.X, to.Y, to.Z } do
+				if not finite(value) then
+					hide()
+					return false
+				end
+			end
+			local delta = to - from
+			local distance = delta.Magnitude
+			local positions = View.CalculateDistances(distance)
+			if #positions == 0 then
 				hide()
 				return false
 			end
-			local a = camera:WorldToViewportPoint(from)
-			local b = camera:WorldToViewportPoint(to)
-			if not (a.Z > 0 and b.Z > 0) then
-				hide()
-				return false
+			local direction = delta.Unit
+			local elapsed = os.clock()
+			local visible = false
+			for index, marker in markers do
+				marker.Visible = false
+				local along = positions[index]
+				if along == nil then
+					continue
+				end
+				local world = from + direction * along
+				local point, onscreen = camera:WorldToViewportPoint(world)
+				if point.Z <= 0 or not onscreen then
+					continue
+				end
+				local nextPoint = camera:WorldToViewportPoint(world + direction)
+				local dx, dy = nextPoint.X - point.X, nextPoint.Y - point.Y
+				if dx * dx + dy * dy < 0.01 then
+					continue
+				end
+				local edge = camera:WorldToViewportPoint(world + camera.CFrame.RightVector * Style.MarkerWidth)
+				local pixels = math.clamp(math.abs(edge.X - point.X), Style.MinPixels, Style.MaxPixels)
+				local pulse = View.Pulse(along, elapsed)
+				marker.Position = UDim2.fromOffset(point.X, point.Y)
+				marker.Size = UDim2.fromOffset(pixels, pixels)
+				marker.Rotation = math.deg(math.atan2(dy, dx)) + 90
+				marker.TextTransparency = Style.BaseTransparency - pulse * Style.PulseOpacity
+				marker.TextColor3 = Color3.fromHex(Style.Gold):Lerp(Color3.fromHex(Style.BrightGold), pulse)
+				marker.Visible = true
+				visible = true
 			end
-			local viewport = camera.ViewportSize
-			local layout = View.CalculateLayout(a.X, a.Y, b.X, b.Y, viewport.X, viewport.Y)
-			if not layout then
-				hide()
-				return false
-			end
-			barBetween(shaft, layout.StartX, layout.StartY, layout.ShaftX, layout.ShaftY)
-			barBetween(left, layout.LeftX, layout.LeftY, layout.TipX, layout.TipY)
-			barBetween(right, layout.RightX, layout.RightY, layout.TipX, layout.TipY)
-			gui.Enabled = true
-			return true
+			gui.Enabled = visible
+			return visible
 		end,
 		Hide = hide,
 		Destroy = function(): ()

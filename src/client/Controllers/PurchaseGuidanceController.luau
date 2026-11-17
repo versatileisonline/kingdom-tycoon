@@ -106,15 +106,7 @@ function Controller.Start(): ()
 			arrow.Hide()
 			return
 		end
-		local legHeight = 0
-		if currentHumanoid.RigType == Enum.HumanoidRigType.R6 then
-			local leg = currentRoot.Parent:FindFirstChild("Left Leg")
-			if leg and leg:IsA("BasePart") then
-				legHeight = leg.Size.Y
-			end
-		end
-		local from = currentRoot.Position
-			- Vector3.new(0, currentHumanoid.HipHeight + currentRoot.Size.Y / 2 + legHeight - Config.WORLD.FootLift, 0)
+		local from = currentRoot.Position + Vector3.new(0, Config.WORLD.CharacterLift, 0)
 		local to = currentTarget.Position + Vector3.new(0, Config.WORLD.TargetLift, 0)
 		if (to - from).Magnitude <= Config.WORLD.NearDistance then
 			arrow.Hide()
