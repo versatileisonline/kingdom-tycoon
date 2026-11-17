@@ -17,7 +17,8 @@ return table.freeze({
 		Muted = "C8B697",
 		Track = "241B16",
 	}),
-	MUSIC_IDS = table.freeze({ 1839906422, 139186694323000 }),
+	-- Free Creator Store medieval court, peaceful keep and dramatic battle tracks.
+	MUSIC_IDS = table.freeze({ 139186694323000, 87479584695420, 137177134668386 }),
 	MUSIC_LOAD_SECONDS = 12,
 	RUN_TESTS_IN_STUDIO = false,
 })

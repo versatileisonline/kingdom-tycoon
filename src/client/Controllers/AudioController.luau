@@ -2,6 +2,7 @@
 local SoundService = game:GetService("SoundService")
 local Settings = require(script.Parent.SettingsController)
 local Config = require(game:GetService("ReplicatedStorage").Shared.HudConfig)
+local MusicPlaylist = require(script.Parent.Parent.Audio.MusicPlaylist)
 local Controller = {}
 local connections: { RBXScriptConnection } = {}
 local originals: { [Sound]: { Group: SoundGroup?, Volume: number } } = {}
@@ -25,7 +26,7 @@ function Controller.Start(): ()
 	worldGroup = wg
 	local sound = Instance.new("Sound")
 	sound.Name = "KingdomBackgroundMusic"
-	sound.Looped = true
+	sound.Looped = false
 	sound.Volume = 1
 	sound.SoundGroup = mg
 	sound.Parent = SoundService
@@ -75,28 +76,51 @@ function Controller.Start(): ()
 			end)
 		)
 	end
-	task.spawn(function(): ()
-		for _, id in Config.MUSIC_IDS do
-			if not running then
-				return
+	local playlist = MusicPlaylist.new(Config.MUSIC_IDS)
+	local advancing = false
+	local function isCurrent(): boolean
+		-- A previous Start task must not touch a destroyed Sound after Shutdown/Start.
+		return running and music == sound
+	end
+	local function advance(): ()
+		if advancing or not isCurrent() then
+			return
+		end
+		advancing = true
+		while isCurrent() do
+			local id = playlist.Next()
+			if id == nil then
+				warn("[KingdomTycoon][AudioController] Background music unavailable")
+				break
 			end
+			sound:Stop()
 			sound.SoundId = "rbxassetid://" .. id
+			sound.TimePosition = 0
 			sound:Play()
 			local deadline = os.clock() + Config.MUSIC_LOAD_SECONDS
 			repeat
 				task.wait(0.1)
-			until not running or sound.IsLoaded or os.clock() >= deadline
-			if not running then
-				return
+			until not isCurrent() or sound.IsLoaded or os.clock() >= deadline
+			if not isCurrent() then
+				break
 			end
 			if sound.IsLoaded then
 				print("[KingdomTycoon][AudioController] Music loaded: " .. id)
-				return
+				break
 			end
 			sound:Stop()
+			playlist.Fail(id)
+			warn("[KingdomTycoon][AudioController] Skipping unavailable music: " .. id)
 		end
-		warn("[KingdomTycoon][AudioController] Background music unavailable")
-	end)
+		advancing = false
+	end
+	table.insert(
+		connections,
+		sound.Ended:Connect(function(): ()
+			task.spawn(advance)
+		end)
+	)
+	task.spawn(advance)
 	table.insert(connections, script.Destroying:Connect(Controller.Shutdown))
 end
 function Controller.Shutdown(): ()
