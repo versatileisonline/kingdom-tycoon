@@ -108,3 +108,13 @@ on rerun: `Mint purchase plates already clear lamps (30 checked, no changes)`.
 Preserve the current template in a new archive before restoring the backup for
 rollback. Static compile, formatting and lint pass; native clearance acceptance and
 installation are coordinated with the tutorial agent, without restarting its Play fixture.
+
+Coordinated Studio installation evidence: the tutorial agent reports cloud save
+version 104 with all 30 row plates corrected and the complete original template
+plus 30 original plate clones preserved in MintPlateClearanceBackup_20261117.
+Minimum conservative plate-circle/lamp-base gap measured 2.244 studs. Second-lane
+Dropper 3 is local (-20,0.8,-34); Upgrader 7 is (-20,0.8,20). The agent then left
+Play at Mint 2 Dropper 3 with 977920 temporary Mock Gold for creator walking and
+visual verification, normal test switches false. This stage is session-only and
+not saved progression. Native acceptance remains with the creator; no further
+Studio calls were made by the second-lane agent for this documentation update.
