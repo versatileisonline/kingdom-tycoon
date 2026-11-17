@@ -83,3 +83,7 @@ Final native Mint verification with the decorated source passed: `All sustained
 Mint coin containment checks passed` and `All Royal Mint checks passed`. All test
 switches were reset. Combined source is integrated on feat/mint-upgrader-chain;
 HUD commits preserve the other session's upgrader commits and changes.
+
+Coin size refinement (2026-11-17): the lower-left badge uses an 18px coin,
+vertically centered inside the panel, with the balance moved closer. Plate coin
+images stay 16px and physical Mint coin geometry is unchanged.

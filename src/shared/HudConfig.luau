@@ -10,6 +10,7 @@ return table.freeze({
 		PanelHeight = 440,
 		OrnamentSize = 96,
 		Margin = 32,
+		BadgeCoinSize = 18,
 		CoinSize = 16,
 		CoinGap = 4,
 	}),

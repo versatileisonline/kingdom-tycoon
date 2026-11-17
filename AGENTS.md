@@ -73,6 +73,9 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+HUD coin refinement: HudConfig.UI.BadgeCoinSize = 18; the badge coin sits inside
+its panel beside the balance. Plate icons remain 16px.
+
 Royal HUD refresh (2026-11-17): approved assets/hud sources map through
 HudConfig.ART to Coin 94873438043725, Corner 81173608072407, Banner 100935518284790.
 Client UI.RoyalStyle supplies decorative art and bounded button feedback; HudView

@@ -67,13 +67,14 @@ function View.new(parent: Instance, settings: any)
 	Style.Gradient(badge, "313039", "141720")
 	Style.Corners(badge, 42, 2)
 	local coin = Style.Image(badge, "Coin", Config.ART.Coin, 3)
-	coin.Position = UDim2.fromOffset(-12, -5)
-	coin.Size = UDim2.fromOffset(68, 68)
+	coin.AnchorPoint = Vector2.new(0, 0.5)
+	coin.Position = UDim2.new(0, 18, 0.5, 0)
+	coin.Size = UDim2.fromOffset(Config.UI.BadgeCoinSize, Config.UI.BadgeCoinSize)
 	local gold = text(badge, "Gold", "—", 20)
 	gold.Font = Enum.Font.GothamBold
 	gold.TextColor3 = color(C.Gold)
-	gold.Position = UDim2.fromOffset(64, 0)
-	gold.Size = UDim2.new(1, -76, 1, 0)
+	gold.Position = UDim2.fromOffset(44, 0)
+	gold.Size = UDim2.new(1, -56, 1, 0)
 	gold.ZIndex = 3
 	local open = button(screen, "SettingsButton", "⚙")
 	open.TextSize = 27
