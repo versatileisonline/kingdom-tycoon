@@ -16,4 +16,5 @@ preview/documentation/verification. Keep map and Rojo mappings unchanged.
 - Branch: feat/royal-shop-gamepasses, created and verified before edits.
 - Existing main is clean. Known strict plate-label diagnostics predate this work.
 - Use current checkout as approved: active Rojo sync must follow these sources.
-- Task 1: ownership state/config and tests — in progress.
+- Task 1: complete — ownership RED→GREEN, fresh Studio module tests, lint/build passed; ac343dd.
+- Task 2: complete — economy RED→GREEN and fresh engine tests passed; no schema/mapping changes.

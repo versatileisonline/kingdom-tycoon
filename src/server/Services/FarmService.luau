@@ -15,6 +15,8 @@ local PlotService = require(script.Parent.PlotService)
 local ProducerScheduler = require(script.Parent.Parent.Farms.ProducerScheduler)
 local FarmLedger = require(script.Parent.Parent.Farms.FarmLedger)
 local SessionEarnings = require(script.Parent.Parent.Farms.SessionEarnings)
+local Entitlements = require(script.Parent.EntitlementService)
+local ShopConfig = require(Shared.ShopConfig)
 local TutorialProgress = require(script.Parent.Parent.Presentation.TutorialProgress)
 local UpgraderCrossing = require(script.Parent.Parent.Farms.UpgraderCrossing)
 local logger = Logger.new("FarmService")
@@ -59,6 +61,8 @@ type Site = {
 	Active: boolean,
 }
 type Production = {
+	Owner: Player,
+	NextAutoCollect: number,
 	Kingdom: Model,
 	Sites: { Site },
 	Account: SessionEarnings.Account,
@@ -77,6 +81,7 @@ local unsubscribe: (() -> ())? = nil
 local running = false
 local initialized = false
 local updatedConnection: RBXScriptConnection? = nil
+local entitlementConnection: RBXScriptConnection? = nil
 
 local function part(model: Model, name: string): BasePart
 	local found = model:FindFirstChild(name)
@@ -102,6 +107,7 @@ end
 
 local function publish(state: Production): ()
 	local balance = state.Account.GetBalance()
+	state.Owner:SetAttribute("UncollectedGold", balance)
 	for _, site in state.Sites do
 		PlatePresentation.SetAmount(site.Label, "Collect Total", balance)
 		site.Plate.Color = if balance > 0 then Config.PLATES.AVAILABLE_COLOR else Config.PLATES.UNAVAILABLE_COLOR
@@ -256,6 +262,27 @@ function FarmService.TryStart(player: Player): boolean
 	return true
 end
 
+local function bank(player: Player, state: Production, collectedSite: string?): (boolean, number)
+	local success, amount = state.Account.Collect(function(value: number): boolean
+		local updated, reason = DataService.Update(player, function(draft): ()
+			assert(draft.Gold <= Config.DATA.MAX_SAFE_INTEGER - value, "Gold would exceed safe integer range")
+			draft.Gold += value
+		end)
+		if not updated then
+			logger.Warn(string.format("Collection retained for %d: %s", player.UserId, tostring(reason)))
+		end
+		return updated
+	end)
+	if success then
+		if collectedSite then
+			TutorialProgress.MarkCollected(player, collectedSite)
+		end
+		publish(state)
+		logger.Info(string.format("Collected %d Gold for %d", amount, player.UserId))
+	end
+	return success, amount
+end
+
 -- Server-only integration entry point. No caller-provided position or instance
 -- can choose the collection range; the named site's actual plate is validated.
 function FarmService.TryCollect(player: Player, siteId: string?): (boolean, number)
@@ -290,22 +317,44 @@ function FarmService.TryCollect(player: Player, siteId: string?): (boolean, numb
 		return false, 0
 	end
 	state.LastCollect = now
-	local success, amount = state.Account.Collect(function(value: number): boolean
-		local updated, reason = DataService.Update(player, function(draft): ()
-			assert(draft.Gold <= Config.DATA.MAX_SAFE_INTEGER - value, "Gold would exceed safe integer range")
-			draft.Gold += value
-		end)
-		if not updated then
-			logger.Warn(string.format("Collection retained for %d: %s", player.UserId, tostring(reason)))
-		end
-		return updated
-	end)
-	if success then
-		TutorialProgress.MarkCollected(player, selected.Id)
-		publish(state)
-		logger.Info(string.format("Collected %d Gold for %d", amount, player.UserId))
+	return bank(player, state, selected.Id)
+end
+
+function FarmService.TryCollectAnywhere(player: Player): (boolean, number)
+	local state = productions[player]
+	if
+		not running
+		or not state
+		or not state.Started
+		or player.Parent ~= Players
+		or PlotService.GetKingdom(player) ~= state.Kingdom
+		or not Entitlements.Owns(player, "CollectNow")
+	then
+		return false, 0
 	end
-	return success, amount
+	local character = player.Character
+	local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
+	local root = if character then character:FindFirstChild("HumanoidRootPart") else nil
+	if not humanoid or humanoid.Health <= 0 or not root or not root:IsA("BasePart") then
+		return false, 0
+	end
+	local now = os.clock()
+	if now - state.LastCollect < ShopConfig.COLLECT_COOLDOWN then
+		return false, 0
+	end
+	state.LastCollect = now
+	return bank(player, state, nil)
+end
+local function autoCollect(player: Player, state: Production): ()
+	if
+		state.Started
+		and Entitlements.Owns(player, "AutoCollect")
+		and state.Account.GetBalance() > 0
+		and os.clock() >= state.NextAutoCollect
+	then
+		local ok = bank(player, state, nil)
+		state.NextAutoCollect = if ok then 0 else os.clock() + ShopConfig.AUTO_RETRY_SECONDS
+	end
 end
 
 local function release(player: Player, _kingdom: Model): ()
@@ -344,6 +393,7 @@ local function release(player: Player, _kingdom: Model): ()
 	state.Account.Clear()
 	TutorialProgress.ResetCollections(player)
 	player:SetAttribute("StarterFarmStarted", nil)
+	player:SetAttribute("UncollectedGold", nil)
 	logger.Info(string.format("Cleaned up farm for %d (uncollected Gold discarded)", player.UserId))
 end
 
@@ -441,8 +491,12 @@ local function prepare(player: Player, kingdom: Model): ()
 	assert(source ~= nil, "WheatBundle unavailable")
 	local model = farmAssets(kingdom)
 	local startPlate = part(kingdom, "FarmStartPlate")
-	local account = SessionEarnings.new(Config.DATA.MAX_SAFE_INTEGER)
+	local account = SessionEarnings.new(Config.DATA.MAX_SAFE_INTEGER, function()
+		return if Entitlements.Owns(player, "DoubleGold") then 2 else 1
+	end)
 	local state: Production = {
+		Owner = player,
+		NextAutoCollect = 0,
 		Kingdom = kingdom,
 		Sites = {},
 		Account = account,
@@ -655,6 +709,12 @@ function FarmService.Start(): ()
 	running = true
 	unsubscribe = PlotService.ObserveKingdoms(prepare, release)
 	updatedConnection = DataService.ObserveUpdates(refreshProducers)
+	entitlementConnection = Entitlements.Observe(function(player, key)
+		local state = productions[player]
+		if key == "AutoCollect" and state then
+			autoCollect(player, state)
+		end
+	end)
 	for _, player in Players:GetPlayers() do
 		local assigned = PlotService.GetKingdom(player)
 		if assigned ~= nil then
@@ -674,6 +734,7 @@ function FarmService.Start(): ()
 							tickSite(site, os.clock())
 						end
 					end
+					autoCollect(player, state)
 					publish(state)
 					return nil
 				end)
@@ -690,6 +751,10 @@ end
 
 function FarmService.Shutdown(): ()
 	running = false
+	if entitlementConnection then
+		entitlementConnection:Disconnect()
+		entitlementConnection = nil
+	end
 	if updatedConnection ~= nil then
 		updatedConnection:Disconnect()
 		updatedConnection = nil

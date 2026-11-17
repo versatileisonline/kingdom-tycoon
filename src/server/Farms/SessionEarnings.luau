@@ -7,15 +7,23 @@ export type Account = {
 	GetBalance: () -> number,
 	Clear: () -> (),
 }
-function SessionEarnings.new(maxBalance: number): Account
+function SessionEarnings.new(maxBalance: number, getMultiplier: (() -> number)?): Account
 	local balance = 0
 	local collecting = false
 	return {
 		Credit = function(value: number): boolean
-			if value ~= value or value <= 0 or value % 1 ~= 0 or balance > maxBalance - value then
+			local multiplier = if getMultiplier then getMultiplier() else 1
+			if
+				value ~= value
+				or value <= 0
+				or value % 1 ~= 0
+				or multiplier < 1
+				or multiplier % 1 ~= 0
+				or value > (maxBalance - balance) / multiplier
+			then
 				return false
 			end
-			balance += value
+			balance += value * multiplier
 			return true
 		end,
 		Collect = function(commit: (number) -> boolean): (boolean, number)
