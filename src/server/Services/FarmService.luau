@@ -27,7 +27,15 @@ type SiteSettings = {
 	BUNDLE_LIFETIME_SECONDS: number,
 	CONVEYOR_SPEED: number,
 }
-type Upgrader = { Id: string, Multiplier: number, Model: Model, Zone: BasePart, Container: Instance, Owned: boolean }
+type Upgrader = {
+	Id: string,
+	Multiplier: number,
+	Model: Model,
+	Zone: BasePart,
+	Container: Instance,
+	Owned: boolean,
+	ActivationPositions: { [BasePart]: Vector3? },
+}
 type Site = {
 	Id: string,
 	Settings: SiteSettings,
@@ -144,10 +152,13 @@ local function refreshProducers(player: Player): ()
 		for _, upgrader in site.Upgraders do
 			local owned = data.PurchasedBuildings[upgrader.Id] == true
 			if owned and not upgrader.Owned then
-				-- Ownership begins now; discard pre-purchase travel segments.
+				-- Only this newly owned arch starts at purchase-time positions. Older
+				-- arches must retain pending segments from the previous production tick.
 				for coin in site.Expires do
-					site.PreviousPositions[coin] = coin.Position
+					upgrader.ActivationPositions[coin] = coin.Position
 				end
+			elseif not owned and upgrader.Owned then
+				table.clear(upgrader.ActivationPositions)
 			end
 			upgrader.Owned = owned
 		end
@@ -317,6 +328,9 @@ local function release(player: Player, _kingdom: Model): ()
 		end
 		table.clear(site.Expires)
 		table.clear(site.PreviousPositions)
+		for _, upgrader in site.Upgraders do
+			table.clear(upgrader.ActivationPositions)
+		end
 		table.clear(site.Upgraders)
 		site.Ledger.Clear()
 		-- FarmService retains the hidden starter model. PurchaseService retains the
@@ -461,6 +475,7 @@ local function prepare(player: Player, kingdom: Model): ()
 						Zone = zone,
 						Container = unlocks,
 						Owned = false,
+						ActivationPositions = {},
 					})
 				end
 			end
@@ -541,13 +556,14 @@ local function tickSite(site: Site, now: number): ()
 		local previous = site.PreviousPositions[bundle]
 		if previous ~= nil then
 			for _, upgrader in site.Upgraders do
+				local from = upgrader.ActivationPositions[bundle] or previous
 				if
 					upgrader.Owned
 					and upgrader.Model.Parent == upgrader.Container
 					and site.Model.Parent == upgrader.Container
 					and upgrader.Zone.Parent == upgrader.Model
 					and UpgraderCrossing.Crosses(
-						previous,
+						from,
 						position,
 						upgrader.Zone.CFrame,
 						upgrader.Zone.Size,
@@ -560,6 +576,11 @@ local function tickSite(site: Site, now: number): ()
 			end
 		end
 		site.PreviousPositions[bundle] = position
+	end
+	-- Purchase-time baselines are needed for one tick only; discard references
+	-- even when coins expired or an arch was temporarily absent from the plot.
+	for _, upgrader in site.Upgraders do
+		table.clear(upgrader.ActivationPositions)
 	end
 	for _, bundle in workspace:GetPartsInPart(site.Pit, site.Overlap) do
 		if site.Expires[bundle] ~= nil then
