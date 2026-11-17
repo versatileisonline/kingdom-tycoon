@@ -82,3 +82,9 @@ if game:GetService("RunService"):IsStudio() and require(Shared.TutorialConfig).R
 		require(script.Tests.TutorialServiceTests).Run()
 	end)
 end
+
+if game:GetService("RunService"):IsStudio() and script:GetAttribute("StudioTutorialPreview") == true then
+	task.spawn(function(): ()
+		require(script.Tests.TutorialPreview).Run()
+	end)
+end
