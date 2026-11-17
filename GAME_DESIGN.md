@@ -109,6 +109,14 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Royal Mint (2026-11-17): approved the revised open-air concept: long conveyor,
+  stone-paved yard, gold-and-iron presses and royal timber/brass decoration, no
+  roof. WoodenWalls unlocks RoyalMint for 60 Gold including the complete yard
+  and first press. Eight total presses cost 60/70/90/110/130/150/170/190 Gold;
+  each yields 3 Gold every three seconds. Farm and Mint share one uncollected
+  balance; either collector collects the total. Only the next purchase is shown.
+  Approved a backed-up one-time Studio Edit recipe. Background gate/wall art
+  remains inspiration rather than part of this build.
 - Plate label revision (2026-11-16): approved centered hovering two-line labels:
   purchase name then configured price with the HUD's gold-colored ●; collector
   Collect: then current amount with the same ●. Supersedes the prior name-only

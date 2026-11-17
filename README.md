@@ -46,6 +46,8 @@ More help: [Rojo documentation](https://rojo.space/docs).
 
 ## Project structure
 
+Royal Mint progression and verification: [docs/ROYAL_MINT.md](docs/ROYAL_MINT.md).
+
 Wooden wall asset contract and verification: [docs/WOODEN_WALLS.md](docs/WOODEN_WALLS.md).
 
 ```text
@@ -66,6 +68,7 @@ src/
 │   │   └── PlotRegistry.luau       # non-yielding session ownership and exclusivity
 │   ├── Farms/
 │   │   ├── ProducerScheduler.luau  # bounded multi-dropper timers and fair capacity sharing
+│   │   ├── SessionEarnings.luau    # shared farm/Mint session balance and collection
 │   │   └── FarmLedger.luau         # private session earnings, cap, expiry, exactly-once bundle credit
 │   └── Tests/
 │       ├── DataLayerTests.luau     # opt-in Studio checks; never runs in published servers
@@ -88,6 +91,7 @@ src/
     ├── HudConfig.luau              # HUD palette, session defaults, music IDs
     ├── Config.luau                 # shared constants, including MAX_ARMY_SIZE = 10
     ├── FarmConfig.luau             # starter farm tuning and opt-in test switch
+    ├── MintConfig.luau             # eight Mint producers, coin value and physics caps
     ├── PurchaseConfig.luau         # prices, prerequisites, and purchase plate settings
     ├── PlatePresentation.luau      # compact plates and centered hovering text labels
     ├── Logger.luau                 # typed, scoped Info/Warn logging

@@ -21,3 +21,15 @@ Session earnings survive death/failed updates, disappear on departure; purchases
 5. Independent whole-branch review; docs, small modular commits, save Edit place, tests false.
 
 No push/publish. No background wall/gate changes. Source lives on feat/royal-mint.
+
+## Execution record
+
+Completed on feat/royal-mint: shared account, production/purchases, backed-up
+assets, normal-bootstrap suites and documentation. Independent review clean after
+adding actual coin transit checks for every Mint producer. Tests: new Mint/shared
+account; existing purchase, farm and data suites separately. Format/lint/strict
+Roblox types/build pass. Source template preserved; 427 anchored script-free Mint
+parts and all corners fit. Saved cloud place version80 in Edit with tests false.
+Native visual/walking/multiplayer/pacing and Persistent rejoin acceptance remain.
+Ruling: work in the existing checkout on the approved dedicated feature branch
+so the active Rojo session continues syncing the intended source.

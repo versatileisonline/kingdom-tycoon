@@ -73,6 +73,17 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Royal Mint (2026-11-17): optional PurchaseUnlocks.RoyalMint has direct Conveyor,
+CollectionPit, CollectPlate (descendant EarningsLabel) and Producers.Dropper01–08
+(each direct DropPoint). PurchasePlates includes RoyalMint and RoyalMintDropper02–08
+with PurchaseLabel. ServerStorage.RoyalMintCoin is a single script-free BasePart.
+FarmService manages both sites, SessionEarnings shares the balance, FarmLedger
+retains site token tracking. Both collectors say Collect Total. MintConfig owns
+production; PurchaseConfig adds typed ProductionSite routing. Whole-yard parenting
+belongs to PurchaseService. Recipe tools/BuildRoyalMint.luau preserves the original
+in RoyalMintBackup_20261117. No remotes/schema/Rojo changes. See docs/ROYAL_MINT.md
+and docs/ROYAL_MINT_ASSETS.md; approved reference docs/ROYAL_MINT_CONCEPT.png.
+
 Centered priced plate labels (2026-11-16) supersede earlier name-only labels.
 PlatePresentation explicitly adorns each plate, clears inherited offsets and uses
 camera-relative vertical offset so the text stays above the projected plate center.
@@ -297,6 +308,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Royal Mint checks: enable only MintConfig.RUN_TESTS_IN_STUDIO in Mock mode, sync
+and Play before claiming. Expect All shared session earnings checks passed and
+All Royal Mint checks passed. Reset afterward. Run existing farm/purchase/data
+suites separately. Asset installation and rollback: docs/ROYAL_MINT_ASSETS.md.
+
 Centered-label checks: enable only PurchaseConfig.RUN_TESTS_IN_STUDIO in Mock
 mode, sync and Play. Expect All centered plate presentation checks passed plus
 existing purchase success logs. Separately enable only FarmConfig tests for live
@@ -399,6 +415,22 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Royal Mint progression (2026-11-17):
+- [x] Approved open-air concept implemented: 96-stud belt, eight presses, 427
+  anchored script-free Mint parts, stone yard, lanterns and crown sign; source
+  template preserved in RoyalMintBackup_20261117. Existing walls/farm preserved.
+- [x] Eight sequential purchases, shared Collect Total balance, server-only
+  validation and cleanup; no schema/remotes/Rojo changes.
+- [x] Normal-bootstrap Mock Mint suite passes, including actual coin transit from
+  all eight presses, both collectors, overflow retention, purchase/restoration
+  and pre-start inactivity. Existing purchase, farm and data suites pass separately.
+- [x] Formatting/lint, strict Roblox type analysis, code-only build, rotation-aware
+  asset corner audit and independent review pass. Edit preview inspected.
+- [x] Cloud place saved version 80, Edit mode, all tests false, no temporary preview
+  or runtime kingdoms; committed on feat/royal-mint. No publish/push.
+- [ ] Creator appearance/walking/pacing acceptance, native multiplayer touches,
+  and full Persistent player rejoin remain hands-on checks.
 
 Centered priced plate labels (2026-11-16):
 - [x] Shared HUD gold ●, configured purchase prices, Collect:/live balance, explicit
