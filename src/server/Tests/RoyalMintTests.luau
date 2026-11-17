@@ -106,6 +106,13 @@ function Tests.Run(): ()
 		local mint = unlocks:FindFirstChild("RoyalMint") :: Model
 		assert(mint, "Mint missing")
 		local producers = mint:FindFirstChild("Producers") :: Folder
+		local authoredBelt = part(mint, "Conveyor")
+		local firstProducer = producers:FindFirstChild("Dropper01") :: Model
+		local dropHeight = part(firstProducer, "DropPoint").Position.Y
+		assert(
+			dropHeight - (authoredBelt.Position.Y + authoredBelt.Size.Y / 2) >= 3,
+			"Dropper outlet must visibly drop coins from above the belt"
+		)
 		assert(#producers:GetChildren() == 1, "Future producers visible")
 		for index = 2, 8 do
 			local id = string.format("RoyalMintDropper%02d", index)
@@ -187,9 +194,18 @@ function Tests.Run(): ()
 					observed[coin] = id
 					assert(coin.CollisionGroup == "KingdomMintCoins", "Coin not isolated")
 					local position = belt.CFrame:PointToObjectSpace(coin.Position)
+					local collectorPosition = pit.CFrame:PointToObjectSpace(coin.Position)
+					local inCollector = math.abs(collectorPosition.X) <= pit.Size.X / 2
+						and math.abs(collectorPosition.Y) <= pit.Size.Y / 2
+						and math.abs(collectorPosition.Z) <= pit.Size.Z / 2
 					assert(
-						position.Y >= 0 and math.abs(position.X) <= belt.Size.X / 2 + 0.8,
-						"Coin escaped conveyor during sustained production: " .. id
+						inCollector or (position.Y >= 0 and math.abs(position.X) <= belt.Size.X / 2 + 0.8),
+						"Coin escaped conveyor during sustained production: "
+							.. id
+							.. " relative="
+							.. tostring(position)
+							.. " pitDistance="
+							.. tostring((coin.Position - pit.Position).Magnitude)
 					)
 				end
 			end
