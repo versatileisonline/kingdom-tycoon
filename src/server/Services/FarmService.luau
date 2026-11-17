@@ -15,6 +15,7 @@ local PlotService = require(script.Parent.PlotService)
 local ProducerScheduler = require(script.Parent.Parent.Farms.ProducerScheduler)
 local FarmLedger = require(script.Parent.Parent.Farms.FarmLedger)
 local SessionEarnings = require(script.Parent.Parent.Farms.SessionEarnings)
+local TutorialProgress = require(script.Parent.Parent.Presentation.TutorialProgress)
 local UpgraderCrossing = require(script.Parent.Parent.Farms.UpgraderCrossing)
 local logger = Logger.new("FarmService")
 
@@ -300,6 +301,7 @@ function FarmService.TryCollect(player: Player, siteId: string?): (boolean, numb
 		return updated
 	end)
 	if success then
+		TutorialProgress.MarkCollected(player, selected.Id)
 		publish(state)
 		logger.Info(string.format("Collected %d Gold for %d", amount, player.UserId))
 	end
@@ -340,6 +342,7 @@ local function release(player: Player, _kingdom: Model): ()
 		end
 	end
 	state.Account.Clear()
+	TutorialProgress.ResetCollections(player)
 	player:SetAttribute("StarterFarmStarted", nil)
 	logger.Info(string.format("Cleaned up farm for %d (uncollected Gold discarded)", player.UserId))
 end
@@ -433,6 +436,7 @@ local function prepare(player: Player, kingdom: Model): ()
 		return
 	end
 	assert(productions[player] == nil, "Player already has production")
+	TutorialProgress.ResetCollections(player)
 	local source = template
 	assert(source ~= nil, "WheatBundle unavailable")
 	local model = farmAssets(kingdom)
