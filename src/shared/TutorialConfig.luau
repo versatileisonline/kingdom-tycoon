@@ -23,6 +23,10 @@ for _, path in paths do
 end
 return table.freeze({
 	STYLE = table.freeze({
+		DisplayOrder = 5,
+		MaxHeadFraction = 0.38,
+		NeckFraction = 0.45,
+		HeadSpread = 0.65,
 		Thickness = 12,
 		HeadLength = 30,
 		Outline = 2,
