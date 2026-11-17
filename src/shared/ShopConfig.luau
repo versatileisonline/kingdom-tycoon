@@ -38,6 +38,5 @@ return table.freeze({
 	AUTO_RETRY_SECONDS = 1,
 	RUN_TESTS_IN_STUDIO = false,
 	-- Approved shop illustration atlas. Zero means use the existing coin artwork.
-	ART_ATLAS = "",
-	ART_CELL = 512,
+	ART_ATLAS = "rbxassetid://83808747914581",
 })

@@ -20,6 +20,7 @@ return table.freeze({
 		HelperArrow = true,
 		LowGraphics = false,
 		MenuOpen = false,
+		ShopOpen = false,
 	}),
 	COLORS = table.freeze({
 		Panel = "201F25",
