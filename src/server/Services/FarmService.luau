@@ -1,6 +1,7 @@
 --!strict
 
 local Players = game:GetService("Players")
+local PhysicsService = game:GetService("PhysicsService")
 local RunService = game:GetService("RunService")
 local ServerStorage = game:GetService("ServerStorage")
 local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
@@ -301,6 +302,15 @@ local function createSite(
 	account: SessionEarnings.Account
 ): Site
 	validateModel(model)
+	if id == "RoyalMint" then
+		-- Only the belt and explicitly authored guides contact coins. Players,
+		-- decorative machine geometry and other coins cannot kick them off course.
+		for _, item in model:GetDescendants() do
+			if item:IsA("BasePart") and (item.Name == "Conveyor" or item:GetAttribute("MintCoinGuide") == true) then
+				item.CollisionGroup = MintSettings.TRACK_COLLISION_GROUP
+			end
+		end
+	end
 	local label = model:FindFirstChild("EarningsLabel", true) :: TextLabel
 	local producerFolder = model:FindFirstChild("Producers")
 	local producers: { Producer } = {}
@@ -330,6 +340,9 @@ local function createSite(
 	local overlap = OverlapParams.new()
 	overlap.FilterType = Enum.RaycastFilterType.Include
 	overlap.FilterDescendantsInstances = { bundles }
+	if id == "RoyalMint" then
+		overlap.CollisionGroup = MintSettings.TRACK_COLLISION_GROUP
+	end
 	local site: Site = {
 		Id = id,
 		Settings = settings,
@@ -430,6 +443,9 @@ local function dropBundle(site: Site, drop: BasePart, now: number): ()
 	bundle.Anchored = false
 	bundle.CanCollide = true
 	bundle.CanQuery = true
+	if site.Id == "RoyalMint" then
+		bundle.CollisionGroup = MintSettings.COIN_COLLISION_GROUP
+	end
 	bundle.CFrame = drop.CFrame
 	bundle.Parent = site.Bundles
 	local ok, reason = pcall(function(): string?
@@ -501,6 +517,19 @@ function FarmService.Start(): ()
 	local unlocks = kingdom:FindFirstChild("PurchaseUnlocks")
 	if unlocks ~= nil and unlocks:FindFirstChild("RoyalMint") ~= nil then
 		mintTemplate = validateSource(ServerStorage:FindFirstChild("RoyalMintCoin"), "RoyalMintCoin")
+		for _, name in { MintSettings.COIN_COLLISION_GROUP, MintSettings.TRACK_COLLISION_GROUP } do
+			if not PhysicsService:IsCollisionGroupRegistered(name) then
+				PhysicsService:RegisterCollisionGroup(name)
+			end
+		end
+		for _, group in PhysicsService:GetRegisteredCollisionGroups() do
+			PhysicsService:CollisionGroupSetCollidable(MintSettings.COIN_COLLISION_GROUP, group.name, false)
+		end
+		PhysicsService:CollisionGroupSetCollidable(
+			MintSettings.COIN_COLLISION_GROUP,
+			MintSettings.TRACK_COLLISION_GROUP,
+			true
+		)
 	else
 		mintTemplate = nil
 	end

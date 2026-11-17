@@ -121,6 +121,20 @@ function Tests.Run(): ()
 		character:PivotTo(original)
 		local farm = kingdom:FindFirstChild("StarterFarm") :: Model
 		local active = mint:FindFirstChild("ActiveBundles") :: Folder
+		local physics = game:GetService("PhysicsService")
+		assert(physics:IsCollisionGroupRegistered("KingdomMintCoins"), "Mint coins need an isolated collision group")
+		assert(
+			not physics:CollisionGroupsAreCollidable("KingdomMintCoins", "Default"),
+			"Players/scenery can knock coins off"
+		)
+		assert(
+			not physics:CollisionGroupsAreCollidable("KingdomMintCoins", "KingdomMintCoins"),
+			"Mint coins can collide with one another"
+		)
+		assert(
+			physics:CollisionGroupsAreCollidable("KingdomMintCoins", "KingdomMintTrack"),
+			"Mint coins cannot contact the track"
+		)
 		-- Capture real coins from every producer; shared balance alone could be farm income.
 		local samples: { [string]: BasePart? } = {}
 		local sampleDeadline = os.clock() + 5
@@ -158,6 +172,45 @@ function Tests.Run(): ()
 				"Coin failed to reach pit before expiry: " .. id
 			)
 		end
+		-- Sustain all eight producers with the owner on the belt. A single successful
+		-- sample from each press did not catch intermittent collision losses.
+		local belt = part(mint, "Conveyor")
+		local observed: { [BasePart]: string } = {}
+		local arrivals: { [string]: number } = {}
+		character:PivotTo(CFrame.new(belt.Position + Vector3.new(0, 5, 0)))
+		local soakDeadline = os.clock() + 36
+		repeat
+			for _, coin in active:GetChildren() do
+				if coin:IsA("BasePart") then
+					local id = coin:GetAttribute("ProducerId")
+					assert(typeof(id) == "string", "Coin missing producer identity")
+					observed[coin] = id
+					assert(coin.CollisionGroup == "KingdomMintCoins", "Coin not isolated")
+					local position = belt.CFrame:PointToObjectSpace(coin.Position)
+					assert(
+						position.Y >= 0 and math.abs(position.X) <= belt.Size.X / 2 + 0.8,
+						"Coin escaped conveyor during sustained production: " .. id
+					)
+				end
+			end
+			for coin, id in observed do
+				if coin.Parent ~= active then
+					assert((coin.Position - pit.Position).Magnitude < 8, "Coin lost/expired before collector: " .. id)
+					arrivals[id] = (arrivals[id] or 0) + 1
+					observed[coin] = nil
+				end
+			end
+			assert(#active:GetChildren() <= MintConfig.MAX_BUNDLES, "Sustained coin cap exceeded")
+			task.wait(0.1)
+		until os.clock() >= soakDeadline
+		character:PivotTo(original)
+		for index = 1, 8 do
+			assert(
+				(arrivals[string.format("Dropper%02d", index)] or 0) >= 4,
+				"Producer starved during sustained production"
+			)
+		end
+		print("All sustained Mint coin containment checks passed")
 		local endTime = os.clock() + 25
 		repeat
 			task.wait(0.25)
