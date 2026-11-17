@@ -73,6 +73,16 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+First Mint upgrader: PurchaseUnlocks.RoyalMintUpgrader01 is an anchored script-free
+Model with direct UpgradeZone (8x4x4 at local -80,5.5,-52) facing+Z. Matching plate
+PurchasePlates.RoyalMintUpgrader01 has PurchaseLabel. tools/BuildMintUpgrader.luau
+preserves the original template in MintUpgraderBackup_20261117. FarmLedger owns
+per-token values/applied IDs; Farms.UpgraderCrossing supplies forward swept-box
+checks. PurchaseService parents the model; FarmService owns effects. Only one
+250-Gold upgrader is configured. Tests.MintUpgraderTests runs via the dedicated
+MintConfig.RUN_UPGRADER_TESTS_IN_STUDIO switch. No remotes/schema/mapping changes.
+See docs/MINT_UPGRADER.md and docs/MINT_UPGRADER_ASSETS.md.
+
 Mint refinement (2026-11-17): tools/ReviseRoyalMint.luau widens paving to 88 x 128
 (local X -100..-12) and moves lane center to X -80, preserving the template+coin
 in RoyalMintRevisionBackup_20261117. tools/RaiseRoyalMintDroppers.luau raises
@@ -324,6 +334,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Upgrader prototype: enable only MintConfig.RUN_UPGRADER_TESTS_IN_STUDIO in Mock,
+sync and Play before claiming. Expect All Mint upgrader prototype checks passed,
+plus upgrader ledger/geometry/directional success messages. Reset switch afterward.
+Run other suites separately. Runtime model and asset contract: docs/MINT_UPGRADER.md.
+
 Mint containment: only MintConfig.RUN_TESTS_IN_STUDIO in Mock; Play before claim.
 Expect All sustained Mint coin containment checks passed then All Royal Mint
 checks passed. Includes elevated drop, per-producer transit and 36-second, eight-producer
@@ -438,6 +453,21 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+First Mint upgrader prototype (2026-11-17):
+- [x] One 250-Gold arch after Dropper 8, private once-only 3->6 coin values,
+  brighter gold feedback and saved ownership. One live config/model/plate only.
+- [x] Forward swept crossing catches delayed ticks; purchase baselines prevent
+  retroactive effects. Prior template preserved in MintUpgraderBackup_20261117.
+  Arch has 40 anchored script-free parts; existing Mint physics unchanged.
+- [x] Normal-bootstrap prototype suite passes: ledger/geometry, real first stream,
+  unchanged downstream streams, purchase rejection, shared collection, cleanup and
+  restoration. Existing Mint containment, farm, purchase and HUD suites pass
+  separately. Formatting/lint/strict Roblox types/build pass; source review clean.
+- [x] Edit preview inspected; cloud saved version 89, tests false, no temporary
+  preview/runtime kingdoms. Committed on feat/mint-upgrader-prototype; no push/publish.
+- [ ] Creator appearance/label/native walking acceptance, multiplayer touches and
+  full Persistent player rejoin remain hands-on. Seven further arches are future work.
 
 Mint refinement and music (2026-11-17):
 - [x] First lane moved left; 88 x 128 paving reserves a parallel lane. Eight fuller

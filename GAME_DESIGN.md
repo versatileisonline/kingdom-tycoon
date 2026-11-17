@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- First Mint upgrader (2026-11-17): approved one playable prototype, priced 250 Gold
+  after all eight droppers. Reuse the approved blue/iron/gold arch with amber
+  inset, crown emblem and small ×2 label. Passing coins double once 3 -> 6 and become
+  brighter gold without physics changes. Build with a backed-up Studio recipe.
+  Plan for eight identical arches later; fast escalating prices are preferred
+  over long waits. Remaining seven prices are provisional, not live purchases.
 - Mint refinement (2026-11-17): fix intermittent coin loss first; move the first
   production lane left and reserve space for a later parallel conveyor. Use fuller
   housed gold droppers, raised to visibly drop coins onto the belt. Add three free

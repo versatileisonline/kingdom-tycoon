@@ -46,6 +46,8 @@ More help: [Rojo documentation](https://rojo.space/docs).
 
 ## Project structure
 
+First Mint upgrader prototype: [docs/MINT_UPGRADER.md](docs/MINT_UPGRADER.md).
+
 Royal Mint progression and verification: [docs/ROYAL_MINT.md](docs/ROYAL_MINT.md).
 Current raised-dropper assets: [docs/ROYAL_MINT_REVISION.md](docs/ROYAL_MINT_REVISION.md).
 Three-track music rotation: [docs/MUSIC_PLAYLIST.md](docs/MUSIC_PLAYLIST.md).
