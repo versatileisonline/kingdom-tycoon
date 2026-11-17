@@ -87,3 +87,9 @@ HUD commits preserve the other session's upgrader commits and changes.
 Coin size refinement (2026-11-17): the lower-left badge uses an 18px coin,
 vertically centered inside the panel, with the balance moved closer. Plate coin
 images stay 16px and physical Mint coin geometry is unchanged.
+
+Compact icon acceptance: native Play reported an 18 x 18 loaded image entirely
+inside the badge, and the desktop screenshot confirmed the small coin beside
+the balance. Output: `All compact HUD gold icon checks passed`. Formatting,
+lint and Rojo build passed. Saved the combined place as Roblox version 97.
+Leaderboard work was explicitly deferred; no leaderboard changes were made.
