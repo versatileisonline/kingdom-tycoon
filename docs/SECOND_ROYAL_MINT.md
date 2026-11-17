@@ -86,3 +86,25 @@ Final suite rerun includes the original-Mint tutorial collection guard and the
 durable two-lane ledger suite; both passed. Edit preview confirms two matching
 parallel belts fit the existing yard. Temporary preview removed and test switches
 reset before saving. Native appearance/pacing remains creator acceptance.
+
+## Purchase-plate lamp clearance
+
+Creator requested shifting dropper and upgrader purchase rows left on both lanes
+because some plates overlapped lamp bases. Final local X is -68 for
+RoyalMintDropper02–08/RoyalMintUpgrader01–08, and -20 for
+RoyalMint02Dropper02–08/RoyalMint02Upgrader01–08: 30 plates, four studs left.
+Preserve every Y/Z, rotation, rim/label alignment, both entry plates and collectors.
+For example Mint 2 Dropper 3 moves from (-16,0.8,-34) to (-20,0.8,-34).
+
+BuildSecondRoyalMint normalizes these absolute positions, including when its source
+first lane was already moved. For existing two-lane assets use
+`tools/ShiftMintPurchasePlates.luau` only in Edit with no active kingdoms. It validates
+all 30 positions before cloning, preserves the original under
+ServerStorage.MintPlateClearanceBackup_20261117, and swaps only after audits. It
+accepts old or corrected positions; an already-correct template is a no-op even if
+the backup exists. Unexpected positions or a conflicting backup stop installation.
+Expected Output: `Mint purchase plate clearance checks passed (30 checked, ... moved)`;
+on rerun: `Mint purchase plates already clear lamps (30 checked, no changes)`.
+Preserve the current template in a new archive before restoring the backup for
+rollback. Static compile, formatting and lint pass; native clearance acceptance and
+installation are coordinated with the tutorial agent, without restarting its Play fixture.

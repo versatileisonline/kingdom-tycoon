@@ -81,6 +81,27 @@ local ok, reason = xpcall(function(): ()
 		arch.Parent = unlocks
 		clonePlate(oldId, newId)
 	end
+	-- Normalize row plates to their accepted lamp-clearance positions. Absolute
+	-- local X avoids a second shift when the source lane was already corrected.
+	for _, row in { { Prefix = "RoyalMint", X = -68 }, { Prefix = "RoyalMint02", X = -20 } } do
+		for index = 1, 8 do
+			local ids = { string.format("%sUpgrader%02d", row.Prefix, index) }
+			if index > 1 then
+				table.insert(ids, string.format("%sDropper%02d", row.Prefix, index))
+			end
+			for _, id in ids do
+				local plate = plates[id] :: BasePart
+				local localPosition = pivot:PointToObjectSpace(plate.Position)
+				local delta = pivot:VectorToWorldSpace(Vector3.new(row.X - localPosition.X, 0, 0))
+				plate.CFrame += delta
+				for _, child in plate:GetDescendants() do
+					if child:IsA("BasePart") then
+						child.CFrame += delta
+					end
+				end
+			end
+		end
+	end
 	-- Every rotated corner must remain in the existing yard; entry plate is outside
 	-- the yard at the approach, matching the original lane's purchase convention.
 	for _, item in lane:GetDescendants() do

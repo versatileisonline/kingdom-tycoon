@@ -73,6 +73,11 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Mint plate clearance: both dropper/upgrader rows move four studs left (first lane
+local X -68, second -20), preserving entry/collector positions. New clone recipe
+normalizes all 30 plates. tools/ShiftMintPurchasePlates.luau is a repeat-safe Edit
+companion with MintPlateClearanceBackup_20261117; see docs/SECOND_ROYAL_MINT.md.
+
 Second Royal Mint lane (2026-11-17): RoyalMint02 clones the first belt +48 local X,
 with eight droppers and eight arches. MintConfig.SITES routes independent ledgers,
 32-coin caps and 9-Gold base coins (first stays 3). All collectors share earnings.

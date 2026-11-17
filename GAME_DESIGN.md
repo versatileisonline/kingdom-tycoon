@@ -109,6 +109,9 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Mint plate clearance (2026-11-17): creator requested moving dropper and upgrader
+  purchase rows left on both belts to clear lamp posts. Shift 30 plates four studs
+  left; preserve entry plates, collectors, production and prices.
 - Second Mint lane (2026-11-17): approved cloning the complete first lane into the
   reserved right-hand space, eight droppers then eight doubling arches after the
   original final upgrader. Approved 12000 opening price and the explicit steady-buy
