@@ -15,6 +15,7 @@ local PlotService = require(script.Parent.PlotService)
 local ProducerScheduler = require(script.Parent.Parent.Farms.ProducerScheduler)
 local FarmLedger = require(script.Parent.Parent.Farms.FarmLedger)
 local SessionEarnings = require(script.Parent.Parent.Farms.SessionEarnings)
+local UpgraderCrossing = require(script.Parent.Parent.Farms.UpgraderCrossing)
 local logger = Logger.new("FarmService")
 
 type Producer = { Model: Model?, Drop: BasePart, PurchaseId: string }
@@ -26,6 +27,7 @@ type SiteSettings = {
 	BUNDLE_LIFETIME_SECONDS: number,
 	CONVEYOR_SPEED: number,
 }
+type Upgrader = { Id: string, Multiplier: number, Model: Model, Zone: BasePart, Container: Instance, Owned: boolean }
 type Site = {
 	Id: string,
 	Settings: SiteSettings,
@@ -41,6 +43,8 @@ type Site = {
 	Bundles: Folder,
 	Ledger: FarmLedger.Ledger,
 	Expires: { [BasePart]: number },
+	PreviousPositions: { [BasePart]: Vector3? },
+	Upgraders: { Upgrader },
 	Overlap: OverlapParams,
 	Connection: RBXScriptConnection?,
 	Active: boolean,
@@ -137,6 +141,16 @@ local function refreshProducers(player: Player): ()
 				activeCount += 1
 			end
 		end
+		for _, upgrader in site.Upgraders do
+			local owned = data.PurchasedBuildings[upgrader.Id] == true
+			if owned and not upgrader.Owned then
+				-- Ownership begins now; discard pre-purchase travel segments.
+				for coin in site.Expires do
+					site.PreviousPositions[coin] = coin.Position
+				end
+			end
+			upgrader.Owned = owned
+		end
 		site.Plate.CanTouch = site.Active
 		site.Conveyor.AssemblyLinearVelocity = if site.Active
 			then site.Conveyor.CFrame.LookVector * site.Settings.CONVEYOR_SPEED
@@ -158,6 +172,26 @@ function FarmService.HasProducer(player: Player, purchaseId: string): boolean
 				if producer.PurchaseId == purchaseId then
 					return true
 				end
+			end
+		end
+	end
+	return false
+end
+
+function FarmService.HasUpgrader(player: Player, purchaseId: string): boolean
+	local state = productions[player]
+	if state == nil or PlotService.GetKingdom(player) ~= state.Kingdom then
+		return false
+	end
+	for _, site in state.Sites do
+		for _, upgrader in site.Upgraders do
+			if upgrader.Id == purchaseId then
+				return upgrader.Zone.Parent == upgrader.Model
+					and upgrader.Zone.Anchored
+					and upgrader.Zone.CanQuery
+					and not upgrader.Zone.CanCollide
+					and upgrader.Container:IsDescendantOf(state.Kingdom)
+					and (upgrader.Model.Parent == nil or upgrader.Model.Parent == upgrader.Container)
 			end
 		end
 	end
@@ -282,6 +316,8 @@ local function release(player: Player, _kingdom: Model): ()
 			end
 		end
 		table.clear(site.Expires)
+		table.clear(site.PreviousPositions)
+		table.clear(site.Upgraders)
 		site.Ledger.Clear()
 		-- FarmService retains the hidden starter model. PurchaseService retains the
 		-- whole hidden Mint and is responsible for its destruction on release.
@@ -364,6 +400,8 @@ local function createSite(
 			account
 		),
 		Expires = {},
+		PreviousPositions = {},
+		Upgraders = {},
 		Overlap = overlap,
 		Connection = nil,
 		Active = false,
@@ -407,6 +445,31 @@ local function prepare(player: Player, kingdom: Model): ()
 		local coin = mintTemplate
 		assert(coin ~= nil, "RoyalMint requires ServerStorage.RoyalMintCoin")
 		table.insert(state.Sites, createSite(mint, "RoyalMint", MintSettings, coin, account))
+	end
+	for _, site in state.Sites do
+		if site.Id == "RoyalMint" and unlocks ~= nil then
+			for _, definition in MintSettings.UPGRADERS do
+				local asset = unlocks:FindFirstChild(definition.Id)
+				if asset ~= nil then
+					assert(asset:IsA("Model"), "Upgrader must be a Model")
+					local zone = part(asset, "UpgradeZone")
+					assert(zone.CanQuery and not zone.CanCollide, "Upgrader zone must be queryable and noncolliding")
+					table.insert(site.Upgraders, {
+						Id = definition.Id,
+						Multiplier = definition.Multiplier,
+						Model = asset,
+						Zone = zone,
+						Container = unlocks,
+						Owned = false,
+					})
+				end
+			end
+			-- The ordering also handles future arches along this same belt.
+			table.sort(site.Upgraders, function(a: Upgrader, b: Upgrader): boolean
+				return a.Zone.Position:Dot(site.Conveyor.CFrame.LookVector)
+					< b.Zone.Position:Dot(site.Conveyor.CFrame.LookVector)
+			end)
+		end
 	end
 	for _, site in state.Sites do
 		site.Connection = site.Plate.Touched:Connect(function(hit: BasePart): ()
@@ -461,6 +524,7 @@ local function dropBundle(site: Site, drop: BasePart, now: number): ()
 		return
 	end
 	site.Expires[bundle] = now + site.Settings.BUNDLE_LIFETIME_SECONDS
+	site.PreviousPositions[bundle] = bundle.Position
 end
 
 local function tickSite(site: Site, now: number): ()
@@ -468,13 +532,40 @@ local function tickSite(site: Site, now: number): ()
 		if bundle.Parent ~= site.Bundles or now >= expires then
 			site.Ledger.Remove(bundle, now, false)
 			site.Expires[bundle] = nil
+			site.PreviousPositions[bundle] = nil
 			bundle:Destroy()
 		end
+	end
+	for bundle in site.Expires do
+		local position = bundle.Position
+		local previous = site.PreviousPositions[bundle]
+		if previous ~= nil then
+			for _, upgrader in site.Upgraders do
+				if
+					upgrader.Owned
+					and upgrader.Model.Parent == upgrader.Container
+					and site.Model.Parent == upgrader.Container
+					and upgrader.Zone.Parent == upgrader.Model
+					and UpgraderCrossing.Crosses(
+						previous,
+						position,
+						upgrader.Zone.CFrame,
+						upgrader.Zone.Size,
+						site.Conveyor.CFrame.LookVector
+					)
+					and site.Ledger.ApplyUpgrade(bundle, upgrader.Id, upgrader.Multiplier, now)
+				then
+					bundle.Color = MintSettings.UPGRADED_COLOR
+				end
+			end
+		end
+		site.PreviousPositions[bundle] = position
 	end
 	for _, bundle in workspace:GetPartsInPart(site.Pit, site.Overlap) do
 		if site.Expires[bundle] ~= nil then
 			site.Ledger.Remove(bundle, now, true)
 			site.Expires[bundle] = nil
+			site.PreviousPositions[bundle] = nil
 			bundle:Destroy()
 		end
 	end

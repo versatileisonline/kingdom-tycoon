@@ -48,6 +48,14 @@ local function getUnavailableReason(player: Player, data: Types.PlayerData, purc
 			return "Start your farm first"
 		end
 	end
+	if purchase.UpgraderSite ~= nil then
+		if not FarmService.HasUpgrader(player, purchase.Id) then
+			return "Upgrader unavailable"
+		end
+		if not FarmService.IsStarted(player) then
+			return "Start your farm first"
+		end
+	end
 	local requirement = purchase.Requires
 	if requirement ~= nil and data.PurchasedBuildings[requirement] ~= true then
 		return "Requires " .. definitions[requirement].Name
@@ -97,7 +105,10 @@ local function refresh(player: Player): ()
 		local requirement = purchase.Requires
 		slot.Visible = slot == nextSlot
 			and (requirement == nil or data.PurchasedBuildings[requirement] == true)
-			and ((not purchase.FarmDropper and purchase.ProductionSite == nil) or FarmService.IsStarted(player))
+			and (
+				(not purchase.FarmDropper and purchase.ProductionSite == nil and purchase.UpgraderSite == nil)
+				or FarmService.IsStarted(player)
+			)
 		PlatePresentation.SetAmount(slot.Label, purchase.Name, purchase.Price)
 		slot.Plate.Color = if getUnavailableReason(player, data, purchase) == nil
 			then Config.PLATES.AVAILABLE_COLOR
@@ -211,6 +222,9 @@ local function prepare(player: Player, kingdom: Model): ()
 			end
 		else
 			assert(unlock ~= nil and unlock:IsA("Model"), "Purchase unlock must be a Model: " .. id)
+			if definition.UpgraderSite ~= nil then
+				assert(FarmService.HasUpgrader(player, id), "Missing valid upgrader for plate " .. id)
+			end
 		end
 		assert(label ~= nil and label:IsA("TextLabel"), "Missing PurchaseLabel for " .. id)
 		seen[id] = true

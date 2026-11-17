@@ -12,6 +12,9 @@ for index = 1, 8 do
 end
 return table.freeze({
 	PRODUCERS = table.freeze(producers),
+	UPGRADERS = table.freeze({ table.freeze({ Id = "RoyalMintUpgrader01", Multiplier = 2 }) }),
+	UPGRADED_COLOR = Color3.fromRGB(255, 230, 96),
+	RUN_UPGRADER_TESTS_IN_STUDIO = false,
 	PRODUCTION_SECONDS = 3,
 	BUNDLE_VALUE = 3,
 	MAX_BUNDLES = 32,

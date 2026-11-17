@@ -8,6 +8,7 @@ export type Purchase = {
 	StudioOnly: boolean?,
 	FarmDropper: boolean?,
 	ProductionSite: "RoyalMint"?,
+	UpgraderSite: "RoyalMint"?,
 }
 
 -- Prerequisites must appear before the purchases that require them.
@@ -83,6 +84,13 @@ local purchases: { Purchase } = {
 		Price = 190,
 		Requires = "RoyalMintDropper07",
 		ProductionSite = "RoyalMint" :: "RoyalMint",
+	}),
+	table.freeze({
+		Id = "RoyalMintUpgrader01",
+		Name = "Upgrader 1",
+		Price = 250,
+		Requires = "RoyalMintDropper08",
+		UpgraderSite = "RoyalMint" :: "RoyalMint",
 	}),
 	table.freeze({ Id = "StudioFarmCrates", Name = "Farm Crates", Price = 3, StudioOnly = true }),
 	table.freeze({
