@@ -74,8 +74,8 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 ## 10. Project structure
 
 Mint plate clearance saved in cloud version 104; coordinated Studio readback reports
-30 corrected plates and minimum 2.244-stud lamp clearance. Creator walking/visual
-acceptance remains pending in the temporary Mock stage.
+30 corrected plates and minimum 2.244-stud lamp clearance. Creator accepted the plate-clearance
+fix after native walking/visual verification in the temporary Mock stage.
 Mint plate clearance: both dropper/upgrader rows move four studs left (first lane
 local X -68, second -20), preserving entry/collector positions. New clone recipe
 normalizes all 30 plates. tools/ShiftMintPurchasePlates.luau is a repeat-safe Edit

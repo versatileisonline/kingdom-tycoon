@@ -118,3 +118,7 @@ Play at Mint 2 Dropper 3 with 977920 temporary Mock Gold for creator walking and
 visual verification, normal test switches false. This stage is session-only and
 not saved progression. Native acceptance remains with the creator; no further
 Studio calls were made by the second-lane agent for this documentation update.
+
+Creator accepted the plate-clearance fix ("looks great") after native verification.
+This closes plate placement acceptance; multiplayer and Persistent rejoin remain
+separate checks. Both feature branches remain unmerged and unpushed.
