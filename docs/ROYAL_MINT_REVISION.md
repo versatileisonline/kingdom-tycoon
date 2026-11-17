@@ -155,3 +155,40 @@ upstream travel before saving. Static checks alone do not establish physics
 acceptance. For height-only rollback, preserve the raised active template in a
 new archive and restore the intact template from `RoyalMintHeightBackup_20261117`;
 leave the active coin and all earlier backups intact.
+
+## Coin collision contract
+
+Runtime reserves KingdomMintCoins and KingdomMintTrack. On server startup,
+existing groups cannot collide with Mint coins except the track group; coins also
+ignore each other. FarmService assigns the track group only to the Conveyor and
+parts tagged with the MintCoinGuide boolean attribute, and assigns coins to the
+coin group before parenting them. Pit OverlapParams.CollisionGroup uses the track
+group, so isolated coins remain detectable. These masks affect no farm bundles.
+Any future dynamically registered collision groups should preserve this contract.
+
+The raised outlet keeps a visible 3.35-stud gap beneath a spawned coin. It does
+not rely on a near-belt spawn to hide instability. The sustained test observes
+all eight streams with the owner standing on the belt, rejects coins outside the
+lane, checks multiple real arrivals per producer, and distinguishes a valid fall
+inside CollectionPit from a loss. Original reported below-belt coins were located
+well before the collector; allowing only the collector volume does not hide them.
+
+## Integration evidence — 2026-11-17
+
+Both recipes installed in the approved place. Final authoring model contains
+643 anchored, script-free BaseParts; all eight corners of every part fit the
+expanded yard. Both backup archives exist. Raised-outlet assertions and the full
+normal-bootstrap Mock Mint suite pass: real arrivals from each producer, at least
+four observed arrivals from each during sustained production, no escapes or lost
+expiry, shared collection/failure retention, ownership restoration and cleanup.
+Owner-on-belt isolation is exercised throughout the 36-second sustained phase.
+The initial strict belt-only assertion was corrected after diagnostics showed a
+valid coin inside the pit (1.93 studs from center) awaiting the next overlap tick.
+
+Separate existing farm, purchase and HUD suites pass. Formatting, lint, strict
+Roblox Luau-LSP and code-only build pass. Independent source review found no
+important bugs. Edit visual preview inspected; creator acceptance remains open.
+Saved cloud version **85**, Edit mode, all tests disabled, no temporary previews
+or runtime kingdoms. No publish or Git push. Prices, base coin value, production
+interval and data schema are unchanged. Future upgraders/second conveyor and
+horse riding are not installed by this revision.

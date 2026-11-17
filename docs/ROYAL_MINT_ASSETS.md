@@ -1,5 +1,9 @@
 # Royal Mint Studio assets
 
+The [wide-yard and raised-dropper revision](ROYAL_MINT_REVISION.md) supersedes
+the initial installation geometry. Do not rerun this initial recipe on the
+installed place. Its historical contract and backup remain documented below.
+
 `tools/BuildRoyalMint.luau` is the approved one-time **Edit-mode** installation
 recipe for the open-air Mint concept. It is not a runtime script or Rojo mapping.
 The recipe is prepared and statically checked; installation and visual acceptance

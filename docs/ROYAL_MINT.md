@@ -1,5 +1,9 @@
 # Royal Mint progression
 
+The [2026-11-17 revision](ROYAL_MINT_REVISION.md) supersedes the original yard,
+dropper and coin geometry below. It reserves a second lane, raises the housed
+droppers and isolates coin collisions. Purchase prices and production stay the same.
+
 Approved open-air concept: [reference image](ROYAL_MINT_CONCEPT.png).
 Asset contract, one-time installation and rollback: [asset notes](ROYAL_MINT_ASSETS.md).
 
@@ -38,7 +42,9 @@ The existing 0.25-second timed loop handles both sites. Farm cap stays 12;
 Mint cap is 32, expiry 20 seconds, belt speed 8 studs/second. Total maximum is
 44 movable bundles per fully upgraded player. A 96-stud belt takes about
 12 seconds end to end before allowing for falling/contact. Server-owned coin
-physics protects arrival credit. Actual transit is covered by the Mint suite.
+physics protects arrival credit. Mint coins use KingdomMintCoins; only the belt
+and MintCoinGuide-tagged rails use KingdomMintTrack. Coins ignore players,
+machine scenery and one another; pit overlap queries use the track group. Actual transit is covered by the Mint suite.
 The Mint adds 425 authored static parts plus its cloned collector plate/rim,
 and eight lantern lights without shadows. No NPCs or server frame loop.
 

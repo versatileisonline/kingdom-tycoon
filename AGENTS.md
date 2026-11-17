@@ -73,6 +73,22 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Mint refinement (2026-11-17): tools/ReviseRoyalMint.luau widens paving to 88 x 128
+(local X -100..-12) and moves lane center to X -80, preserving the template+coin
+in RoyalMintRevisionBackup_20261117. tools/RaiseRoyalMintDroppers.luau raises
+housed presses 3 studs on solid pedestals; DropPoint Y 7.1, belt top Y 3.5. Its prior
+source remains in RoyalMintHeightBackup_20261117. Conveyor 8 x 2 x 96 and two taller
+rails carry MintCoinGuide=true; runtime assigns KingdomMintTrack and isolates
+KingdomMintCoins from other groups. Pit queries use Track so isolated coins
+still count. Source coin is 0.5 x 1.6 x 1.6. No schema/remotes/mapping changes.
+See docs/ROYAL_MINT_REVISION.md. Templates remain script-free and Studio-owned.
+
+Medieval music rotation (2026-11-17): client Audio.MusicPlaylist selects three
+free Creator Store tracks from HudConfig.MUSIC_IDS. AudioController waits for
+loading before Play and advances on native Sound.Ended; failed tracks are skipped
+with bounded exhaustion. Volumes/routing remain settings-controlled. Pure tests
+MusicPlaylistTests.Run(Playlist) and source/asset links: docs/MUSIC_PLAYLIST.md.
+
 Royal Mint (2026-11-17): optional PurchaseUnlocks.RoyalMint has direct Conveyor,
 CollectionPit, CollectPlate (descendant EarningsLabel) and Producers.Dropper01–08
 (each direct DropPoint). PurchasePlates includes RoyalMint and RoyalMintDropper02–08
@@ -308,6 +324,13 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Mint containment: only MintConfig.RUN_TESTS_IN_STUDIO in Mock; Play before claim.
+Expect All sustained Mint coin containment checks passed then All Royal Mint
+checks passed. Includes elevated drop, per-producer transit and 36-second, eight-producer
+containment with owner on the belt. Reset switch. MusicPlaylistTests.Run accepts pure
+Client.Audio.MusicPlaylist; expect All music playlist checks passed. Native music
+loaded IDs rotate 139186694323000 -> 87479584695420 -> 137177134668386 -> first.
+
 Royal Mint checks: enable only MintConfig.RUN_TESTS_IN_STUDIO in Mock mode, sync
 and Play before claiming. Expect All shared session earnings checks passed and
 All Royal Mint checks passed. Reset afterward. Run existing farm/purchase/data
@@ -415,6 +438,25 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Mint refinement and music (2026-11-17):
+- [x] First lane moved left; 88 x 128 paving reserves a parallel lane. Eight fuller
+  housed gold droppers raised 3 studs on solid decorated pedestals. Visible coin
+  fall is about 3.35 studs. Final Mint has 643 anchored, script-free BaseParts.
+- [x] Coins isolated from players, machine scenery and other coins; thicker belt
+  and taller guides. Full Mock Mint suite passes with per-producer arrivals and
+  36-second sustained containment while the owner stands on the belt. Valid
+  collector-volume falls are distinguished from actual escapes/lost coins.
+- [x] Three free medieval tracks load and play; native Ended advances through all
+  three and wraps. Pure playlist tests and normal HUD volume/routing suite pass.
+- [x] Existing farm and purchase suites pass separately; formatting, lint, strict
+  Roblox types, code-only build and independent source review pass. All asset
+  corners fit the new yard. Prior template/coin and pre-height template preserved.
+- [x] Cloud saved version 85 in Edit, tests false, no temporary previews/runtime
+  kingdoms. Modular commits on feat/royal-mint; no publish or push.
+- [ ] Creator raised-dropper appearance/fall, native walking, long-session music
+  preference, multiplayer touch and Persistent rejoin acceptance remain hands-on.
+  Horse, pass-through upgraders and conveyor two are separate tasks.
 
 Royal Mint progression (2026-11-17):
 - [x] Approved open-air concept implemented: 96-stud belt, eight presses, 427

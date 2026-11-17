@@ -56,3 +56,17 @@ Initial native transition testing found that the next ID loaded but remained
 stopped when Play was issued before the new asset finished loading. AudioController
 now waits for IsLoaded, resets playback position, and then calls Play. Native
 transition recheck and HUD volume checks remain pending integration.
+
+Native integration (2026-11-17): after the load-before-Play correction, seeking
+each playing track near its end caused real Sound.Ended events to advance through
+Ravensmoor Keep, Medieval Battle Blaze, and back to Royal Court. Every successor
+was checked IsLoaded and IsPlaying=true; music group gain remained 0.25. This
+verifies real playback transitions rather than calling private methods or firing
+signals. All three tracks loaded in the intended experience. Listening preference
+and long-session acceptance remain with the creator.
+
+Existing normal-bootstrap HUD presentation/client suites passed after the music
+change, including independent music/world mute and preservation of authored sound
+groups. Final place saved version 85 in Edit with all tests disabled. The three
+songs are the free Creator Store versions linked above; no original television
+soundtrack asset was used.

@@ -109,6 +109,15 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Mint refinement (2026-11-17): fix intermittent coin loss first; move the first
+  production lane left and reserve space for a later parallel conveyor. Use fuller
+  housed gold droppers, raised to visibly drop coins onto the belt. Add three free
+  medieval/kingdom music tracks in rotation. Keep the current prices and rates.
+  Horse riding is a separate milestone. Future progression discussed: all eight
+  droppers, then eight pass-through upgraders, then conveyor two. Each upgrader
+  doubles each passing coin once, so later downstream arches affect more streams.
+  Decorative/showcase purchases may begin after Dropper 3; their content, order,
+  prices and the upgrader prices remain for separate planning, not this fix.
 - Royal Mint (2026-11-17): approved the revised open-air concept: long conveyor,
   stone-paved yard, gold-and-iron presses and royal timber/brass decoration, no
   roof. WoodenWalls unlocks RoyalMint for 60 Gold including the complete yard
