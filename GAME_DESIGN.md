@@ -109,6 +109,13 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Second Mint lane (2026-11-17): approved cloning the complete first lane into the
+  reserved right-hand space, eight droppers then eight doubling arches after the
+  original final upgrader. Approved 12000 opening price and the explicit steady-buy
+  curve in docs/SECOND_ROYAL_MINT.md. Subsequently increased base coins to 9 Gold
+  (three times first-lane value) for an intentionally generous experimental economy;
+  prices stay fixed. Ends at the last arch; floor two is separate. Approved a
+  backed-up one-time Studio clone recipe, isolated branch and shared collection.
 - Royal HUD refresh (2026-11-17): approved royal blue banner headings, sculpted
   antique gold corners outside dark panels, brass controls and a prominent coin
   badge. Approved custom transparent artwork and its resulting coin/corner/banner

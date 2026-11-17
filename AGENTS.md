@@ -73,6 +73,13 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Second Royal Mint lane (2026-11-17): RoyalMint02 clones the first belt +48 local X,
+with eight droppers and eight arches. MintConfig.SITES routes independent ledgers,
+32-coin caps and 9-Gold base coins (first stays 3). All collectors share earnings.
+New saved IDs retain schema v1. tools/BuildSecondRoyalMint.luau preserves the source
+in SecondRoyalMintBackup_20261117; assets remain Studio-owned. No mappings/remotes.
+Contract, pricing, rollback and tests: docs/SECOND_ROYAL_MINT.md.
+
 HUD coin refinement: HudConfig.UI.BadgeCoinSize = 18; the badge coin sits inside
 its panel beside the balance. Plate icons remain 16px.
 
@@ -354,6 +361,10 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Second Mint: enable only MintConfig.RUN_SECOND_LANE_TESTS_IN_STUDIO in Mock, sync
+and Play before claiming. Expect All second Royal Mint lane checks passed. Reset
+the switch afterward. Run old farm/purchase/Mint suites separately.
+
 Royal HUD checks (2026-11-17): HUD, centered plate/purchase, and sustained Mint
 containment suites passed separately in normal Mock Play. Artwork fetch succeeded.
 All test switches reset; native desktop appearance reviewed. Narrow-screen and
@@ -483,6 +494,11 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Second Mint lane: installed clone and backed-up template. Normal Mock suite passed
+all sixteen purchases, exact 4590 wave, thirty-second transit, shared collection,
+reclaim and cleanup. Pure config/ledger checks passed. Native appearance/pacing,
+multiplayer and Persistent rejoin remain hands-on. See docs/SECOND_ROYAL_MINT.md.
 
 Eight Mint upgraders and gold curtains (2026-11-17):
 - [x] All eight sequential purchases at 250/300/400/600/1000/1900/3800/7500 Gold;
