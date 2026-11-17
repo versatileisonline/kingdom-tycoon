@@ -315,11 +315,21 @@ local ok, reason = xpcall(function()
 		assert(not item:IsA("LuaSourceContainer"), "Mint must be script-free")
 		if item:IsA("BasePart") then
 			assert(item.Anchored, "Mint template part is not anchored")
-			local localPosition = pivot:PointToObjectSpace(item.Position)
-			assert(
-				localPosition.X > -90 and localPosition.X < -38 and localPosition.Z >= -77 and localPosition.Z < 54,
-				"Mint exceeds its reserved yard"
-			)
+			for _, x in { -0.5, 0.5 } do
+				for _, y in { -0.5, 0.5 } do
+					for _, z in { -0.5, 0.5 } do
+						local corner = pivot:PointToObjectSpace(
+							item.CFrame:PointToWorldSpace(
+								Vector3.new(x * item.Size.X, y * item.Size.Y, z * item.Size.Z)
+							)
+						)
+						assert(
+							corner.X >= -88.01 and corner.X <= -39.99 and corner.Z >= -76.01 and corner.Z <= 52.01,
+							"Mint exceeds its reserved yard"
+						)
+					end
+				end
+			end
 		end
 	end
 	assert(#producers:GetChildren() == 8, "Incomplete Mint producer set")
