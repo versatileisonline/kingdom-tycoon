@@ -78,8 +78,8 @@ and exact1530 first-lane wave. Pure two-lane ledger checks passed. Independent
 code review found no material issues. Lint, changed-file formatting and code-only
 build pass. Strict Roblox analysis reports existing PlatePresentation optional
 Frame and CurrencyRow label-test errors; no new-file/type errors were reported.
-Repository-wide formatting also retains the imported TutorialProgressTests baseline
-difference, owned by the concurrent tutorial agent. Studio logs include an existing
+Integration resolves the imported TutorialProgressTests formatting difference;
+repository-wide source formatting now passes. Studio logs include an existing
 asset-type failure for203785492 and an Assistant plugin version warning.
 
 Final suite rerun includes the original-Mint tutorial collection guard and the
@@ -107,7 +107,9 @@ Expected Output: `Mint purchase plate clearance checks passed (30 checked, ... m
 on rerun: `Mint purchase plates already clear lamps (30 checked, no changes)`.
 Preserve the current template in a new archive before restoring the backup for
 rollback. Static compile, formatting and lint pass; native clearance acceptance and
-installation are coordinated with the tutorial agent, without restarting its Play fixture.
+installation are coordinated with the tutorial agent. The requested Mock preview
+was restored at Mint2 Dropper3, and the creator accepted clearance through the
+last second-lane upgrader.
 
 Coordinated Studio installation evidence: the tutorial agent reports cloud save
 version 104 with all 30 row plates corrected and the complete original template

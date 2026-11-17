@@ -88,6 +88,15 @@ New saved IDs retain schema v1. tools/BuildSecondRoyalMint.luau preserves the so
 in SecondRoyalMintBackup_20261117; assets remain Studio-owned. No mappings/remotes.
 Contract, pricing, rollback and tests: docs/SECOND_ROYAL_MINT.md.
 
+First-action tutorial trail (2026-11-17): TutorialConfig + client TutorialState/
+TutorialArrowView and PurchaseGuidanceController show one affordable new action.
+Gold translucent triangles start at waist height, with a bright pulse flowing to
+the plate; existing HelperArrow setting controls it. TutorialProgress publishes
+read-only saved ownership and exact-site successful collection signals; no schema,
+remotes, physics assets or mappings. Client-only animation caps at64 labels.
+Studio Mock TutorialPreview supports an optional purchase frontier/test Gold.
+See docs/TUTORIAL_GUIDANCE.md for sequence, signals, checks and preview commands.
+
 HUD coin refinement: HudConfig.UI.BadgeCoinSize = 18; the badge coin sits inside
 its panel beside the balance. Plate icons remain 16px.
 
@@ -373,6 +382,12 @@ Second Mint: enable only MintConfig.RUN_SECOND_LANE_TESTS_IN_STUDIO in Mock, syn
 and Play before claiming. Expect All second Royal Mint lane checks passed. Reset
 the switch afterward. Run old farm/purchase/Mint suites separately.
 
+Tutorial checks: enable only TutorialConfig.RUN_TESTS_IN_STUDIO in Mock and Play
+before claiming. Expect All tutorial presentation checks passed, All tutorial
+stage checks passed, All tutorial service checks passed; reset false afterward.
+Run TutorialArrowViewTests.Run separately for engine projection/pulse/cleanup.
+Opt-in preview and Server Command Bar Gold grant: docs/TUTORIAL_GUIDANCE.md.
+
 Royal HUD checks (2026-11-17): HUD, centered plate/purchase, and sustained Mint
 containment suites passed separately in normal Mock Play. Artwork fetch succeeded.
 All test switches reset; native desktop appearance reviewed. Narrow-screen and
@@ -507,13 +522,23 @@ Second Mint lane (2026-11-17): cloned assets installed with intact backup; Mock
 suite passed sixteen purchases, exact4590 wave, thirty-second transit, shared
 collection, reclaim and cleanup. First-lane chain, farm and purchase suites passed
 separately. Lint/build and pure config/ledger checks pass; strict analysis retains
-existing plate-label errors. Multiplayer/Persistent rejoin and creator visual/pacing
-acceptance remain hands-on. Contract: docs/SECOND_ROYAL_MINT.md.
+existing plate-label errors. Creator accepted appearance, plate clearance and the
+full second-lane purchase chain. Multiplayer/Persistent rejoin remain hands-on.
+Contract: docs/SECOND_ROYAL_MINT.md.
 
-Second Mint lane: installed clone and backed-up template. Normal Mock suite passed
-all sixteen purchases, exact 4590 wave, thirty-second transit, shared collection,
-reclaim and cleanup. Pure config/ledger checks passed. Native appearance/pacing,
-multiplayer and Persistent rejoin remain hands-on. See docs/SECOND_ROYAL_MINT.md.
+First-action guidance revision (2026-11-17):
+- [x] First new action only; affordable purchases/nonzero collection; successful
+  exact-site collection and committed ownership presentation; claim/release reset.
+- [x] Translucent animated gold triangle trail at waist height, flowing toward
+  target, controlled by existing HelperArrow setting; creator accepted appearance.
+- [x] Normal-bootstrap Mock service/state checks, engine-view/pulse checks and
+  actual client69/70-Gold affordability passed. Lint/format/code-only build pass;
+  tutorial files strict-clean; existing PlatePresentation/CurrencyRow errors remain.
+- [x] Creator accepted the trail and plate-clearance revision. Combined Studio
+  assets/code saved as cloud version104; creator verified the full second-lane
+  purchase chain in Play. Tutorial and conveyor changes are integrated into main.
+- [ ] Native toggle/device/input walkthrough remains with creator by preference.
+
 
 Eight Mint upgraders and gold curtains (2026-11-17):
 - [x] All eight sequential purchases at 250/300/400/600/1000/1900/3800/7500 Gold;
