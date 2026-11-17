@@ -76,3 +76,9 @@ if game:GetService("RunService"):IsStudio() and require(Shared.MintConfig).RUN_U
 		require(script.Tests.MintUpgraderChainTests).Run()
 	end)
 end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.MintConfig).RUN_SECOND_LANE_TESTS_IN_STUDIO then
+	task.spawn(function(): ()
+		require(script.Tests.SecondRoyalMintTests).Run()
+	end)
+end
