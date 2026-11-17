@@ -1,6 +1,6 @@
-# Royal Mint: wider yard and housed presses
+# Royal Mint: wider yard and raised housed presses
 
-This revision supersedes the narrow-yard geometry in `ROYAL_MINT_ASSETS.md`.
+These revisions supersede the narrow-yard geometry in `ROYAL_MINT_ASSETS.md`.
 It preserves the eight existing purchases and their prices/output, shared
 Collect Total behavior, wooden walls, outside farm, template pivot, and kingdom
 entry route. Horses, upgraders, a second production lane, and additional purchase
@@ -63,7 +63,7 @@ Coin template thickness increases from 0.3 to **0.5 studs**. The recipe retains
 its existing color/material and clones it before modification. Runtime unanchors
 each spawned coin, gives it server physics ownership, and positions it using the
 DropPoint CFrame. DropPoint retains the Z-axis quarter-turn that lies the cylinder
-flat; its smaller free fall places the coin just above the belt. Decorative
+flat; the follow-up height revision raises it for a clearly visible fall onto the belt. Decorative
 nozzle art must not be included in the guide collision group.
 
 ## Geometry and visual direction
@@ -76,7 +76,7 @@ All coordinates are local to the unchanged KingdomTemplate pivot.
 | Conveyor | Center `(-80, 2.5, -16)`, size **8 × 2 × 96**, LookVector +Z; top Y 3.5 |
 | Paired rails | X −84.5 / −75.5, center Y 4.4, Z −16; size 0.6 × 1.8 × 96 |
 | Eight machine centers | X −89; Z −58, −46, −34, −22, −10, 2, 14, 26 |
-| Eight drop points | X −80, Y **4.1**; matching station Z |
+| Eight drop points | X −80, Y **7.1** after height revision; matching station Z |
 | Collection pit | Center `(-80, 3.2, 35)`, size **9 × 4 × 6** |
 | Collector plate | `(-80, 0.8, 46)` |
 | Initial purchase plate | `(-28, 0.4, 60)`; unchanged |
@@ -94,8 +94,8 @@ flywheel, and a short brass/iron discharge nozzle. This replaces the sparse
 open-frame press silhouette. There is no roof over the production yard. The blue,
 gold, timber, and stone palette remains consistent with the approved reference.
 
-The recipe creates **617 authored parts** plus the cloned collector face/rim;
-`AuthoredPartCount` records the generated count. The exact overall BasePart count
+The wide-yard recipe creates **617 authored parts** plus the cloned collector face/rim;
+`AuthoredPartCount` records the generated count. The height revision adds 24 support parts for **641 authored parts**. The exact overall BasePart count
 also includes cloned collector parts. The expanded paving contributes 176 shallow
 pavers; the added static geometry uses no NPCs, rigs, or frame-loop animations.
 Eight low-range PointLights retain shadow casting disabled. The recipe checks
@@ -106,7 +106,7 @@ parts are anchored/script-free, and requires exactly three collidable guides.
 
 Before saving, inspect the full yard and individual housed presses in Edit mode.
 In Play, verify the runtime hides unowned presses and later plates, all eight
-low-release coin streams stay on the thick belt, and the first station's longest
+raised coin streams visibly fall onto and stay on the thick belt, and the first station's longest
 trip reaches the pit before expiry. The pit starts at Z 32 exactly where the
 belt ends and covers the belt's full width. Verify both Collect Total plates,
 walking access beside the rails and collector, restoration, death, and release.
@@ -120,3 +120,38 @@ clearly named archive folder. Move the intact template and coin from
 and owned purchase IDs. Revert matching runtime collision changes together with
 this geometry revision. Do not rerun the recipe over edited assets or remove its
 backup merely to bypass its guard.
+
+
+## Follow-up: visible coin fall
+
+After the wide-yard revision is installed, execute
+`tools/RaiseRoyalMintDroppers.luau` once in **Edit mode**. It requires the Mint's
+`Revision` attribute to be `WideYardHousedPresses`, the existing eight housed
+presses, and original DropPoints at local Y 4.1. It refuses existing
+`ServerStorage.RoyalMintHeightBackup_20261117` or unexpected heights, preventing
+accidental replacement of a manually edited setup.
+
+This separate recipe clones the active KingdomTemplate, raises every BasePart in
+each press by **three studs** except its existing `MachinePlinth`, and adds a
+solid stone pedestal with iron foot and gold cap. The pedestal rises from Y 1.1
+to 4.1, joining the floor plinth to the raised iron bed; the machinery does not
+float. Each press gains three anchored support parts, 24 in total. The nozzle,
+housing, hopper, flywheel, and DropPoint all move together. DropPoint ends at
+**Y 7.1** above belt top Y 3.5, giving approximately **3.35 studs of visible free
+fall below the 0.5-stud-thick coin**. No towers or roofs are introduced.
+
+After detached construction, anchored/script-free checks, unchanged floor-plinth
+checks, and rotation-aware yard-corner audits pass, the recipe archives the entire
+original template intact under `RoyalMintHeightBackup_20261117` and installs the
+replacement. It sets `RoyalMint.Revision` to `RaisedHousedPresses` and increments
+`AuthoredPartCount` by 24. The prior wide-yard and initial Mint archives stay
+untouched. Conveyor/rail CFrames, guide attributes, the coin template, prices,
+rates, ownership IDs, and collection behavior are unchanged.
+
+Expect `Raised Royal Mint asset checks passed (8 presses, +24 support parts,
+DropPoint Y 7.1)` and `Raised Royal Mint droppers; original template retained...`
+in Output. Run the Mint transit suite and inspect native coin falling and full
+upstream travel before saving. Static checks alone do not establish physics
+acceptance. For height-only rollback, preserve the raised active template in a
+new archive and restore the intact template from `RoyalMintHeightBackup_20261117`;
+leave the active coin and all earlier backups intact.
