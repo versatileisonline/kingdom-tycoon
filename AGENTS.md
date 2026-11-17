@@ -518,6 +518,13 @@ before players have a purchase to make.
 
 ## 12. Status
 
+Main integration (2026-11-17): second conveyor5201d9c and tutorial4b66513 merged.
+Fresh sequential normal-context tutorial/second-lane regression suites, engine
+trail tests, formatting/lint/build pass. Studio saved cloud version107 in Edit;
+65 authored sources match main, all tests/previews off,30 plate positions checked.
+Existing14 plate-label strict-analysis issues remain. Session continuation:
+docs/SESSION_HANDOFF.md. Creator requested pushing main and clearing chat history.
+
 Second Mint lane (2026-11-17): cloned assets installed with intact backup; Mock
 suite passed sixteen purchases, exact4590 wave, thirty-second transit, shared
 collection, reclaim and cleanup. First-lane chain, farm and purchase suites passed

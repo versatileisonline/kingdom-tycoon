@@ -123,4 +123,6 @@ Studio calls were made by the second-lane agent for this documentation update.
 
 Creator accepted the plate-clearance fix ("looks great") after native verification.
 This closes plate placement acceptance; multiplayer and Persistent rejoin remain
-separate checks. Both feature branches remain unmerged and unpushed.
+separate checks. Both feature histories are now merged into main (5201d9c and4b66513). Final
+Studio cloud save is version107, Edit mode with tests/previews off; see
+SESSION_HANDOFF.md for merged regression evidence and continuation notes.

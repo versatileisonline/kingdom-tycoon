@@ -46,6 +46,10 @@ More help: [Rojo documentation](https://rojo.space/docs).
 
 ## Project structure
 
+Latest continuation notes: [docs/SESSION_HANDOFF.md](docs/SESSION_HANDOFF.md).
+First-action tutorial: [docs/TUTORIAL_GUIDANCE.md](docs/TUTORIAL_GUIDANCE.md).
+Second Mint conveyor: [docs/SECOND_ROYAL_MINT.md](docs/SECOND_ROYAL_MINT.md).
+
 Current eight-arch Mint chain: [docs/MINT_UPGRADER_CHAIN.md](docs/MINT_UPGRADER_CHAIN.md).
 
 First Mint upgrader prototype: [docs/MINT_UPGRADER.md](docs/MINT_UPGRADER.md).
