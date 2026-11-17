@@ -10,11 +10,16 @@ for index = 1, 8 do
 		})
 	)
 end
+local upgraders: { { Id: string, Multiplier: number } } = {}
+for index = 1, 8 do
+	table.insert(upgraders, table.freeze({ Id = string.format("RoyalMintUpgrader%02d", index), Multiplier = 2 }))
+end
 return table.freeze({
 	PRODUCERS = table.freeze(producers),
-	UPGRADERS = table.freeze({ table.freeze({ Id = "RoyalMintUpgrader01", Multiplier = 2 }) }),
+	UPGRADERS = table.freeze(upgraders),
 	UPGRADED_COLOR = Color3.fromRGB(255, 230, 96),
 	RUN_UPGRADER_TESTS_IN_STUDIO = false,
+	RUN_UPGRADER_CHAIN_TESTS_IN_STUDIO = false,
 	PRODUCTION_SECONDS = 3,
 	BUNDLE_VALUE = 3,
 	MAX_BUNDLES = 32,
