@@ -52,4 +52,7 @@ Runtime asset check (2026-11-17): all three IDs loaded successfully in the inten
 Kingdom Tycoon client using temporary muted Sounds. Reported lengths were
 224.60 seconds (Royal Court), 207.80 seconds (Ravensmoor Keep), and 189.44 seconds
 (Medieval Battle Blaze). This establishes loading permission, not a listening review.
-Native end-to-next-track and HUD volume checks are performed during integration.
+Initial native transition testing found that the next ID loaded but remained
+stopped when Play was issued before the new asset finished loading. AudioController
+now waits for IsLoaded, resets playback position, and then calls Play. Native
+transition recheck and HUD volume checks remain pending integration.

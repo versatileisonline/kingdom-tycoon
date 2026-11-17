@@ -95,8 +95,6 @@ function Controller.Start(): ()
 			end
 			sound:Stop()
 			sound.SoundId = "rbxassetid://" .. id
-			sound.TimePosition = 0
-			sound:Play()
 			local deadline = os.clock() + Config.MUSIC_LOAD_SECONDS
 			repeat
 				task.wait(0.1)
@@ -105,6 +103,10 @@ function Controller.Start(): ()
 				break
 			end
 			if sound.IsLoaded then
+				-- Start only after the new asset is ready; an early Play can be
+				-- reset by the asset change after the previous track ends.
+				sound.TimePosition = 0
+				sound:Play()
 				print("[KingdomTycoon][AudioController] Music loaded: " .. id)
 				break
 			end
