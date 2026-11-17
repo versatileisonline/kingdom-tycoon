@@ -507,6 +507,9 @@ First-action guidance revision (2026-11-17):
 - [x] Normal-bootstrap Mock service/state checks, engine-view/pulse checks and
   actual client69/70-Gold affordability passed. Lint/format/code-only build pass;
   tutorial files strict-clean; existing PlatePresentation/CurrencyRow errors remain.
+- [x] Creator accepted the trail and plate-clearance revision. Combined Studio
+  assets/code saved as cloud version104; creator verified the full second-lane
+  purchase chain in Play. Tutorial and conveyor work remain on dedicated branches.
 - [ ] Native toggle/device/input walkthrough remains with creator by preference.
 
 
