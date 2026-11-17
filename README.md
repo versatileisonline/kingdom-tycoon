@@ -90,7 +90,7 @@ src/
 │       ├── SettingsController.luau  # session preferences
 │       ├── AudioController.luau     # music/world volume
 │       ├── GraphicsController.luau  # reversible local quality reduction
-│       ├── PurchaseGuidanceController.luau # owner-only introductory purchase arrow
+│       ├── PurchaseGuidanceController.luau # affordable first-action gold tutorial trail
 │       ├── CameraController.luau   # Left Shift camera lock, restoration, respawn handling
 │       └── ExampleController.luau  # startup example; no gameplay
 └── shared/                         → ReplicatedStorage.Shared (Folder)

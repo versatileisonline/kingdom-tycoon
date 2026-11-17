@@ -109,6 +109,14 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- First-action guidance (2026-11-17): approved an owner-only, translucent gold
+  triangle trail from character waist height to the interaction plate, with a
+  brighter pulse flowing toward the objective and the existing helper setting.
+  Teach Start Farm, farm collect, Wooden Walls, Royal Mint, Mint Dropper2, Mint
+  collect and first upgrader. Show purchases only when affordable and collection
+  at one Gold or more; disappear after use. Horse remains a separate milestone.
+  Creator prefers hands-on visual checks and short feedback over repeated
+  automated computer-use verification.
 - Royal HUD refresh (2026-11-17): approved royal blue banner headings, sculpted
   antique gold corners outside dark panels, brass controls and a prominent coin
   badge. Approved custom transparent artwork and its resulting coin/corner/banner
