@@ -160,7 +160,8 @@ function Tests.Run(): ()
 		local earningsLabel = farm:FindFirstChild("EarningsLabel", true) :: TextLabel
 		assert(
 			earningsLabel.RichText
-				and earningsLabel.Text == string.format('Collect:\n%d <font color="#E7B84B">●</font>', balance),
+				and earningsLabel.Text
+					== string.format('Collect Total\n%d <font color="#E7B84B">●</font>', balance),
 			"Collector label differs from private ledger"
 		)
 		assert(balance >= 2 * Settings.BUNDLE_VALUE, "Bundles failed to travel to pit before timeout")
@@ -188,7 +189,7 @@ function Tests.Run(): ()
 			"Full balance not collected"
 		)
 		assert(
-			earningsLabel.Text == 'Collect:\n0 <font color="#E7B84B">●</font>',
+			earningsLabel.Text == 'Collect Total\n0 <font color="#E7B84B">●</font>',
 			"Collected label did not reset to zero"
 		)
 		local after = DataService.GetSnapshot(owner)

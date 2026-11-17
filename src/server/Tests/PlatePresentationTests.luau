@@ -36,9 +36,9 @@ function Tests.Run(): ()
 			label.RichText and tostring(label.Text) == 'Dropper 4\n24 <font color="#E7B84B">●</font>',
 			"Price/icon presentation incorrect"
 		)
-		Presentation.SetAmount(label, "Collect:", 0)
+		Presentation.SetAmount(label, "Collect Total", 0)
 		assert(
-			tostring(label.Text) == 'Collect:\n0 <font color="#E7B84B">●</font>',
+			tostring(label.Text) == 'Collect Total\n0 <font color="#E7B84B">●</font>',
 			"Zero collection presentation incorrect"
 		)
 		Presentation.SetAmount(label, "A & <B>", 40)

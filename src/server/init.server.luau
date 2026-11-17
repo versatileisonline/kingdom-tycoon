@@ -58,3 +58,9 @@ if game:GetService("RunService"):IsStudio() and require(Shared.HudConfig).RUN_TE
 		require(script.Tests.HudServiceTests).Run()
 	end)
 end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.MintConfig).RUN_TESTS_IN_STUDIO then
+	task.spawn(function(): ()
+		require(script.Tests.RoyalMintTests).Run()
+	end)
+end

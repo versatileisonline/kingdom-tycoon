@@ -217,7 +217,14 @@ function Tests.Run(): ()
 		assert(not PurchaseService.TryPurchase(owner, "WoodenWalls"), "Duplicate wall purchase accepted")
 		local walls = unlocks:FindFirstChild("WoodenWalls")
 		assert(walls ~= nil and walls:IsA("Model"), "Purchased walls not revealed")
-		assert(#plates:GetChildren() == 0, "Completed chain left a purchase plate")
+		if FarmService.HasProducer(owner, "RoyalMint") then
+			assert(
+				#plates:GetChildren() == 1 and plates:FindFirstChild("RoyalMint") ~= nil,
+				"Walls must reveal only the next Mint purchase"
+			)
+		else
+			assert(#plates:GetChildren() == 0, "Completed chain left a purchase plate")
+		end
 		PlotService.Release(owner)
 		assert(marker.Transparency == 0, "Released claim plate did not return")
 		assert(producers.Parent == nil and bundles.Parent == nil and walls.Parent == nil, "Release leaked assets")
