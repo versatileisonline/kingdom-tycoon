@@ -2,6 +2,7 @@
 
 -- Private session accounting. Keys are registered physical bundles in production;
 -- tests use standalone tokens. Neither attributes nor client values grant credit.
+local SessionEarnings = require(script.Parent.SessionEarnings)
 local FarmLedger = {}
 
 export type Ledger = {
@@ -13,10 +14,16 @@ export type Ledger = {
 	Clear: () -> (),
 }
 
-function FarmLedger.new(cap: number, lifetime: number, value: number, maxBalance: number): Ledger
+function FarmLedger.new(
+	cap: number,
+	lifetime: number,
+	value: number,
+	maxBalance: number,
+	sharedAccount: SessionEarnings.Account?
+): Ledger
 	local bundles: { [any]: number } = {}
 	local count = 0
-	local balance = 0
+	local account = sharedAccount or SessionEarnings.new(maxBalance)
 	return {
 		Register = function(token: any, now: number): boolean
 			if count >= cap or bundles[token] ~= nil then
@@ -33,31 +40,22 @@ function FarmLedger.new(cap: number, lifetime: number, value: number, maxBalance
 			end
 			bundles[token] = nil -- Consume before crediting; repeated pit contacts are harmless.
 			count -= 1
-			if arrived and now < expires and balance <= maxBalance - value then
-				balance += value
+			if arrived and now < expires and account.Credit(value) then
 				return true
 			end
 			return false
 		end,
-		Collect = function(commit: (number) -> boolean): (boolean, number)
-			local amount = balance
-			if amount == 0 or not commit(amount) then
-				return false, 0
-			end
-			-- The production caller uses DataService.Update, which never yields.
-			balance -= amount
-			return true, amount
-		end,
-		GetBalance = function(): number
-			return balance
-		end,
+		Collect = account.Collect,
+		GetBalance = account.GetBalance,
 		GetCount = function(): number
 			return count
 		end,
 		Clear = function(): ()
 			table.clear(bundles)
 			count = 0
-			balance = 0
+			if sharedAccount == nil then
+				account.Clear()
+			end
 		end,
 	}
 end
