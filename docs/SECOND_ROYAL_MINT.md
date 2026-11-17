@@ -72,6 +72,7 @@ rejoin. No second floor, stairs, rebirth or shop changes are included.
 
 Normal-bootstrap Mock second-lane suite passed all sixteen purchases, exact4590
 wave, thirty-second natural transit, shared collection, reclaim and cleanup.
+Farm and purchase-service suites passed separately.
 Original eight-arch suite also passed, including its delayed-crossing regression
 and exact1530 first-lane wave. Pure two-lane ledger checks passed. Independent
 code review found no material issues. Lint, changed-file formatting and code-only
@@ -80,3 +81,8 @@ Frame and CurrencyRow label-test errors; no new-file/type errors were reported.
 Repository-wide formatting also retains the imported TutorialProgressTests baseline
 difference, owned by the concurrent tutorial agent. Studio logs include an existing
 asset-type failure for203785492 and an Assistant plugin version warning.
+
+Final suite rerun includes the original-Mint tutorial collection guard and the
+durable two-lane ledger suite; both passed. Edit preview confirms two matching
+parallel belts fit the existing yard. Temporary preview removed and test switches
+reset before saving. Native appearance/pacing remains creator acceptance.

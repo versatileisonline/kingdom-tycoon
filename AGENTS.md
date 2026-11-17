@@ -495,6 +495,13 @@ before players have a purchase to make.
 
 ## 12. Status
 
+Second Mint lane (2026-11-17): cloned assets installed with intact backup; Mock
+suite passed sixteen purchases, exact4590 wave, thirty-second transit, shared
+collection, reclaim and cleanup. First-lane chain, farm and purchase suites passed
+separately. Lint/build and pure config/ledger checks pass; strict analysis retains
+existing plate-label errors. Multiplayer/Persistent rejoin and creator visual/pacing
+acceptance remain hands-on. Contract: docs/SECOND_ROYAL_MINT.md.
+
 Second Mint lane: installed clone and backed-up template. Normal Mock suite passed
 all sixteen purchases, exact 4590 wave, thirty-second transit, shared collection,
 reclaim and cleanup. Pure config/ledger checks passed. Native appearance/pacing,
