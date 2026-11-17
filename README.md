@@ -46,6 +46,8 @@ More help: [Rojo documentation](https://rojo.space/docs).
 
 ## Project structure
 
+Current eight-arch Mint chain: [docs/MINT_UPGRADER_CHAIN.md](docs/MINT_UPGRADER_CHAIN.md).
+
 First Mint upgrader prototype: [docs/MINT_UPGRADER.md](docs/MINT_UPGRADER.md).
 
 Royal Mint progression and verification: [docs/ROYAL_MINT.md](docs/ROYAL_MINT.md).

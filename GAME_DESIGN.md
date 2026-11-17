@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Full Mint upgrader chain (2026-11-17): creator accepted prototype and requested
+  a gold holographic laser curtain through each opening, then all eight arches.
+  Confirmed curve 250/300/400/600/1000/1900/3800/7500, sequential after all droppers.
+  Each arch doubles every passing coin once. Extend the belt/collector to clear
+  the final arch; preserve the template in a one-time backed-up Edit recipe.
+  Finish at a temporary Mock stage with 20,000 Gold to buy/verify the whole chain.
 - First Mint upgrader (2026-11-17): approved one playable prototype, priced 250 Gold
   after all eight droppers. Reuse the approved blue/iron/gold arch with amber
   inset, crown emblem and small ×2 label. Passing coins double once 3 -> 6 and become

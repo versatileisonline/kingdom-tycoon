@@ -73,6 +73,14 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Full Mint chain supersedes prototype-only config: RoyalMintUpgrader01–08 share
+identical arch/UpgradeZone contracts. GoldHologram is a translucent Neon plane,
+noncolliding/non-touching/non-queryable, purely visual. tools/ExpandMintUpgraders.luau
+preserves the full original template in MintUpgraderChainBackup_20261117 and
+extends the belt/frames/rails to 100 studs, pit center Z 39, collectorZ 49.5. No schema,
+remotes or Rojo changes. Tests.MintUpgraderChainTests uses the dedicated
+MintConfig.RUN_UPGRADER_CHAIN_TESTS_IN_STUDIO switch. See docs/MINT_UPGRADER_CHAIN.md.
+
 First Mint upgrader: PurchaseUnlocks.RoyalMintUpgrader01 is an anchored script-free
 Model with direct UpgradeZone (8x4x4 at local -80,5.5,-52) facing+Z. Matching plate
 PurchasePlates.RoyalMintUpgrader01 has PurchaseLabel. tools/BuildMintUpgrader.luau
@@ -334,6 +342,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Eight-arch checks: enable only MintConfig.RUN_UPGRADER_CHAIN_TESTS_IN_STUDIO in
+Mock, sync and Play before claiming. Expect All eight Mint upgrader chain checks
+passed, plus ledger-chain success. Reset afterward; run other suites separately.
+Creator stage is session-only Mock data, not persisted progression.
+
 Upgrader prototype: enable only MintConfig.RUN_UPGRADER_TESTS_IN_STUDIO in Mock,
 sync and Play before claiming. Expect All Mint upgrader prototype checks passed,
 plus upgrader ledger/geometry/directional success messages. Reset switch afterward.
@@ -453,6 +466,23 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Eight Mint upgraders and gold curtains (2026-11-17):
+- [x] All eight sequential purchases at 250/300/400/600/1000/1900/3800/7500 Gold;
+  identical gold holographic curtains, noncolliding/non-queryable. Belt/guides
+  extend to 100 studs; collector/pit leave clearance after the last arch.
+- [x] Full-chain suite passes: exact 1,530-Gold registered-wave payout, 30-second
+  natural arrivals from all eight streams, restoration and cleanup. Actual
+  pending-crossing regression observed RED then GREEN with per-arch baselines.
+- [x] Existing prototype, Mint containment, farm and purchase suites pass
+  separately. Formatting/lint/strict types/build pass. Independent review clean.
+- [x] Source template preserved in MintUpgraderChainBackup_20261117; 328 anchored
+  script-free arch parts. Saved cloud version 93 in Edit with tests false.
+- [x] Creator requested a separate temporary Mock stage: all droppers, 20,000 Gold,
+  eight sequential upgraders unowned. Source setup removed after startup; leave
+  Studio Play active for native verification. No publish or push.
+- [ ] Native laser appearance/pacing/multiplayer and full Persistent rejoin
+  acceptance remain hands-on. No second conveyor or other future systems added.
 
 First Mint upgrader prototype (2026-11-17):
 - [x] One 250-Gold arch after Dropper 8, private once-only 3->6 coin values,

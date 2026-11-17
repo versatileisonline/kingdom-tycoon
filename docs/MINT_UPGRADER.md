@@ -1,5 +1,8 @@
 # First Royal Mint upgrader
 
+Historical prototype notes. The [full eight-arch chain](MINT_UPGRADER_CHAIN.md)
+now supersedes the one-live-arch scope and purchase-baseline implementation below.
+
 Approved visual: [concept](MINT_UPGRADER_CONCEPT.png). Studio construction,
 preservation and rollback: [asset contract](MINT_UPGRADER_ASSETS.md).
 
