@@ -11,6 +11,7 @@ local logger = Logger.new("ServerBootstrap")
 local services: { Types.Lifecycle } = {
 	require(script.Services.DataService),
 	require(script.Services.PresentationService),
+	require(script.Services.EntitlementService),
 	require(script.Services.PlotService),
 	require(script.Services.FarmService),
 	require(script.Services.PurchaseService),
