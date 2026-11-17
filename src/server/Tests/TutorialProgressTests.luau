@@ -4,17 +4,14 @@ function Tests.Run(Progress: any): ()
 	local owner = Instance.new("Folder")
 	Progress.Publish(owner, nil)
 	assert(owner:GetAttribute("TutorialWoodenWallsOwned") == nil, "Unavailable ownership not cleared")
-	Progress.Publish(
-		owner,
-		{
-			PurchasedBuildings = {
-				WoodenWalls = true,
-				RoyalMint = true,
-				RoyalMintDropper02 = false,
-				RoyalMintUpgrader01 = true,
-			},
-		}
-	)
+	Progress.Publish(owner, {
+		PurchasedBuildings = {
+			WoodenWalls = true,
+			RoyalMint = true,
+			RoyalMintDropper02 = false,
+			RoyalMintUpgrader01 = true,
+		},
+	})
 	assert(
 		owner:GetAttribute("TutorialWoodenWallsOwned") == true
 			and owner:GetAttribute("TutorialMintDropper02Owned") == false,
