@@ -17,6 +17,7 @@ local services: { Types.Lifecycle } = {
 	require(script.Services.FarmService),
 	require(script.Services.PurchaseService),
 	require(script.Services.EquipmentService),
+	require(script.Services.TrainingCourseService),
 	require(script.Services.SprintService),
 	require(script.Services.ShopService),
 	require(script.Services.RebirthService),
@@ -164,5 +165,18 @@ end
 if game:GetService("RunService"):IsStudio() and require(Shared.MainMenuConfig).RUN_TESTS_IN_STUDIO then
 	task.spawn(function()
 		require(script.Tests.EntryServiceTests).Run()
+	end)
+end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.TrainingCourseConfig).RUN_TESTS_IN_STUDIO then
+	task.spawn(function()
+		require(script.Tests.TrainingCourseStateTests).Run(require(script.Training.CourseState))
+		require(script.Tests.TrainingCourseServiceTests).Run()
+	end)
+end
+
+if game:GetService("RunService"):IsStudio() and script:GetAttribute("StudioCourtyardPreview") == true then
+	task.spawn(function()
+		require(script.Tests.CourtyardPreview).Run()
 	end)
 end

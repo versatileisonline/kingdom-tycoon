@@ -21,6 +21,7 @@ local controllers: { Types.Lifecycle } = {
 	require(script.Controllers.CameraController),
 	require(script.Controllers.SprintController),
 	require(script.Controllers.EquipmentController),
+	require(script.Controllers.TrainingCourseController),
 	require(script.Controllers.PurchaseGuidanceController),
 }
 
