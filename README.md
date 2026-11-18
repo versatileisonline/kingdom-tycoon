@@ -46,6 +46,8 @@ More help: [Rojo documentation](https://rojo.space/docs).
 
 ## Project structure
 
+Royal Shop setup and testing: [docs/ROYAL_SHOP.md](docs/ROYAL_SHOP.md).
+
 Latest continuation notes: [docs/SESSION_HANDOFF.md](docs/SESSION_HANDOFF.md).
 First-action tutorial: [docs/TUTORIAL_GUIDANCE.md](docs/TUTORIAL_GUIDANCE.md).
 Second Mint conveyor: [docs/SECOND_ROYAL_MINT.md](docs/SECOND_ROYAL_MINT.md).
@@ -252,6 +254,7 @@ depend on that running service context.
   - [x] 1.5 Purchase buttons (linked purchases verified in Studio with Mock data; live assets pending)
   - [ ] 1.6 Farms ([four-dropper assets installed and saved; purchase/farm suites passed; broader acceptance pending](docs/MILESTONE_1_6.md))
   - [ ] 1.7 HUD + settings ([implemented; focused cursor/touch acceptance pending](docs/MILESTONE_1_7.md))
+  - [ ] 1.8 Shop + gamepasses ([three-pass implementation; real pass setup and live purchase acceptance pending](docs/ROYAL_SHOP.md))
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)

@@ -109,6 +109,13 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Royal Shop (2026-11-17): approved the three-card royal mockup and dedicated HUD
+  Shop button. Three permanent passes: Collect Now 49 Robux (owner-only HUD
+  button, remote manual collection), 2× Gold 99 Robux (new arrivals only; old
+  pending Gold unchanged), Auto-Collect 149 Robux (automatic banking as coins
+  reach pits). Retain physical production. Approved modular commits and a
+  temporary Studio Mock hands-on preview without Robux; live pass IDs remain
+  required for sales. Cosmetics/rebirth/leaderboards/horses stay separate tasks.
 - Mint plate clearance (2026-11-17): creator requested moving dropper and upgrader
   purchase rows left on both belts to clear lamp posts. Shift 30 plates four studs
   left; preserve entry plates, collectors, production and prices.

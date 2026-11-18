@@ -73,6 +73,18 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Royal Shop (2026-11-17): ShopConfig, server Shop.EntitlementRegistry /
+Services.EntitlementService / Services.ShopService, client ShopController /
+UI.ShopView / UI.ShopState. Three permanent offers: CollectNow49, DoubleGold99,
+AutoCollect149 Robux; live PassIds unset, sales unavailable until configured.
+Runtime ReplicatedStorage.KingdomShop remotes validate/rate-limit requests.
+FarmService.TryCollectAnywhere validates the living owner; shared banking also
+serves Auto-Collect after existing production ticks. SessionEarnings optional
+multiplier applies only at arrival. No schema, map/template or Rojo changes.
+Atlas assets/hud/shop-atlas.png maps to83808747914581; equal quadrant contract,
+setup, rollback and verification: docs/ROYAL_SHOP.md. Shop/Settings are exclusive
+and both suspend camera lock. Preview grants require explicit Studio Mock setup.
+
 Mint plate clearance saved in cloud version 104; coordinated Studio readback reports
 30 corrected plates and minimum 2.244-stud lamp clearance. Creator accepted the plate-clearance
 fix after native walking/visual verification in the temporary Mock stage.
@@ -378,6 +390,14 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Shop: in Studio Mock, enable only ShopConfig.RUN_TESTS_IN_STUDIO and set Server
+attribute StudioShopPreview=true before Play. Expect All shop and pass checks
+passed and All shop client checks passed. Optional StudioShopRegression=true
+runs farm/purchase/Mint chains/tutorial/HUD sequentially. Reset all afterward.
+With tests false, StudioShopPreview alone starts the hands-on fixture and logs
+Shop preview ready (Studio Mock). All simulated passes start unowned; Shop's
+Reset preview clears them. No Robux charged. See docs/ROYAL_SHOP.md.
+
 Second Mint: enable only MintConfig.RUN_SECOND_LANE_TESTS_IN_STUDIO in Mock, sync
 and Play before claiming. Expect All second Royal Mint lane checks passed. Reset
 the switch afterward. Run old farm/purchase/Mint suites separately.
@@ -517,6 +537,20 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Royal Shop implementation (2026-11-17): three permanent passes and approved
+three-card royal HUD implemented on feat/royal-shop-gamepasses in modular commits.
+Ownership/economy/client/normal-bootstrap service suites pass, including exact
+remote credit, malformed request rejection, missing-root/death rejection,
+automatic banking failure retention, contributing-site tutorial advancement and
+preview mode reset. Native preview purchase/Collect Now tested. Formatting,
+Selene (zero warnings/errors), code-only build pass; strict analysis has only the
+same14 existing plate-label diagnostics. Fresh review findings corrected.
+Live pass IDs remain unset; real sales are intentionally unavailable. Device,
+real-purchase/rejoin and two-player pass acceptance remain hands-on checks.
+Sequential final regressions passed: farm, purchase, first eight-arch Mint chain,
+second Mint lane, tutorial and HUD; All shop regression checks passed observed.
+Normal Edit save and temporary Mock handoff recorded below when completed.
 
 Main integration (2026-11-17): second conveyor5201d9c and tutorial4b66513 merged.
 Fresh sequential normal-context tutorial/second-lane regression suites, engine

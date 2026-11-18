@@ -1,0 +1,135 @@
+# Royal Shop — milestone 1.8
+
+Approved: royal three-card mockup, permanent Collect Now 49 Robux, 2× Gold 99,
+Auto-Collect 149. Cosmetics, rebirth, leaderboards and horses are later milestones.
+
+## Player behavior
+
+Shop opens from the dedicated HUD button and replaces Settings; both suspend
+shift lock. Desktop shows three cards; narrow viewports scroll vertically.
+Owned cards cannot be bought again. Unknown ownership and unavailable products
+never enable a live purchase. Refresh retries ownership and product information.
+
+Collect Now owners see a button above their Gold badge, displaying pending Gold.
+It collects their own active kingdom's shared earnings from any distance while
+alive. It is disabled with zero pending earnings, unavailable data, or death.
+Auto-Collect banks once after each production tick, even during death; no extra
+server loop or per-token data update is added. If both passes are owned, the
+manual button remains, normally disabled because automatic banking has emptied
+pending earnings. Floor collectors remain usable by everyone.
+
+2× Gold applies once as a valid bundle/coin arrives in its pit, after all Mint
+arches. It does not alter existing pending Gold. Travelling coins receive the
+benefit if the pass is confirmed before arrival. Both floor and remote collection
+bank the resulting amount without another multiplier. Successful remote/automatic
+banking advances collection guidance only for sites that contributed pending
+earnings; failed banking retains those source markers. Auto-Collect confirmation
+also banks already-pending earnings. A failed DataService update retains the
+balance, with a bounded automatic retry interval. Pending Gold still discards on
+kingdom release/departure, as before; there is no offline production.
+
+## Architecture and interfaces
+
+ShopConfig contains the three allowed offer keys, pass IDs, constants and art.
+EntitlementService queries Roblox ownership and handles Roblox's server-side
+purchase-finished event. Its registry rejects obsolete lookup generations,
+preserves confirmed permanent ownership through network failure, and discards
+state on leave. Client attributes are presentation only and cannot grant passes.
+No saved profile/schema change is needed: Roblox owns pass entitlements.
+
+FarmService.TryCollectAnywhere(player) returns (success, amount). It validates
+confirmed CollectNow ownership, active started kingdom, live character/root,
+and a server cooldown. Floor and remote collection share one private banking
+function. SessionEarnings accepts an optional multiplier provider used at credit.
+
+Runtime ReplicatedStorage.KingdomShop contains CollectNow, CollectResult and
+RefreshOwnership RemoteEvents. CollectNow and RefreshOwnership accept no payload;
+extra/malformed arguments are rejected. Requests are rate-limited per player.
+CollectResult reports the authoritative success and amount. No client-supplied
+price, balance, player or kingdom is trusted. Remotes are runtime-owned and
+cleaned up on shutdown; Rojo mappings and Studio map/template assets are unchanged.
+
+## Artwork contract
+
+assets/hud/shop-atlas.png is a transparent, four-cell square atlas, generated
+with the built-in ImageGen tool and uploaded as rbxassetid://83808747914581.
+Order: top-left Shop, top-right Collect Now, bottom-left 2× Gold, bottom-right
+Auto-Collect. ShopView crops equal quadrants using clipped frames and normalized
+image positioning, independent of Roblox texture resizing. Existing HudConfig
+coin, banner and corner assets are reused. No new map assets are required.
+
+Prompt: transparent square 2×2 atlas; four isolated, centered medieval Roblox UI
+illustrations with empty margins, no text/numbers/grid. Royal blue and antique
+gold dimensional art: market stall, crown coin with pointing glove, two overlapping
+crown coins with ribbon sparkle, coin dropping into chest with curved arrow.
+
+## Live pass setup
+
+Create three permanent passes for experience 10769565462 in Creator Hub and set
+Collect Now / 2× Gold / Auto-Collect to 49 / 99 / 149 Robux. Put their actual pass
+IDs in ShopConfig.OFFERS. Current IDs are intentionally zero: live purchases
+show Unavailable until configured. Prices shown in live UI come from
+MarketplaceService:GetProductInfoAsync, including the applicable Roblox price;
+PreviewPrice is only for the simulated shop. No repeatable developer products
+or ProcessReceipt handler are involved.
+
+Real Roblox purchase completion, ownership on a fresh rejoin, and regional price
+presentation still require testing with configured passes. Studio simulation is
+not evidence that payment processing has been tested.
+
+## Automated checks
+
+Only in Studio Mock, enable ShopConfig.RUN_TESTS_IN_STUDIO on disk and set the
+Server Script attribute StudioShopPreview=true in Edit before Play. Run before
+claiming. Expect:
+
+- All shop ownership checks passed
+- All shop economy checks passed
+- All shop client checks passed
+- All shop and pass checks passed
+
+The overflow test intentionally logs one retained-collection warning.
+Set StudioShopRegression=true on Server before Play to run existing farm,
+purchase, first Mint chain, second Mint lane, tutorial and HUD suites sequentially
+after the shop suite. Expect All shop regression checks passed. Other suites'
+config switches must remain false. Reset all attributes/switches afterward.
+
+## Hands-on preview
+
+With all test switches false, set Server.StudioShopPreview=true in Edit and Play.
+ShopPreview claims Plot01, activates the farm and first Mint's eight droppers,
+sets 25,000 Mock Gold, and opens Shop with every pass unowned. Expect:
+`[KingdomTycoon][ShopPreview] Shop preview ready (Studio Mock)`.
+
+The shop clearly says STUDIO PREVIEW / No Robux charged. Purchase buttons grant
+session-only simulated ownership. Reset preview clears all simulated passes so
+you can test independently. It does not reverse already banked Gold. Test:
+
+1. Buy Collect Now: owner button appears; close Shop and collect pending earnings.
+2. Reset, buy 2× Gold: new arrivals earn double; old pending Gold stays unchanged.
+3. Reset, buy Auto-Collect: pending balance banks, then Gold increases without
+   touching a plate. Buy both collection passes to see their combined state.
+4. Verify Settings/Shop exclusivity, Escape/close, shift-lock suspension, respawn,
+   and touch scrolling on your devices.
+
+Preview grants require BOTH Studio and Mock, plus explicit StudioShopPreview.
+They never write ownership to profiles. Disabling the preview attribute immediately
+rejects cached mock grants and reinitializes ownership presentation. Re-enable
+starts unowned. Set the flag in Edit for normal use; the preview-only purchase
+remote is created during bootstrap, not dynamically added later.
+
+Stop Play to discard the fixture. Clear StudioShopPreview/StudioShopRegression
+before saving the normal place. The intended handoff saves a normal Edit version
+first, then enables preview only for the running test; the Edit flag is cleared
+once Play has cloned it, so subsequent sessions start normally.
+
+## Verification record
+
+- Pure ownership/economy RED→GREEN tests and fresh Studio module tests passed.
+- Normal-bootstrap Mock shop/client suite passed; real production and exact
+  remote collection, duplicate rejection, automatic banking and failure retention.
+- Native preview purchase and HUD Collect Now click banked earnings; malformed
+  amount payload was rejected without banking.
+- Desktop panel inspected; button gradient issue corrected and artwork loaded.
+- Final regression/static results and cloud-save version are recorded in AGENTS.md.
+- Full device/touch and multi-player pass acceptance remain hands-on checks.
