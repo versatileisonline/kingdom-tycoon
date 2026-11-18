@@ -73,6 +73,14 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Final forest revision (2026-11-18) supersedes spruce:16 OpenWoodlandPine trees,
+70–82 studs, exposed brown lower trunks/branches and loose dark upper crowns.
+ServerStorage.PlotLandscapeAssets.WoodlandPine source116813767400777;
+tools/RestylePlotWoodland.luau preserves every previous footprint/base and archives
+spruces in SpruceForestBackup_20261118.326 decorative parts total; two content
+requests passed, cloud save138. Coordinated Edit window with equipment/menu agents;
+no gameplay, settings, main-checkout or play-state changes. See docs/PLOT_LANDSCAPING.md.
+
 Plot landscaping (2026-11-18): permanent Plots.<plot>.Environment holds 250 grass,
 40 ferns, 20 rocks and 16 tall on-plate trees (326 anchored decorative parts), visible
 to everyone independently of kingdom ownership. ServerStorage.PlotLandscapeAssets

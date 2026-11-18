@@ -174,3 +174,13 @@ RestoreParent attributes. New models carry ForestStyle=OpenWoodlandPine. Use
 APPLY=false for a dry run, then APPLY=true in Edit. Repeated execution refuses the
 backup. Rollback follows the spruce recipe: archive current trees, restore the
 previous models to recorded parents. No gameplay or other-agent code is modified.
+
+Final revision installed after a coordinated Edit handoff from equipment/menu
+agents. Source model116813767400777. Verified sixteen OpenWoodlandPine trees,
+326 decorative parts, sixteen archived spruce originals, exact previous X/Z
+sizes/positions and bottom heights. Both content requests loaded successfully;
+all additions remain script-free and physics-disabled. Dry-run, StyLua/Selene and
+player-height screenshot review passed. Saved Roblox cloud version138 (not
+published), then released Studio back to the menu/equipment agents. No play-state
+changes or main-checkout edits were performed during this handoff.
+Output: `Open woodland forest installed: 16 trees; footprints and grounding preserved`.
