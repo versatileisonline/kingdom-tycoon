@@ -25,7 +25,7 @@ function View.new(parent: Instance)
 		local item = Instance.new("TextLabel")
 		item.Name, item.Text = name, value
 		item.BackgroundTransparency, item.Font = 1, require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
-		item.TextColor3, item.TextSize = Color3.fromHex(Colors.Gold), size
+		item.TextColor3, item.TextSize = Color3.fromHex(Colors.Gold), size + 2
 		item.Position, item.Size = UDim2.fromOffset(0, y), UDim2.new(1, 0, 0, height)
 		item.Parent = panel
 		return item
@@ -46,7 +46,7 @@ function View.new(parent: Instance)
 		local item = Instance.new("TextButton")
 		item.Name, item.Text, item.Font =
 			name, value, require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
-		item.TextSize, item.TextColor3 = 24, Color3.fromHex(Colors.Text)
+		item.TextSize, item.TextColor3 = 26, Color3.fromHex(Colors.Text)
 		item.BackgroundColor3, item.BorderSizePixel = Color3.fromHex(Colors.Raised), 0
 		item.Position, item.Size = UDim2.new(0.5, -178, 0, y), UDim2.fromOffset(356, 56)
 		item.Parent = panel

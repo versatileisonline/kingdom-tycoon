@@ -14,7 +14,9 @@ local function text(parent: Instance, name: string, value: string, size: number,
 	item.Text = value
 	item.TextColor3 = Color3.fromHex(C.Text)
 	item.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
-	item.TextSize = math.max(10, math.floor(size * 0.75))
+	item.TextStrokeColor3 = Color3.fromRGB(20, 24, 33)
+	item.TextStrokeTransparency = 0.65
+	item.TextSize = math.max(12, math.floor(size * 0.75) + 2)
 	item.BackgroundTransparency = 1
 	item.ZIndex = z
 	item.Parent = parent
@@ -47,7 +49,9 @@ local function button(
 	item.Text = value
 	item.TextColor3 = Color3.fromHex(C.Text)
 	item.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
-	item.TextSize = 13
+	item.TextStrokeColor3 = Color3.fromRGB(20, 24, 33)
+	item.TextStrokeTransparency = 0.65
+	item.TextSize = 15
 	item.ZIndex = z
 	item.Parent = parent
 	surface(item, true)
@@ -149,7 +153,8 @@ function View.new(parent: Instance, settings: any)
 			text(card, "Heading", copy(key .. "Title", ({ "Your reward", "Resets", "You keep" })[index]), 22, 14)
 		heading.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 		heading.Position = UDim2.fromOffset(8, 12)
-		heading.Size = UDim2.new(1, -16, 0, 32)
+		heading.Size = UDim2.new(1, -16, 0, 40)
+		heading.TextWrapped = true
 		local picture = art(card, "Illustration", index - 1, 14)
 		picture.AnchorPoint = Vector2.new(0.5, 0)
 		picture.Position = UDim2.new(0.5, 0, 0, 46)
@@ -237,7 +242,7 @@ function View.new(parent: Instance, settings: any)
 			return
 		end
 		local viewport = camera.ViewportSize
-		local narrow = viewport.X < 740
+		local narrow = viewport.X < 840
 		local scale = math.min(1, math.max(1, viewport.Y - 48) / 440)
 		panelScale.Scale = scale
 		local width = math.min(Config.UI.PanelWidth, (viewport.X - 32) / scale)

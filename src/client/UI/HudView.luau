@@ -27,7 +27,8 @@ local function text(parent: Instance, name: string, content: string, size: numbe
 	l.Text = content
 	l.TextColor3 = color(C.Text)
 	l.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
-	l.TextSize = math.max(10, math.floor(size * 0.75))
+	l.TextStrokeColor3, l.TextStrokeTransparency = color(C.Track), 0.65
+	l.TextSize = math.max(12, math.floor(size * 0.75) + 2)
 	l.TextXAlignment = Enum.TextXAlignment.Left
 	l.Parent = parent
 	return l
@@ -36,8 +37,9 @@ local function button(parent: Instance, name: string, content: string): TextButt
 	local b = Instance.new("TextButton")
 	b.Name = name
 	b.Text = content
-	b.TextSize = 11
+	b.TextSize = 13
 	b.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
+	b.TextStrokeColor3, b.TextStrokeTransparency = color(C.Track), 0.65
 	b.TextColor3 = color(C.Text)
 	b.BackgroundColor3 = color(C.Raised)
 	b.BorderSizePixel = 0
@@ -105,7 +107,7 @@ function View.new(parent: Instance, settings: any)
 	gold.LayoutOrder = 3
 	gold.ZIndex = 3
 	local open = button(screen, "SettingsButton", "⚙")
-	open.TextSize = 20
+	open.TextSize = 22
 	open.AnchorPoint = Vector2.new(1, 0)
 	open.Position = UDim2.new(1, -20, 0, game:GetService("GuiService"):GetGuiInset().Y + 16)
 	open.Size = UDim2.fromOffset(52, 52)

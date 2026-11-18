@@ -9,8 +9,10 @@ local function label(parent: Instance, name: string, text: string, size: number,
 	local item = Instance.new("TextLabel")
 	item.Name = name
 	item.Text = text
-	item.TextSize = math.max(10, math.floor(size * 0.75))
+	item.TextSize = math.max(12, math.floor(size * 0.75) + 2)
 	item.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
+	item.TextStrokeColor3 = Color3.fromRGB(20, 24, 33)
+	item.TextStrokeTransparency = 0.65
 	item.BackgroundTransparency = 1
 	item.TextColor3 = Color3.fromHex(C.Text)
 	item.ZIndex = z
@@ -49,7 +51,9 @@ local function button(
 	item.Name = name
 	item.Text = text
 	item.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
-	item.TextSize = 13
+	item.TextStrokeColor3 = Color3.fromRGB(20, 24, 33)
+	item.TextStrokeTransparency = 0.65
+	item.TextSize = 15
 	item.TextColor3 = Color3.fromHex(C.Text)
 	item.ZIndex = z
 	item.Parent = parent
@@ -158,7 +162,8 @@ function View.new(parent: Instance, settings: any)
 		local heading = label(card, "Name", offer.Name, 22, 14)
 		heading.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 		heading.Position = UDim2.fromOffset(8, 14)
-		heading.Size = UDim2.new(1, -16, 0, 32)
+		heading.Size = UDim2.new(1, -16, 0, 40)
+		heading.TextWrapped = true
 		local icon = illustration(card, "Illustration", index, 14)
 		icon.AnchorPoint = Vector2.new(0.5, 0)
 		icon.Position = UDim2.new(0.5, 0, 0, 48)
@@ -179,13 +184,13 @@ function View.new(parent: Instance, settings: any)
 	local retry = button(panel, "Retry", "Refresh", 13, connections)
 	retry.AnchorPoint = Vector2.new(1, 1)
 	retry.Position = UDim2.new(1, -20, 1, -12)
-	retry.Size = UDim2.fromOffset(88, 28)
-	retry.TextSize = 10
+	retry.Size = UDim2.fromOffset(112, 28)
+	retry.TextSize = 12
 	local previewReset = button(panel, "PreviewReset", "Reset preview", 13, connections)
 	previewReset.AnchorPoint = Vector2.new(0, 1)
 	previewReset.Position = UDim2.new(0, 20, 1, -12)
-	previewReset.Size = UDim2.fromOffset(120, 28)
-	previewReset.TextSize = 10
+	previewReset.Size = UDim2.fromOffset(168, 28)
+	previewReset.TextSize = 12
 	previewReset.Visible = false
 	local message = label(screen, "ShopMessage", "", 13, 30)
 	message.AnchorPoint = Vector2.new(0.5, 1)
@@ -199,7 +204,7 @@ function View.new(parent: Instance, settings: any)
 			return
 		end
 		local viewport = camera.ViewportSize
-		local narrow = viewport.X < 740
+		local narrow = viewport.X < 840
 		local width = math.min(840, viewport.X - 32)
 		local height = math.min(560, viewport.Y - 48)
 		panel.Size = UDim2.fromOffset(width, height)
