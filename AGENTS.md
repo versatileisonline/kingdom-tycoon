@@ -108,6 +108,14 @@ Animator track at Action priority, replacing grip-only tween; upright grip and
 0.65s cooldown remain. Native client playback/unequip/reuse checks passed.
 No damage/schema/remotes/mapping changes. See docs/SWORD_ANIMATION.md.
 
+Music replacement (2026-11-18): HudConfig.MUSIC_IDS now contains Dungeon Quest
+115384070099102, The Rise of Kings 128045338895178 and Viking Invasion
+100085318455652. Client Audio.MusicPlaylist clones and shuffles once per startup,
+then repeats that session order; optional Random parameter supports seeded tests.
+Failure skipping, loading, settings and mappings stay unchanged. Tests cover
+shuffle/cycles/immutable input/session isolation. docs/MUSIC_PLAYLIST.md records
+track links, behavior, verification and historical results for the old playlist.
+
 
 Server leaderboard/pixel typography (2026-11-18): shared HudConfig.FONT uses the
 starter menu's Arcade font across screen UI and runtime plate labels. Larger text

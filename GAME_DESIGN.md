@@ -113,6 +113,12 @@ Roaming ambient NPCs; counts capped per server for performance.
   swing with a free Creator Store animation consistent with existing movement.
   Use free R15 pack3083796281 SideSwipe567479941, keep upright grip, current
   cooldown and no damage, and preserve existing walk/jump/control animations.
+
+- Music replacement (2026-11-18): creator approved Dungeon Quest
+  (115384070099102), The Rise of Kings (128045338895178) and Viking Invasion
+  (100085318455652), replacing the old three-track rotation. Shuffle the full
+  playlist once per client startup, then repeat that order. Existing volume,
+  loading and unavailable-track behavior remain unchanged.
 - Server leaderboard and typography (2026-11-18): creator approved replacing
   Roblox's player list with a custom upper-right Tab panel in the existing royal
   palette, real player portraits, Lifetime Gold ranking and Rebirths; highlight

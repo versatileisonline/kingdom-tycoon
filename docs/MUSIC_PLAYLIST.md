@@ -1,21 +1,26 @@
-# Medieval music rotation
+# Kingdom music: shuffled session playlist
 
-The client cycles three tracks rather than looping the first available asset.
-All three were returned as free (price 0) by the Roblox Creator Store audio search
-on 2026-11-17. They are mood references for kingdom gameplay, not tracks from the
-Game of Thrones soundtrack.
+The creator approved replacing the previous court/ambient/battle rotation with
+Dungeon Quest and two stronger medieval companions on 2026-11-18. All three were
+returned as free (price 0) by Creator Store search. Catalog availability does not
+prove runtime permission or listening acceptance.
 
-| Mood | Track | Creator | Asset ID |
+| Role | Track | Creator | Asset ID |
 | --- | --- | --- | --- |
-| Court | [Royal Court Background Music](https://create.roblox.com/store/asset/139186694323000) | DistrokidOfficial | 139186694323000 |
-| Calm kingdom | [Ravensmoor Keep (Peaceful Medieval Ambient)](https://create.roblox.com/store/asset/87479584695420) | DistrokidOfficial | 87479584695420 |
-| Dramatic medieval | [Medieval Battle Blaze](https://create.roblox.com/store/asset/137177134668386) | DistrokidOfficial | 137177134668386 |
+| Chosen reference | [Dungeon Quest](https://create.roblox.com/store/asset/115384070099102) | DistrokidOfficial | 115384070099102 |
+| Medieval orchestral | [The Rise of Kings](https://create.roblox.com/store/asset/128045338895178) | DistrokidOfficial | 128045338895178 |
+| Medieval companion | [Viking Invasion](https://create.roblox.com/store/asset/100085318455652) | DistrokidOfficial | 100085318455652 |
 
 ## Behavior
 
-HudConfig.MUSIC_IDS owns the ordered three-track rotation. AudioController keeps
+HudConfig.MUSIC_IDS owns the three tracks. MusicPlaylist.new(ids, random?) clones
+the list and shuffles it once with Fisher–Yates. The optional Random instance lets
+tests reproduce an order; normal startup uses a fresh Random.new(). Each client
+has its own order, which repeats after every playable track has played. Startup
+may legitimately select the same first song as the previous session. There is no
+saved order or cross-player synchronization. AudioController keeps
 one local KingdomBackgroundMusic Sound under SoundService, plays each song once,
-and advances on Sound.Ended. After the third song it returns to the first.
+and advances on Sound.Ended. After the third song it returns to its first.
 Settings music volume and mute still scale the independent KingdomMusic group;
 world audio routing and authored sound groups retain their existing behavior.
 No new UI, remotes, saved preferences or Studio assets are required.
@@ -29,15 +34,18 @@ obsolete. A subsequent Start receives a fresh playlist and fresh Sound.
 ## Verification
 
 MusicPlaylistTests.Run(Playlist) accepts the pure client Audio.MusicPlaylist module,
-like the existing HudState tests accept their state module. It tests ordered
-advancement/wrap, skipping failed tracks, bounded exhaustion, session isolation,
-empty lists and a single remaining playable track. Expect:
+like the existing HudState tests accept their state module. It tests deterministic
+seeded shuffles, all three possible starting tracks across fixed seeds, exactly
+one appearance per cycle, unchanged frozen input, wrap, skipping failed tracks,
+bounded exhaustion, session isolation, empty lists and one remaining track. Expect:
 
 `All music playlist checks passed`
 
 For actual audio, use normal client startup in the intended Studio place. Expect
-`[KingdomTycoon][AudioController] Music loaded: 139186694323000` initially; when it
-finishes, expect IDs 87479584695420, then 137177134668386, then the first ID again.
+`[KingdomTycoon][AudioController] Music loaded: <asset ID>` with one of the three
+new IDs initially. Let each finish: all three should play before the first repeats.
+Restart several times to observe varied starts; do not require consecutive starts
+to differ.
 To verify advancement quickly in a temporary Play session, seek the local
 KingdomBackgroundMusic.TimePosition near TimeLength and let native Ended fire;
 do not call private controller functions or spoof the signal.
@@ -48,7 +56,18 @@ alone does not prove runtime permission or aesthetic acceptance. The search did
 not include a listening review. Formatting, lint and strict Roblox types are
 checked independently of playback.
 
-Runtime asset check (2026-11-17): all three IDs loaded successfully in the intended
+Current change verification (2026-11-18): the expanded suite failed against the
+old ordered implementation, then passed with startup shuffling in Studio's native
+Luau runtime. StyLua, Selene (zero errors/warnings), Rojo build and independent
+code review passed. New-track playback and native transitions are checked
+separately from these pure selection tests.
+
+## Historical verification: superseded playlist (2026-11-17)
+
+The results below apply only to the old IDs 139186694323000, 87479584695420,
+and 137177134668386, not the replacement tracks.
+
+Runtime asset check (2026-11-17): all three old IDs loaded successfully in the intended
 Kingdom Tycoon client using temporary muted Sounds. Reported lengths were
 224.60 seconds (Royal Court), 207.80 seconds (Ravensmoor Keep), and 189.44 seconds
 (Medieval Battle Blaze). This establishes loading permission, not a listening review.
