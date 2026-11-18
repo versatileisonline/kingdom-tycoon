@@ -26,7 +26,7 @@ function Tests.Run(): ()
 	local zones = m:FindFirstChild("CourseZones") :: Folder
 	local function move(name: string): ()
 		local part = zones:FindFirstChild(name) :: BasePart
-		character:PivotTo(part.CFrame)
+		character:PivotTo(part.CFrame + Vector3.new(0, 1, 0))
 		local root = character:FindFirstChild("HumanoidRootPart") :: BasePart
 		root.AssemblyLinearVelocity = Vector3.zero
 		task.wait(0.25)
@@ -38,6 +38,11 @@ function Tests.Run(): ()
 	move("Checkpoint1")
 	assert(p:GetAttribute("CourseCheckpoint") == 1, "Checkpoint failed")
 	local started = p:GetAttribute("CourseStarted")
+	local nextCheckpoint = zones:FindFirstChild("Checkpoint2") :: BasePart
+	local groundPoint = Vector3.new(nextCheckpoint.Position.X, m:GetPivot().Position.Y + 3, nextCheckpoint.Position.Z)
+	character:PivotTo(CFrame.new(groundPoint))
+	task.wait(1)
+	assert(p:GetAttribute("CourseCheckpoint") == 1, "Ground contact advanced checkpoint")
 	character:PivotTo(m:GetPivot() * CFrame.new(0, 3, 0))
 	task.wait(1)
 	assert(p:GetAttribute("CourseStarted") == started, "Fall restarted timer")

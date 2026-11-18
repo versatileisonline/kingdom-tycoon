@@ -91,6 +91,25 @@ local function tickPlayer(player: Player, record: Record): ()
 		record.LastRecovery = now
 		publish(player, record)
 	end
+
+	-- Only recover after landing on the ground below the elevated route.
+	local localPosition = model:GetPivot():PointToObjectSpace(position)
+	local ground = model:GetAttribute("FallRootY")
+	if typeof(ground) == "number" and localPosition.Y < ground then
+		if now - record.LastRecovery < Config.RECOVERY_COOLDOWN then
+			return
+		end
+		local destination = if run.Checkpoint == 0 then start else zone(model, "Checkpoint" .. run.Checkpoint)
+		if destination then
+			local actualRoot = root :: BasePart
+			local actualCharacter = character :: Model
+			actualRoot.AssemblyLinearVelocity = Vector3.zero
+			actualRoot.AssemblyAngularVelocity = Vector3.zero
+			actualCharacter:PivotTo(destination.CFrame + Vector3.new(0, Config.RECOVERY_LIFT, 0))
+			record.LastRecovery = now
+		end
+		return
+	end
 	for index = 1, Config.CHECKPOINTS do
 		local checkpoint = zone(model, "Checkpoint" .. index)
 		if checkpoint and inside(checkpoint, position, 0) and State.Checkpoint(run, index) then
@@ -101,24 +120,6 @@ local function tickPlayer(player: Player, record: Record): ()
 		record.LastRecovery = now
 		publish(player, record)
 		return
-	end
-	-- Only recover after landing on the ground below the elevated route.
-	local localPosition = model:GetPivot():PointToObjectSpace(position)
-	local ground = model:GetAttribute("FallRootY")
-	if
-		typeof(ground) == "number"
-		and localPosition.Y < ground
-		and now - record.LastRecovery >= Config.RECOVERY_COOLDOWN
-	then
-		local destination = if run.Checkpoint == 0 then start else zone(model, "Checkpoint" .. run.Checkpoint)
-		if destination then
-			local actualRoot = root :: BasePart
-			local actualCharacter = character :: Model
-			actualRoot.AssemblyLinearVelocity = Vector3.zero
-			actualRoot.AssemblyAngularVelocity = Vector3.zero
-			actualCharacter:PivotTo(destination.CFrame + Vector3.new(0, Config.RECOVERY_LIFT, 0))
-			record.LastRecovery = now
-		end
 	end
 end
 function Service.Init(): () end
@@ -140,25 +141,23 @@ function Service.Start(): ()
 	local menu = Instance.new("RemoteEvent")
 	menu.Name, menu.Parent = "Menu", folder
 	folder.Parent = game:GetService("ReplicatedStorage")
-	local last: { [Player]: number } = {}
 	table.insert(
 		connections,
 		menu.OnServerEvent:Connect(function(player: Player, opened: unknown, ...: any)
 			if typeof(opened) ~= "boolean" or select("#", ...) ~= 0 then
 				return
 			end
-			local now = os.clock()
-			if opened ~= true and now - (last[player] or -math.huge) < 0.1 then
-				return
-			end
-			last[player] = now
 			player:SetAttribute("CourseMenuOpen", opened)
+			local record = records[player]
+			if opened and record and record.Run.Active then
+				State.Cancel(record.Run)
+				publish(player, record)
+			end
 		end)
 	)
 	table.insert(
 		connections,
 		Players.PlayerRemoving:Connect(function(player)
-			last[player] = nil
 			records[player] = nil
 		end)
 	)
