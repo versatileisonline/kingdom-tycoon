@@ -30,7 +30,10 @@ local function observe(instance: Instance): ()
 	table.insert(
 		list,
 		tool.Activated:Connect(function()
-			if tool.Parent == Players.LocalPlayer.Character then
+			if
+				tool.Parent == Players.LocalPlayer.Character
+				and Players.LocalPlayer:GetAttribute("KingdomEntered") ~= false
+			then
 				remote:FireServer()
 			end
 		end)

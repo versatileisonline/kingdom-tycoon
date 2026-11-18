@@ -39,6 +39,7 @@ function Service.TrySwing(player: Player): boolean
 	local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
 	if
 		not state
+		or player:GetAttribute("KingdomEntered") == false
 		or not tool
 		or tool.Parent ~= character
 		or not humanoid
