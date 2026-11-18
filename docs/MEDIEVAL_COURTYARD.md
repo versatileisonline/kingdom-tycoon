@@ -79,3 +79,37 @@ and menu cancellation retaining best. Reset the test switch afterward.
 Manually traverse every jump using normal jump/sprint settings; check native
 falls, checkpoint facing, sign visibility, equipped sword orientation, stand/horse
 appearance, plaza walking clearance, purchase restoration and rebirth cleanup.
+
+## Verification and saved assets (2026-11-18)
+Generated horse model asset90054557348148 is stored as MedievalHorseTemplate.
+It contains7mesh parts; each clone is anchored/noninteractive, with no scripts.
+The generated front-right-leg texture71593976060416 failed runtime loading; use
+the matching left-front-leg texture100252241141730 on that leg. The base generation
+and all other textures are retained. Rework recipe applies the same fallback.
+tools/PolishMedievalCourtyard.luau is a repeat-safe companion for the installed
+revision: vendor faces customers, course sign has timber supports, texture fallback.
+Saved courtyard asset revision to cloud version150 with test switches false and
+preview attributes cleared. No publishing/pushing performed by this task.
+
+Observed normal Mock Play:
+- All medieval course state checks passed.
+- All medieval course service checks passed, including ordered checkpoints,
+  early-finish rejection, ground contact not advancing checkpoint, fall recovery
+  preserving start time, finish/session-best, retry and menu cancellation.
+- Actual R15 equipped sword Blade.UpVector.Y exceeded0.999 at rest and after a
+  client Tool:Activate() round trip (SwingSerial incremented). Initial snapshots
+  before the equip pose settled were misleading; settled orientation is upright.
+- Close-up stand, paddock and course screenshots reviewed. Farmer was corrected
+  to face the customer using the authored eyes' +Z direction.
+- Full src Selene, StyLua and Rojo build passed. Strict Luau-LSP has only existing
+  nullable Frame diagnostics in PlatePresentation; no new course-file diagnostics.
+- Independent review found menu-close and ground-checkpoint edge cases; both fixed.
+- Sprint commit ec1104f and acceptance notes5476321 were preserved. No edits to
+  sprint/camera modules, tuning or current bindings (R camera, Shift sprint).
+- Main shared checkout was switched by the leaderboard agent; task-only hunks
+  committed there without staging the leaderboard/pixel UI work.
+- Backup has both model and plate originals with matching IDs; select original
+  by class (Model versus BasePart), never blindly restore a same-name child.
+- Still requires creator acceptance: all jumps at normal movement settings,
+  visual scale/spacing, touch/gamepad/narrow windows, and multiplayer/rebirth
+  course reset. Automated integration teleports between zones to isolate logic.

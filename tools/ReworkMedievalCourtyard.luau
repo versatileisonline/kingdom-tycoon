@@ -87,7 +87,7 @@ for _, x in { 25, 30, 35 } do
 end
 local vendor = template.StarterFarm.Scenery.Farmer:Clone()
 vendor.Name = "FarmerVendor"
-vendor:PivotTo(origin * CFrame.new(30, 3, 30) * CFrame.Angles(0, math.pi, 0))
+vendor:PivotTo(origin * CFrame.new(30, 3, 30))
 local box, vendorSize = vendor:GetBoundingBox()
 vendor:PivotTo(vendor:GetPivot() + Vector3.new(0, origin.Position.Y + 0.3 - (box.Position.Y - vendorSize.Y / 2), 0))
 for _, v in vendor:GetDescendants() do
@@ -114,6 +114,11 @@ end
 for i, pos in { Vector3.new(46, 0, -96), Vector3.new(77, 0, -91) } do
 	local h = horseSource:Clone()
 	h.Name = "DecorativeHorse" .. i
+	local leftLeg = h:FindFirstChild("front left leg_geom", true)
+	local rightLeg = h:FindFirstChild("front right leg_geom", true)
+	if leftLeg and rightLeg and leftLeg:IsA("MeshPart") and rightLeg:IsA("MeshPart") then
+		rightLeg.TextureID = leftLeg.TextureID
+	end
 	local _, s = h:GetBoundingBox()
 	h:ScaleTo(h:GetScale() * 7.5 / s.Y)
 	h:PivotTo(origin * CFrame.new(pos) * CFrame.Angles(0, if i == 1 then math.rad(25) else math.rad(-35), 0))
@@ -239,6 +244,9 @@ local barrel =
 	part(course, "WaterBarrel", Vector3.new(3, 2.5, 2.5), 58, 1.6, 19, wood, nil, CFrame.Angles(0, 0, math.pi / 2))
 barrel.Shape = Enum.PartType.Cylinder
 sign(course, "TrainingSign", "Medieval Practice", 70, 8, 16, 19)
+for _, x in { 60, 80 } do
+	part(course, "TrainingSignPost", Vector3.new(0.6, 9, 0.6), x, 4.5, 16, wood)
+end
 for _, x in { 60, 80 } do
 	part(course, "PennantPost", Vector3.new(0.4, 7, 0.4), x, 3.5, 52, wood)
 	part(
