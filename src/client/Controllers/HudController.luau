@@ -50,7 +50,11 @@ function Controller.Start(): ()
 		)
 		local formatted = State.FormatGold(value)
 		view.Gold.Text = formatted
-		view.Gold.TextSize = math.clamp(math.floor(128 / math.max(1, #formatted * 0.6)) + 2, 12, 22)
+		view.Gold.TextSize = math.clamp(
+			math.floor(152 / math.max(1, #formatted * 0.6)) + 2,
+			Config.UI.GoldTextMin,
+			Config.UI.GoldTextMax
+		)
 	end
 	table.insert(connections, player:GetAttributeChangedSignal("Gold"):Connect(render))
 	table.insert(connections, player:GetAttributeChangedSignal("GoldReady"):Connect(render))

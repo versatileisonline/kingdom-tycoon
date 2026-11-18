@@ -17,6 +17,7 @@ local controllers: { Types.Lifecycle } = {
 	require(script.Controllers.LeaderboardController),
 	require(script.Controllers.AudioController),
 	require(script.Controllers.GraphicsController),
+	require(script.Controllers.WorldTypographyController),
 	require(script.Controllers.ExampleController),
 	require(script.Controllers.PlotController),
 	require(script.Controllers.CameraController),

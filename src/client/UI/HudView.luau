@@ -96,6 +96,9 @@ function View.new(parent: Instance, settings: any)
 	collectLabel.LayoutOrder = 1
 	collectLabel.ZIndex = 3
 	collectLabel.Visible = false
+	collectLabel.TextSize = Config.UI.CollectTextSize
+	collectLabel.TextStrokeColor3 = collectLabel.TextColor3
+	collectLabel.TextStrokeTransparency = Config.UI.LauncherStrokeTransparency
 	local coin = Style.Image(currencyRow, "Coin", Config.ART.Coin, 3)
 	coin.Size = UDim2.fromOffset(Config.UI.BadgeCoinSize, Config.UI.BadgeCoinSize)
 	coin.LayoutOrder = 2
@@ -104,6 +107,8 @@ function View.new(parent: Instance, settings: any)
 	gold.TextColor3 = color(C.Gold)
 	gold.Size = UDim2.fromOffset(0, 28)
 	gold.AutomaticSize = Enum.AutomaticSize.X
+	gold.TextStrokeColor3 = gold.TextColor3
+	gold.TextStrokeTransparency = Config.UI.LauncherStrokeTransparency
 	gold.LayoutOrder = 3
 	gold.ZIndex = 3
 	local open = button(screen, "SettingsButton", "⚙")

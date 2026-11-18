@@ -102,6 +102,13 @@ footprints/grounding retained; total326 decorative parts. Broadleaf originals
 archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
 and tools/RestylePlotForest.luau supply repeatable replacement. Saving this
 revision was deferred because another Play session started; version132 was not saved.
+Left HUD emphasis/world signs (2026-11-18): HudConfig.UI owns larger 22px
+Shop/Rebirth launchers, 21px Collect text, 16–26px Gold and matching weight.
+WorldTypographyController applies the shared Arcade font to BillboardGui and
+SurfaceGui TextLabels under ActiveKingdoms, KingdomMap and Plots, including
+Sword Stand and other authored medieval signs. Event-driven clone/stream support;
+original FontFaces are restored on removal/shutdown. Templates remain untouched.
+
 Free sword animation (2026-11-18): EquipmentConfig selects SideSwipe567479941 from
 free Creator Store pack3083796281. EquipmentService uses one nonlooping server
 Animator track at Action priority, replacing grip-only tween; upright grip and

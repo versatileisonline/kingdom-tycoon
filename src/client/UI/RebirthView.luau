@@ -79,11 +79,18 @@ function View.new(parent: Instance, settings: any)
 	screen.DisplayOrder = 20
 	screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	screen.Parent = parent
-	local open = button(screen, "RebirthButton", "     " .. copy("Title", "Rebirth"), 2, connections)
-	open.Size = UDim2.fromOffset(132, 48)
+	local open = button(screen, "RebirthButton", copy("Title", "Rebirth"), 2, connections)
+	open.Size = UDim2.fromOffset(Hud.UI.LauncherWidth, Hud.UI.LauncherHeight)
+	open.TextSize = Hud.UI.LauncherTextSize
+	open.TextXAlignment = Enum.TextXAlignment.Left
+	open.TextStrokeColor3 = open.TextColor3
+	open.TextStrokeTransparency = Hud.UI.LauncherStrokeTransparency
+	local textPadding = Instance.new("UIPadding")
+	textPadding.PaddingLeft = UDim.new(0, Hud.UI.LauncherTextInset)
+	textPadding.Parent = open
 	local launcher = art(open, "RebirthIcon", 3, 3)
 	launcher.Size = UDim2.fromOffset(42, 42)
-	launcher.Position = UDim2.fromOffset(6, 3)
+	launcher.Position = UDim2.fromOffset(6 - Hud.UI.LauncherTextInset, 7)
 	local shade = Instance.new("TextButton")
 	shade.Name = "RebirthShade"
 	shade.Text = ""
@@ -252,7 +259,7 @@ function View.new(parent: Instance, settings: any)
 		layout.FillDirectionMaxCells = if narrow then 1 else 3
 		layout.CellSize = UDim2.fromOffset(cardWidth, 316)
 		scroll.CanvasSize = UDim2.fromOffset(0, if narrow then 3 * 316 + 2 * 14 + 8 else 324)
-		open.Position = UDim2.new(0, if narrow then 12 else 28, 0.30, 58)
+		open.Position = UDim2.new(0, if narrow then 12 else 28, 0.30, Hud.UI.LauncherHeight + Hud.UI.LauncherGap)
 	end
 	local cameraConnection: RBXScriptConnection? = nil
 	local function cameraChanged(): ()

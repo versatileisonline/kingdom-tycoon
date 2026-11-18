@@ -53,3 +53,17 @@ Automated Studio tools were denied by approval policy during implementation;
 rendering, multi-client input and persistent test-store rejoin remain manual
 acceptance checks. Another agent reported schema-v2 Mock startup and the
 LeaderboardController Ready message during its authorized courtyard preview.
+
+## Left HUD and authored world signs refinement
+
+Shop/Rebirth launchers now use 22px Arcade text with a matching-color text stroke
+for heavier letters, expanded 184×56 buttons, and a 10px gap. Gold uses a larger
+16–26px sizing range and Collect uses 21px. Existing royal colors/art stay.
+WorldTypographyController styles SurfaceGui/BillboardGui TextLabels under
+ActiveKingdoms, KingdomMap and Plots using HudConfig.FONT, including Sword Stand,
+training and paddock signs. It handles later clones/streaming through descendant
+events and restores original FontFaces during cleanup; no template edits needed.
+
+Verify after a fresh Play: Shop/Rebirth/Gold text should be visibly larger/heavier,
+buttons should not overlap, and Sword Stand/medieval signs should use Arcade.
+Output should retain ClientBootstrap Ready without WorldTypographyController errors.
