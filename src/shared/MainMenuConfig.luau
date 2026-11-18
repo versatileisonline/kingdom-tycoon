@@ -1,0 +1,15 @@
+--!strict
+return table.freeze({
+	TITLE = "KINGDOM AWAITS",
+	REMOTE_FOLDER = "KingdomEntry",
+	REQUEST_COOLDOWN = 1,
+	REQUEST_TIMEOUT = 10,
+	ENTRY_OFFSET = 12,
+	RAY_HEIGHT = 24,
+	RAY_DEPTH = 64,
+	CLEARANCE = Vector3.new(4, 5, 4),
+	WIDTH = 560,
+	HEIGHT = 400,
+	MARGIN = 24,
+	RUN_TESTS_IN_STUDIO = false,
+})
