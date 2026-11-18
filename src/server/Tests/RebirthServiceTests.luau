@@ -85,6 +85,7 @@ function Tests.Run(): ()
 		assert(
 			Data.Update(owner, function(draft)
 				draft.Gold = 100000
+				draft.LifetimeGold = 345678
 			end),
 			"exact target fixture"
 		)
@@ -132,11 +133,13 @@ function Tests.Run(): ()
 		assert(Rebirth.TryRebirth(owner, 1), "second exact target succeeds")
 		after = Data.GetSnapshot(owner)
 		assert(after and after.Rebirths == 2 and after.Gold == 0, "second reward applied once")
+		assert(after and after.LifetimeGold == 345678, "rebirth must preserve lifetime earnings")
 	end, debug.traceback)
 	Plots.Release(owner)
 	assert(
 		Data.Update(owner, function(draft)
 			draft.Gold = before.Gold
+			draft.LifetimeGold = before.LifetimeGold
 			draft.Rebirths = before.Rebirths
 			draft.PurchasedBuildings = before.PurchasedBuildings
 		end),

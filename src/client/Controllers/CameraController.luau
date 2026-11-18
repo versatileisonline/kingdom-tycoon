@@ -44,7 +44,9 @@ local function update(): ()
 		or not focused
 		or UserInputService:GetFocusedTextBox() ~= nil
 		or GuiService.MenuIsOpen
-		or (Preferences.Get("MenuOpen") == true or Preferences.Get("ShopOpen") == true or Preferences.Get("RebirthOpen") == true)
+		or (Preferences.Get("MenuOpen") == true or Preferences.Get("ShopOpen") == true or Preferences.Get("RebirthOpen") == true or Preferences.Get(
+			"LeaderboardOpen"
+		) == true)
 		or humanoid == nil
 		or humanoid.Health <= 0
 		or humanoid.Sit
@@ -90,7 +92,10 @@ function CameraController.Start(): ()
 	table.insert(
 		connections,
 		Preferences.Observe(function(key: string): ()
-			if (key == "MenuOpen" or key == "ShopOpen" or key == "RebirthOpen") and Preferences.Get(key) == true then
+			if
+				(key == "MenuOpen" or key == "ShopOpen" or key == "RebirthOpen" or key == "LeaderboardOpen")
+				and Preferences.Get(key) == true
+			then
 				restore()
 			end
 		end)
@@ -106,6 +111,7 @@ function CameraController.Start(): ()
 				and Preferences.Get("MenuOpen") ~= true
 				and Preferences.Get("ShopOpen") ~= true
 				and Preferences.Get("RebirthOpen") ~= true
+				and Preferences.Get("LeaderboardOpen") ~= true
 			then
 				enabled = not enabled
 				logger.Info(if enabled then "Camera lock selected" else "Camera lock released")

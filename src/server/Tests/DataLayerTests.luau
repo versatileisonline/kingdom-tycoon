@@ -40,7 +40,10 @@ function Tests.RunSchema(): number
 			local legacy = { SchemaVersion = 1, Gold = 123, Rebirths = 2, PurchasedBuildings = { Probe = true } }
 			local migrated, reason = DataMigrations.Prepare(legacy)
 			assert(migrated ~= nil, reason)
-			assert(migrated.LifetimeGold == 123 and migrated.Rebirths == 2 and migrated.PurchasedBuildings.Probe)
+			assert(
+				migrated.LifetimeGold == 123 and migrated.Rebirths == 2 and migrated.PurchasedBuildings.Probe,
+				"Legacy progress not preserved"
+			)
 			assert(legacy.SchemaVersion == 1, "Migration mutated source")
 			local copy = DataSchema.Copy(migrated)
 			copy.LifetimeGold += 1

@@ -10,8 +10,10 @@ function Controller.Get(key: string): State.Value?
 	return state.Get(key)
 end
 function Controller.Set(key: string, value: unknown): boolean
-	if value == true and (key == "MenuOpen" or key == "ShopOpen" or key == "RebirthOpen") then
-		for _, other in { "MenuOpen", "ShopOpen", "RebirthOpen" } do
+	if
+		value == true and (key == "MenuOpen" or key == "ShopOpen" or key == "RebirthOpen" or key == "LeaderboardOpen")
+	then
+		for _, other in { "MenuOpen", "ShopOpen", "RebirthOpen", "LeaderboardOpen" } do
 			if other ~= key and state.Get(other) == true then
 				state.Set(other, false)
 				changed:Fire(other, false)

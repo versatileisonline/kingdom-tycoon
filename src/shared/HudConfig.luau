@@ -28,6 +28,7 @@ return table.freeze({
 		MainMenuOpen = true,
 		ShopOpen = false,
 		RebirthOpen = false,
+		LeaderboardOpen = false,
 	}),
 	COLORS = table.freeze({
 		Panel = "201F25",

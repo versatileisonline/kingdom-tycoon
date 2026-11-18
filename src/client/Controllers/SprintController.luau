@@ -27,6 +27,7 @@ local function blocked(): boolean
 		or Preferences.Get("MenuOpen") == true
 		or Preferences.Get("ShopOpen") == true
 		or Preferences.Get("RebirthOpen") == true
+		or Preferences.Get("LeaderboardOpen") == true
 		or humanoid == nil
 		or humanoid.Health <= 0
 		or humanoid.Sit
