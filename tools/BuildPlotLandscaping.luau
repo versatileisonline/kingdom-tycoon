@@ -2,6 +2,8 @@
 -- One-time Studio authoring recipe. Not Rojo mapped; never runs in published servers.
 -- Set APPLY=true only after reviewing the dry-run result.
 local APPLY = false
+local REVISE_TREES_ONLY = false
+local TREE_BACKUP = "PlotTreePlacementBackup_20261118"
 local SEED = 18112026
 local CLEARANCE = 6
 local run = game:GetService("RunService")
@@ -10,6 +12,9 @@ local assets = game:GetService("ServerStorage"):FindFirstChild("PlotLandscapeAss
 assert(assets, "Missing ServerStorage.PlotLandscapeAssets")
 local template = game:GetService("ServerStorage"):FindFirstChild("KingdomTemplate") :: Model
 assert(template and template:IsA("Model"), "Missing KingdomTemplate")
+if REVISE_TREES_ONLY and APPLY then
+	assert(not game.ServerStorage:FindFirstChild(TREE_BACKUP), "Tree backup already exists; inspect before revising")
+end
 local plots = workspace:FindFirstChild("Plots")
 assert(plots, "Missing Plots")
 type Rect = { x: number, z: number, hx: number, hz: number }
@@ -86,7 +91,15 @@ local ok, reason = xpcall(function()
 		if not plot:IsA("Model") then
 			continue
 		end
-		assert(not plot:FindFirstChild("Environment"), "Environment already exists: " .. plot.Name)
+		if REVISE_TREES_ONLY then
+			local current = plot:FindFirstChild("Environment")
+			assert(current and current:GetAttribute("LandscapeVersion") == 1, "Expected original landscaping")
+			for i = 1, 8 do
+				assert(current:FindFirstChild(string.format("Tree%02d", i)), "Missing original tree")
+			end
+		else
+			assert(not plot:FindFirstChild("Environment"), "Environment already exists: " .. plot.Name)
+		end
 		local origin = plot:FindFirstChild("Origin") :: BasePart
 		local ground = plot:FindFirstChild("Ground") :: BasePart
 		assert(origin and ground, "Missing plot origin/ground")
@@ -102,13 +115,21 @@ local ok, reason = xpcall(function()
 		)
 		local environment = Instance.new("Folder")
 		environment.Name = "Environment"
-		environment:SetAttribute("LandscapeVersion", 1)
+		environment:SetAttribute("LandscapeVersion", 2)
 		environment:SetAttribute("Seed", SEED)
 		table.insert(stages, { plot = plot, environment = environment })
 		local rng = Random.new(SEED)
 		local function make(name: string, scale: number, p: Vector3): Model
 			local model = (assets:FindFirstChild(name) :: Model):Clone()
-			model:ScaleTo(model:GetScale() * scale)
+			if name == "Tree" then
+				local part = model:FindFirstChildWhichIsA("BasePart", true) :: BasePart
+				local width = 24 * scale / math.max(part.Size.X, part.Size.Z)
+				part.Size = Vector3.new(part.Size.X * width, 72 * scale, part.Size.Z * width)
+				local cf, size = model:GetBoundingBox()
+				model.WorldPivot = CFrame.new(cf.Position - Vector3.new(0, size.Y / 2, 0))
+			else
+				model:ScaleTo(model:GetScale() * scale)
+			end
 			model:PivotTo(frame * CFrame.new(p) * CFrame.Angles(0, rng:NextNumber(0, 2 * math.pi), 0))
 			return model
 		end
@@ -144,32 +165,24 @@ local ok, reason = xpcall(function()
 			assert(accepted == spec.count, "Insufficient clear ground for " .. spec.name)
 			totals[spec.name] += accepted
 		end
-		local terrainParams = RaycastParams.new()
-		terrainParams.FilterType = Enum.RaycastFilterType.Include
-		terrainParams.FilterDescendantsInstances = { workspace.Terrain }
-		terrainParams.IgnoreWater = false
 		local locations = {
-			{ -100, -210 },
-			{ -40, -215 },
-			{ 50, -213 },
-			{ 120, -210 },
-			{ -210, -60 },
-			{ -213, 60 },
-			{ 210, -60 },
-			{
-				213,
-				60,
-			},
+			{ -137, -108 },
+			{ -137, -25 },
+			{ -137, 25 },
+			{ -137, 70 },
+			{ 137, -108 },
+			{ 137, -25 },
+			{ 137, 25 },
+			{ 137, 70 },
 		}
 		for index, location in locations do
-			local world = frame:PointToWorldSpace(Vector3.new(location[1], 100, location[2]))
-			local hit = workspace:Raycast(world, Vector3.new(0, -250, 0), terrainParams)
-			assert(hit and hit.Material ~= Enum.Material.Water, "Tree needs dry terrain")
-			local p = frame:PointToObjectSpace(hit.Position)
-			local model = make("Tree", rng:NextNumber(0.85, 1.15), p - Vector3.new(0, 0.1, 0))
+			local model = make("Tree", rng:NextNumber(0.95, 1.05), Vector3.new(location[1], top - 0.1, location[2]))
 			model.Parent = environment
 			local rect = bounds(model, frame)
-			assert(not overlaps(rect, { x = 0, z = 0, hx = 165, hz = 165 }, 2), "Tree canopy overlaps plateau")
+			assert(math.abs(rect.x) + rect.hx <= 158 and math.abs(rect.z) + rect.hz <= 158, "Tree outside plate")
+			for _, mask in masks do
+				assert(not overlaps(rect, mask, CLEARANCE), "Tree overlaps gameplay reservation")
+			end
 			model.Name = string.format("Tree%02d", index)
 			totals.Tree += 1
 		end
@@ -183,6 +196,23 @@ if not ok or not APPLY then
 	if not ok then
 		error(reason)
 	end
+elseif REVISE_TREES_ONLY then
+	local backup = Instance.new("Folder")
+	backup.Name = TREE_BACKUP
+	backup.Parent = game.ServerStorage
+	for _, stage in stages do
+		local current = stage.plot.Environment
+		local saved = Instance.new("Folder")
+		saved.Name = stage.plot.Name
+		saved.Parent = backup
+		for i = 1, 8 do
+			local name = string.format("Tree%02d", i)
+			current[name].Parent = saved
+			stage.environment[name].Parent = current
+		end
+		current:SetAttribute("LandscapeVersion", 2)
+		stage.environment:Destroy()
+	end
 else
 	for _, stage in stages do
 		stage.environment.Parent = stage.plot
@@ -191,7 +221,7 @@ end
 print(
 	string.format(
 		"Landscaping %s: %d plots; %d grass, %d ferns, %d rocks, %d trees; clearance checks passed",
-		if APPLY then "installed" else "dry run",
+		if not APPLY then "dry run" elseif REVISE_TREES_ONLY then "trees revised" else "installed",
 		#stages,
 		totals.Grass,
 		totals.Fern,

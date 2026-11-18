@@ -11,7 +11,7 @@ hill, pond or gameplay work.
   non-queryable part. Model pivot is the bottom center at local zero.
 - `RawSources` inside that folder preserves imported/generated originals. Prepared
   copies retain geometry and texture children only; no scripts are cloned.
-- `Workspace.Plots.<plot>.Environment`: permanent scenery, `LandscapeVersion=1`,
+- `Workspace.Plots.<plot>.Environment`: permanent scenery, `LandscapeVersion=2`,
   `Seed=18112026`. It belongs to the plot, not the player's runtime kingdom.
 - Each 320x320 plot receives 250 Grass, 40 Fern, 20 Rock and 8 Tree Models: 318
   parts total. Existing objects are preserved. Duplicating the entire plot carries
@@ -23,7 +23,9 @@ generated grass model **71085021125277** (requested 900 triangles),
 and one stone from [Rock by FinisMaps](https://create.roblox.com/store/asset/4038061999).
 The unused [Grass clumps by Quenty](https://create.roblox.com/store/asset/361802126)
 source is archived, not placed: 71 parts per patch was too costly.
-Prepared tree height is 48 studs, grass height 2; fern width 4.5, rock width 4.
+Prepared source tree height is 48 studs; placed trees are reshaped to 68.4–75.6
+studs tall with 22.8–25.2-stud maximum local mesh width. Grass height is 2; fern
+width 4.5, rock width 4.
 Reconstruct prepared assets by cloning geometry with its textures, stripping all
 other children, normalizing these dimensions and setting bottom-center pivots.
 Assets are Studio-owned and are not included in a Rojo code-only build.
@@ -44,15 +46,23 @@ ferns and rocks have six studs of horizontal bounding-box clearance from these
 regions and remain within the baseplate. This includes future hidden purchases.
 The interior remains empty even where no machinery currently exists.
 
-Trees stand on dry terrain outside the plateau, with at least two studs of canopy
-bounding-box clearance. Generation produced a broader crown than requested, so the
-initial 185–190-stud offsets failed validation; installed offsets are 210–215
-studs at the rear and 210–213 on the sides. The front remains open. Existing simple
-plot trees and the earlier preview tree are preserved.
+Creator revision: all eight generated trees now stand on the baseplate, grounded
+at local Y=-0.1 (world Y=39.9). Four per side use local X=-137/+137 and Z=-108,
+-25, 25, 70. Full transformed bounds remain within the plate with a two-stud edge
+margin and six-stud clearance from gameplay reservations. Existing simple plot
+trees and the earlier preview tree are preserved. The front remains open.
+
+To revise an existing v1 installation, set REVISE_TREES_ONLY=true. First dry-run
+with APPLY=false, then apply. The recipe validates a complete stage but transfers
+only its eight trees, preserving every grass/fern/rock instance. Original trees
+are moved intact into ServerStorage.PlotTreePlacementBackup_20261118.<plot>.
+It refuses an existing backup or already revised Environment. To undo this tree
+revision, archive the eight new trees and restore the eight original models from
+that backup; reset LandscapeVersion to1.
 
 ## Verification and limits
 
-- Saved to Roblox cloud version 129 (not published).
+- Initial installation saved as cloud version 129; tree revision saved afterward (not published).
 - StyLua and Selene pass for the placement recipe.
 - Dry run and installation both passed all geometry and asset safety assertions.
 - Reinstallation was refused with Environment already exists. A final dry-run
@@ -91,3 +101,8 @@ Move the newly added Environment folder out of each plot into a uniquely named
 ServerStorage archive. Do not delete or move any pre-existing plot parts.
 PlotLandscapeAssets can remain in ServerStorage. No schema, remotes, mappings,
 production, purchases, saving or rebirth code changed.
+
+Tree revision verification: all eight bases at Y39.9, full bounds/clearance pass,
+318 scenery objects retained, eight originals archived. Grass/fern/rock objects
+were not replaced. StyLua/Selene pass; overhead screenshot reviewed.
+Output for revision begins `Landscaping trees revised:`.
