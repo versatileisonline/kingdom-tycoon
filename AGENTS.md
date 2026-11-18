@@ -662,6 +662,40 @@ existing geometry readback unchanged and two Edit screenshots reviewed. Purchase
 rebirth Play checks deferred because Studio is configured Persistent; Mock-only
 suite refused before fixture changes. Mobile performance remains unmeasured.
 
+Player-style acceptance (2026-11-18): clean Mock walkthrough plus explicitly
+staged runtime-only Gold/ownership to skip waiting. No gameplay code/assets changed.
+Native menu Settings/Play, unclaimed arrival, claim/start farm, 3-Gold collection,
+insufficient-funds rejection, all farm upgrades/walls, both Mint lanes and all16
+upgraders completed. Progressive frontier and six optional purchases restored
+visible models; lane-two collection reset all three collector labels to0. Native
+sword equip/click registered SwingSerial1; death/respawn restored the sword and
+kept the menu closed. Rebirth Cancel preserved progress; Confirm reset Gold and
+advanced UI to1.5x and200000 next cost; farm could restart. Early loop was unboosted;
+later purchases were funded, so this does not establish economy pacing.
+Fresh Play verified ec1104f Output Started (R toggles camera lock). Native R
+selected/released lock; Shift hold gave server speed24, release16;100ms double tap
+kept24 with Shift released,450ms taps did not lock. Jump observed Freefall with
+speed24; Shift again, stopping, exhaustion and Settings opening cancelled sprint.
+Continuing to hold Shift after exhaustion/recovery stayed16. No controls bug found
+in these cases; focus loss, typing and physical device variability remain untested.
+Shop preview integration BUG: StudioShopPreview at bootstrap claims the only plot
+before KingdomEntered; main menu Play then says No free tycoon is available.
+Temporary runtime-only KingdomEntered/unanchor bypass permitted native preview
+purchases: all three became Owned, AutoCollect banked pending earnings, reset
+revoked ownership, and owned GoldBadge collected pending Gold. Exact2x arithmetic
+was not checked here. Real pass IDs remain unset; normal Shop shows Unavailable.
+Navigation tool sometimes bought newly revealed plates en route; reported blocked
+paths could follow successful purchases. Paddock ultimately purchased, so no map
+blockage established. Camera-lock tool-navigation failure resolved when unlocked.
+Asset203785492 type mismatch persists. Earlier concurrent AssistantCommand failures
+and the temporary grant self-destruction warning were test tooling, not boot errors.
+Not covered: durable rejoin/live purchases, multiplayer, narrow-screen/physical
+mobile/gamepad, full low-graphics restoration and forced failures. Do not mark whole
+milestones complete from this smoke pass. Stopped Play, cleared preview attributes,
+verified zero runtime kingdoms and handed clean Edit ownership to courtyard agent;
+no cloud save, publish or push. Verification notes committed separately.
+
+
 Startup menu (2026-11-18): Studio Mock policy/placement/client tests passed;
 physical Settings/Play/touch Claim and post-entry death/respawn verified. Existing
 PlotService regression passed. selene src and Rojo build passed. Background art,
