@@ -40,6 +40,7 @@ type Upgrader = {
 	ActivationPositions: { [BasePart]: Vector3? },
 }
 type Site = {
+	HasPendingEarnings: boolean,
 	Id: string,
 	Settings: SiteSettings,
 	Source: BasePart,
@@ -262,7 +263,7 @@ function FarmService.TryStart(player: Player): boolean
 	return true
 end
 
-local function bank(player: Player, state: Production, collectedSite: string?): (boolean, number)
+local function bank(player: Player, state: Production, collectedSite: string?, silent: boolean?): (boolean, number)
 	local success, amount = state.Account.Collect(function(value: number): boolean
 		local updated, reason = DataService.Update(player, function(draft): ()
 			assert(draft.Gold <= Config.DATA.MAX_SAFE_INTEGER - value, "Gold would exceed safe integer range")
@@ -277,8 +278,16 @@ local function bank(player: Player, state: Production, collectedSite: string?): 
 		if collectedSite then
 			TutorialProgress.MarkCollected(player, collectedSite)
 		end
+		for _, site in state.Sites do
+			if not collectedSite and site.HasPendingEarnings then
+				TutorialProgress.MarkCollected(player, site.Id)
+			end
+			site.HasPendingEarnings = false
+		end
 		publish(state)
-		logger.Info(string.format("Collected %d Gold for %d", amount, player.UserId))
+		if not silent then
+			logger.Info(string.format("Collected %d Gold for %d", amount, player.UserId))
+		end
 	end
 	return success, amount
 end
@@ -352,7 +361,7 @@ local function autoCollect(player: Player, state: Production): ()
 		and state.Account.GetBalance() > 0
 		and os.clock() >= state.NextAutoCollect
 	then
-		local ok = bank(player, state, nil)
+		local ok = bank(player, state, nil, true)
 		state.NextAutoCollect = if ok then 0 else os.clock() + ShopConfig.AUTO_RETRY_SECONDS
 	end
 end
@@ -447,6 +456,7 @@ local function createSite(
 		overlap.CollisionGroup = MintSettings.TRACK_COLLISION_GROUP
 	end
 	local site: Site = {
+		HasPendingEarnings = false,
 		Id = id,
 		Settings = settings,
 		Source = source,
@@ -645,7 +655,9 @@ local function tickSite(site: Site, now: number): ()
 	end
 	for _, bundle in workspace:GetPartsInPart(site.Pit, site.Overlap) do
 		if site.Expires[bundle] ~= nil then
-			site.Ledger.Remove(bundle, now, true)
+			if site.Ledger.Remove(bundle, now, true) then
+				site.HasPendingEarnings = true
+			end
 			site.Expires[bundle] = nil
 			site.PreviousPositions[bundle] = nil
 			bundle:Destroy()
