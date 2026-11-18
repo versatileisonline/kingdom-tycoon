@@ -131,3 +131,31 @@ footprint/ground checks, StyLua and Selene passed; overhead screenshot reviewed.
 Saved to Roblox version 131, not published. Output:
 `Round tree replacement installed: 8 tall trees; original footprints preserved`.
 Player-height appearance and mobile performance remain hands-on checks.
+
+## Dark spruce forest revision
+
+Creator requested a northern spruce/taiga look: tall pointed evergreen silhouettes,
+dense layered needles, muted dark forest green rather than bright broadleaf crowns.
+`tools/RestylePlotForest.luau` replaces only the sixteen existing tree models,
+keeping their parent/name, oriented horizontal size, and grounded bottom height.
+Heights vary 70–82 studs; the generated spruce is tinted muted green with no shine.
+No additional runtime code, lighting, terrain, understory or gameplay changes.
+
+Asset contract: `ServerStorage.PlotLandscapeAssets.Spruce` is one script-free
+MeshPart inside a Model; original generated model is retained in RawSources.
+Run the recipe in Edit, first APPLY=false, then APPLY=true. Old tree models are
+archived in ServerStorage.BroadleafForestBackup_20261118.<plot>, with a
+RestoreParent attribute recording each original container. New models carry
+ForestStyle=DarkSpruce. Repeated installation refuses the existing backup.
+Rollback by archiving the new spruce trees and restoring the backed-up models to
+their recorded containers. Earlier source assets and backups stay untouched.
+
+Spruce revision installed and verified: generated source model 84489544364656
+(requested 4500-triangle budget), sixteen spruce meshes, 70–82 studs tall, tint
+RGB(61,88,72). All sixteen original X/Z dimensions, X/Z positions and bottom heights
+matched the archived broadleaf trees exactly. Total remains 326 decorative parts;
+all script-free and physics-disabled. Both spruce content requests loaded. Dry-run,
+StyLua/Selene and overhead/player-height visual checks passed. Saved cloud version
+132, not published. Output: `Dark spruce forest installed: 16 trees; footprints
+and grounding preserved`. Device performance and normal gameplay checks remain
+hands-on; no gameplay, data, settings or other-agent files were edited.

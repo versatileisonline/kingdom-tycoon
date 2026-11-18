@@ -88,6 +88,11 @@ Original eight circular trees subsequently replaced at the same locations with
 67–73-stud tall meshes; originals retained in RoundPlotTreesBackup_20261118.
 New trees live in Environment.ReplacementTrees. Companion recipe:
 tools/ReplacePlotCircleTrees.luau. Cloud save version131.
+Dark spruce revision supersedes broadleaf appearance:16 dark evergreen meshes,
+70–82 studs tall, tint RGB(61,88,72), source model84489544364656. Exact previous
+footprints/grounding retained; total326 decorative parts. Broadleaf originals
+archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
+and tools/RestylePlotForest.luau supply repeatable replacement; save version132.
 
 Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
 RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
@@ -424,6 +429,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   from runtime plot clones outside Studio.
 
 ## 11. Commands
+
+Forest restyle: tools/RestylePlotForest.luau runs only in Edit, APPLY=false dry-run
+then APPLY=true. Requires sixteen existing trees and prepared Spruce asset; refuses
+an existing BroadleafForestBackup_20261118. Expect Dark spruce forest installed:
+16 trees; footprints and grounding preserved. See docs/PLOT_LANDSCAPING.md.
 
 Landscaping: run tools/BuildPlotLandscaping.luau in Edit with APPLY=false for
 a dry run; APPLY=true installs only when Environment does not already exist.
