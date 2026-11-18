@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Sprint controls (2026-11-18): creator approved R camera-lock toggle, hold Left
+  Shift for temporary sprint, and double-tap Left Shift to lock sprint (0.3-second
+  window). Shift again, stopping movement (0.15-second grace), exhaustion, or
+  input interruptions cancel the lock; jumping preserves it while moving.
+  Recovery does not restart sprint. Supersedes the earlier Shift/Control binding;
+  existing purchase, speed, stamina, and other gameplay remain unchanged.
 - Optional plate correction (2026-11-18): creator requested the exact pre-existing
   red/green dropper purchase plate appearance, including black outer rim, for all
   optional purchases. Clone the authored dropper plate; preserve prices/positions.

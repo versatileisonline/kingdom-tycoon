@@ -54,6 +54,7 @@ end
 
 if game:GetService("RunService"):IsStudio() and require(Shared.SprintConfig).RUN_TESTS_IN_STUDIO then
 	task.spawn(function()
+		require(script.UI.SprintInputTests).Run(require(script.Movement.SprintInput))
 		require(script.UI.StaminaViewTests).Run()
 		require(script.UI.EquipmentInputTests).Run()
 	end)

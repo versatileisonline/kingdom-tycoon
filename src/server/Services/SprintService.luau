@@ -18,6 +18,7 @@ type Record = {
 	Refilled: number,
 	LastSent: number,
 	SentOwned: boolean?,
+	SentExhausted: boolean?,
 }
 local records: { [Player]: Record } = {}
 local connections: { RBXScriptConnection } = {}
@@ -58,6 +59,7 @@ local function register(player: Player): ()
 		Refilled = os.clock(),
 		LastSent = -1,
 		SentOwned = nil,
+		SentExhausted = nil,
 	}
 	refresh(player)
 end
@@ -129,9 +131,14 @@ local function tickPlayer(player: Player, record: Record, dt: number): ()
 	end
 	-- Owner-only updates, quantized to 1%; no traffic while full and unchanged.
 	local percent = math.floor(record.Meter.Remaining / Config.CAPACITY * 100 + 0.5)
-	if percent ~= record.LastSent or record.Owned ~= record.SentOwned then
+	if
+		percent ~= record.LastSent
+		or record.Owned ~= record.SentOwned
+		or record.Meter.Exhausted ~= record.SentExhausted
+	then
 		record.LastSent, record.SentOwned = percent, record.Owned
-		status:FireClient(player, record.Owned, percent / 100)
+		record.SentExhausted = record.Meter.Exhausted
+		status:FireClient(player, record.Owned, percent / 100, record.Meter.Exhausted)
 	end
 end
 function Service.Init(): ()

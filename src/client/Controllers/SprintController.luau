@@ -1,4 +1,5 @@
 --!strict
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 local GuiService = game:GetService("GuiService")
@@ -6,9 +7,11 @@ local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.SprintConfig)
 local Preferences = require(script.Parent.SettingsController)
 local View = require(script.Parent.Parent.UI.StaminaView)
+local Input = require(script.Parent.Parent.Movement.SprintInput)
+local state = Input.New()
 local Controller = {}
 local connections: { RBXScriptConnection } = {}
-local held = false
+local sent = false
 local started = false
 local focused = true
 local remote: RemoteEvent
@@ -26,15 +29,17 @@ local function blocked(): boolean
 		or Preferences.Get("RebirthOpen") == true
 		or humanoid == nil
 		or humanoid.Health <= 0
+		or humanoid.Sit
 end
-local function release(): ()
-	if held then
-		held = false
-		remote:FireServer(false)
+local function sync(): ()
+	if state.Requested ~= sent then
+		sent = state.Requested
+		remote:FireServer(sent)
 	end
 end
-local function shift(key: Enum.KeyCode): boolean
-	return key == Enum.KeyCode.LeftShift or key == Enum.KeyCode.RightShift
+local function release(): ()
+	Input.Cancel(state)
+	sync()
 end
 function Controller.Init(): () end
 function Controller.Start(): ()
@@ -48,24 +53,28 @@ function Controller.Start(): ()
 	view = View.Create(Players.LocalPlayer:WaitForChild("PlayerGui"))
 	table.insert(
 		connections,
-		status.OnClientEvent:Connect(function(owned: boolean, fraction: number)
+		status.OnClientEvent:Connect(function(owned: boolean, fraction: number, exhausted: boolean)
 			view.Set(owned, fraction)
+			if not owned or exhausted then
+				release()
+			end
 		end)
 	)
 	table.insert(
 		connections,
 		UserInputService.InputBegan:Connect(function(input, processed)
-			if shift(input.KeyCode) and not processed and not blocked() and not held then
-				held = true
-				remote:FireServer(true)
+			if input.KeyCode == Enum.KeyCode.LeftShift and not processed and not blocked() then
+				Input.Press(state, os.clock())
+				sync()
 			end
 		end)
 	)
 	table.insert(
 		connections,
 		UserInputService.InputEnded:Connect(function(input)
-			if shift(input.KeyCode) then
-				release()
+			if input.KeyCode == Enum.KeyCode.LeftShift then
+				Input.Release(state, os.clock())
+				sync()
 			end
 		end)
 	)
@@ -98,6 +107,20 @@ function Controller.Start(): ()
 		Players.LocalPlayer:GetAttributeChangedSignal("KingdomEntered"):Connect(function()
 			if blocked() then
 				release()
+			end
+		end)
+	)
+	-- Client movement intent keeps wall collisions and jumps from cancelling lock.
+	table.insert(
+		connections,
+		RunService.Heartbeat:Connect(function(dt: number)
+			if blocked() then
+				release()
+			else
+				local character = Players.LocalPlayer.Character
+				local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
+				Input.Step(state, dt, humanoid ~= nil and humanoid.MoveDirection.Magnitude > 0)
+				sync()
 			end
 		end)
 	)

@@ -60,12 +60,22 @@ KingdomEquipment.Swing request. Tool input is client-side per
 [Roblox tools documentation](https://create.roblox.com/docs/players/tools).
 SprintService accepts only one boolean through KingdomSprint.Input, with a token bucket
 for start requests. Releases remain accepted so throttling cannot leave sprint stuck.
-Owner-only KingdomSprint.Status carries ownership and remaining fraction. The server
+Owner-only KingdomSprint.Status carries ownership, remaining fraction, and an explicit
+exhaustion boolean (including changes that do not change the rounded fraction). The server
 owns stamina and WalkSpeed; clients never send speed, stamina, prices, or ownership.
 Horizontal root velocity determines movement because Humanoid.MoveDirection is not
 replicated from client-owned characters. There is one 0.1-second server loop and
-quantized status updates only when stamina or ownership changes.
-SprintController stops input for menus, typing, loss of focus, and character removal.
+quantized status updates only when stamina, ownership, or exhaustion changes.
+SprintController uses client Movement.SprintInput: hold Left Shift for temporary sprint,
+quickly double-tap Left Shift (0.3 seconds between presses) to lock sprint, and press
+Shift again to cancel. Only short presses count toward double-tapping. Locked sprint
+ends after 0.15 seconds without movement intent or on server-reported exhaustion;
+recovery never restarts it. Direction changes within the grace period, wall collisions,
+and jumping with movement intent preserve lock. R independently toggles camera lock.
+Menus, typing, focus loss, sitting, death, character removal, and ownership revocation
+clear sprint and pending double-taps. One client Heartbeat checks movement intent and
+blocking conditions; it sends remote requests only when requested sprint changes.
+Server movement/stamina tick and purchase/rebirth validation remain unchanged.
 The stamina view uses the fixed viewport center +30px even with camera lock off,
 matching the approved plan; it does not follow the free mouse pointer.
 No remotes or schema fields were added to purchasing or rebirth. New remotes are
@@ -116,13 +126,32 @@ reset. It restores the initial Mock profile and releases the plot. The client te
 activates the equipped Tool and verifies the server increments SwingSerial.
 Reset the switch false after testing. Do not run other suites simultaneously.
 
+## Sprint control verification (2026-11-18)
+SprintInputTests runs with the existing SprintConfig.RUN_TESTS_IN_STUDIO client switch;
+expect `All sprint input checks passed`. It covers hold/release, double-tap versus
+slow taps/long holds, explicit cancellation, stopping grace, movement continuation,
+and clearing/rearming after interruption. Existing StaminaTests retains server-side
+exhaustion/recovery checks. Restart Play after syncing to load updated controllers.
+Verification for this change: source-bundled SprintInputTests and existing StaminaTests
+passed in Studio's Luau runtime. A controller integration harness using the actual
+controller source and isolated input/remote boundaries passed Shift routing, latch
+release, stopping, exhaustion/recovery, focus/shop/death/revocation cancellation,
+and shutdown disconnection. Full-source Selene, changed-file formatting, and Rojo
+build passed. The active Play session belongs to a concurrent acceptance task;
+it was not restarted or modified for these checks. Cached controllers in that
+session still use the prior keys until a fresh Play.
+Physical key feel and the full optional-additions service suite require a fresh Mock
+Play before claiming; avoid rerunning that fixture in a player's active kingdom.
+
 ## Hands-on acceptance still required
 With test switches false, earn or use an explicitly temporary Mock fixture to reach
 Mint Dropper 8. Inspect six independent optional plates plus one production plate.
 Buy Sprint Training: hold Shift while walking, release to recover; exhaust stamina,
 keep holding to confirm it stays stopped, then release/repress. Confirm the bar
 appears immediately below the center cursor, refills, and fades only at full.
-Control toggles camera lock; Shift must not toggle it. Open Settings/Shop/Rebirth
+Double-tap Left Shift, release it, and keep moving: sprint stays active. Tap Shift
+to cancel; also check that stopping or exhaustion cancels without automatic restart.
+R toggles camera lock; Shift and Control must not toggle it. Open Settings/Shop/Rebirth
 and return: sprint should stop until Shift is pressed again.
 Equip the sword and click; check its grip and visible swing. Visit another player:
 sword contact must never lower their health. Reset character and verify owned

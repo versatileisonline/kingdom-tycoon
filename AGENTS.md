@@ -94,8 +94,10 @@ after RoyalMintDropper08 alongside the production frontier: banners250, lanterns
 sword600, sprint1000, paddock1900, fountain4000 Gold. PurchaseOffers owns visibility;
 PurchaseService retains validated transactions. EquipmentService/EquipmentController
 grant a non-damaging sword; SprintService/Movement.Stamina and SprintController/
-UI.StaminaView own server stamina and owner HUD. Hold Shift sprints; Left Control
-now toggles camera lock. Rebirth revokes purchases and abilities; saves unchanged.
+UI.StaminaView own server stamina and owner HUD. Hold Left Shift sprints; double-tap
+locks sprint until stopping/exhaustion or another Shift press. R toggles camera lock.
+Client Movement.SprintInput owns 0.3-second double-tap/0.15-second stop grace.
+Rebirth revokes purchases and abilities; saves unchanged.
 tools/BuildOptionalAdditions.luau adds six model/plate pairs and a script-free
 ServerStorage.KingdomTrainingSword, preserving OptionalAdditionsBackup_20261118.
 Vegetation remains owned by the other agent. No schema or Rojo mapping changes.
@@ -416,7 +418,7 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   One timed loop queries pit overlaps, expires bundles, and produces at most one
   bundle per interval. Per-farm cap 12; lifetime 20 seconds. Death preserves earnings;
   release/departure discards them. No saved schema change or request remotes.
-- CameraController owns Left Shift locking, starts unlocked, suspends during typing,
+- CameraController owns R camera locking, starts unlocked, suspends during typing,
   menus and death, and restores normal controls. PlotService disables native mouse
   lock per player to avoid competing toggles. The render callback is client-only.
 - Milestone 1.5 asset contract: optionally add `PurchasePlates` and `PurchaseUnlocks`
@@ -445,7 +447,8 @@ passed and All main menu client checks passed. Reset false afterward.
 Optional additions: in Mock enable only SprintConfig.RUN_TESTS_IN_STUDIO, sync and
 Play before claiming. Expect All optional additions and rebirth checks passed,
 All stamina HUD checks passed, All sword input bridge checks passed. Reset false.
-Physical Shift/Control, sword appearance and two-player safety remain hands-on
+Expect All sprint input checks passed as well. Physical Shift/R, sword appearance
+and two-player safety remain hands-on
 acceptance. See docs/OPTIONAL_KINGDOM_ADDITIONS.md.
 
 
