@@ -39,8 +39,8 @@ return table.freeze({
 		Muted = "C8B697",
 		Track = "12151E",
 	}),
-	-- Free Creator Store medieval court, peaceful keep and dramatic battle tracks.
-	MUSIC_IDS = table.freeze({ 139186694323000, 87479584695420, 137177134668386 }),
+	-- Free Creator Store Dungeon Quest, The Rise of Kings and Viking Invasion.
+	MUSIC_IDS = table.freeze({ 115384070099102, 128045338895178, 100085318455652 }),
 	MUSIC_LOAD_SECONDS = 12,
 	RUN_TESTS_IN_STUDIO = false,
 })

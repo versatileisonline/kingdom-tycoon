@@ -1,12 +1,17 @@
 --!strict
--- Session-local circular selection. Unavailable assets are skipped until restart.
+-- Shuffled once per session, then circular. Unavailable assets skip until restart.
 local MusicPlaylist = {}
 export type Playlist = {
 	Next: () -> number?,
 	Fail: (number) -> (),
 }
-function MusicPlaylist.new(ids: { number }): Playlist
+function MusicPlaylist.new(ids: { number }, random: Random?): Playlist
 	local tracks = table.clone(ids)
+	local rng = random or Random.new()
+	for index = #tracks, 2, -1 do
+		local other = rng:NextInteger(1, index)
+		tracks[index], tracks[other] = tracks[other], tracks[index]
+	end
 	local failed: { [number]: boolean } = {}
 	local cursor = 0
 	return {
