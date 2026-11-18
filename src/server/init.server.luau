@@ -16,6 +16,7 @@ local services: { Types.Lifecycle } = {
 	require(script.Services.FarmService),
 	require(script.Services.PurchaseService),
 	require(script.Services.ShopService),
+	require(script.Services.RebirthService),
 	require(script.Services.ExampleService),
 }
 
@@ -122,5 +123,31 @@ end
 if require(script.Services.EntitlementService).IsPreview() and not require(Shared.ShopConfig).RUN_TESTS_IN_STUDIO then
 	task.spawn(function()
 		require(script.Tests.ShopPreview).Run()
+	end)
+end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.RebirthConfig).RUN_TESTS_IN_STUDIO then
+	task.spawn(function()
+		require(script.Tests.RebirthServiceTests).Run()
+		if script:GetAttribute("StudioRebirthRegression") == true then
+			for _, run in
+				{
+					require(script.Tests.FarmServiceTests).Run,
+					require(script.Tests.PurchaseServiceTests).Run,
+					require(script.Tests.MintUpgraderChainTests).Run,
+					require(script.Tests.SecondRoyalMintTests).Run,
+					require(script.Tests.TutorialServiceTests).Run,
+					require(script.Tests.HudServiceTests).Run,
+				}
+			do
+				task.wait(1.2)
+				run()
+			end
+			require(script.Tests.ShopEconomyTests).Run(
+				require(script.Farms.SessionEarnings),
+				require(script.Farms.FarmLedger)
+			)
+			print("[KingdomTycoon][RebirthRegression] All rebirth regressions passed")
+		end
 	end)
 end

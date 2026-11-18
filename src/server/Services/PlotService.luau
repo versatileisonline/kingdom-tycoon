@@ -100,6 +100,75 @@ function PlotService.GetPlotId(player: Player): string?
 	return registry.GetPlot(player.UserId)
 end
 
+local resetting: { [Player]: boolean } = {}
+function PlotService.IsResetting(player: Player): boolean
+	return resetting[player] == true
+end
+
+-- Keeps the registry reservation throughout. Commit must be non-yielding.
+function PlotService.ResetKingdom(player: Player, commit: () -> (boolean, string?)): (boolean, string?)
+	local id = registry.GetPlot(player.UserId)
+	if id == nil or resetting[player] or closing then
+		return false, "Your kingdom is unavailable."
+	end
+	local plot = plots[id]
+	local old = plot.Kingdom
+	local source = template
+	if old == nil or source == nil then
+		return false, "Your kingdom is unavailable."
+	end
+	local replacement: Model? = nil
+	local preflight, failure = pcall(function()
+		local clone = source:Clone()
+		replacement = clone
+		clone.Name = id
+		clone:SetAttribute("OwnerUserId", player.UserId)
+		clone:SetAttribute("PlotId", id)
+		clone:PivotTo(plot.Origin.CFrame)
+		local spawn = clone:FindFirstChild("SpawnPoint")
+		local sign = clone:FindFirstChild("OwnerLabel", true)
+		assert(spawn and spawn:IsA("SpawnLocation") and sign and sign:IsA("TextLabel"), "Invalid reset template")
+		sign.Text = player.DisplayName .. "'s Kingdom"
+	end)
+	if not preflight then
+		if replacement then
+			replacement:Destroy()
+		end
+		logger.Warn("Rebirth preflight failed: " .. tostring(failure))
+		return false, "Your kingdom could not be prepared. Try again."
+	end
+	local clone = replacement :: Model
+	resetting[player] = true
+	local called, accepted, reason = pcall(commit)
+	if not called or not accepted then
+		resetting[player] = nil
+		clone:Destroy()
+		return false, if called then reason else "Your progress could not be updated. Try again."
+	end
+	local rebuilt, rebuildError = pcall(function()
+		notifyRelease(player, old)
+		old:Destroy()
+		clone.Parent = activeKingdoms
+		plot.Kingdom = clone
+		player.RespawnLocation = clone:FindFirstChild("SpawnPoint") :: SpawnLocation
+		for _, observer in table.clone(observers) do
+			observer.Claimed(player, clone)
+		end
+		if player.Character then
+			player.Character:PivotTo((player.RespawnLocation :: SpawnLocation).CFrame + Vector3.new(0, 4, 0))
+		end
+	end)
+	resetting[player] = nil
+	if not rebuilt then
+		logger.Warn("Committed rebirth rebuild failed: " .. tostring(rebuildError))
+		PlotService.Release(player)
+		clone:Destroy()
+		player:Kick("Your rebirth was applied, but your kingdom could not restart. Please rejoin.")
+		return false, "Rebirth applied. Please rejoin to rebuild your kingdom."
+	end
+	return true, nil
+end
+
 function PlotService.Release(player: Player): ()
 	local id = registry.Release(player.UserId)
 	if id ~= nil then

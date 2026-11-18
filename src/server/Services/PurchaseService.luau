@@ -120,7 +120,8 @@ end
 local function purchaseOnTouch(player: Player, state: KingdomPurchases, slot: Slot, hit: BasePart): boolean
 	local character = player.Character
 	if
-		slot.Shown
+		PlotService.IsResetting(player)
+		or slot.Shown
 		or not slot.Visible
 		or character == nil
 		or not hit:IsDescendantOf(character)

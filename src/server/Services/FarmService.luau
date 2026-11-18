@@ -264,6 +264,9 @@ function FarmService.TryStart(player: Player): boolean
 end
 
 local function bank(player: Player, state: Production, collectedSite: string?, silent: boolean?): (boolean, number)
+	if PlotService.IsResetting(player) then
+		return false, 0
+	end
 	local success, amount = state.Account.Collect(function(value: number): boolean
 		local updated, reason = DataService.Update(player, function(draft): ()
 			assert(draft.Gold <= Config.DATA.MAX_SAFE_INTEGER - value, "Gold would exceed safe integer range")
@@ -501,8 +504,10 @@ local function prepare(player: Player, kingdom: Model): ()
 	assert(source ~= nil, "WheatBundle unavailable")
 	local model = farmAssets(kingdom)
 	local startPlate = part(kingdom, "FarmStartPlate")
+	local data = DataService.GetSnapshot(player)
+	local rebirthMultiplier = require(Shared.RebirthConfig).Multiplier(if data then data.Rebirths else 0)
 	local account = SessionEarnings.new(Config.DATA.MAX_SAFE_INTEGER, function()
-		return if Entitlements.Owns(player, "DoubleGold") then 2 else 1
+		return rebirthMultiplier * (if Entitlements.Owns(player, "DoubleGold") then 2 else 1)
 	end)
 	local state: Production = {
 		Owner = player,

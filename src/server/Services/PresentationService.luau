@@ -10,8 +10,10 @@ local function refresh(player: Player): ()
 	TutorialProgress.Publish(player, data)
 	if data == nil then
 		player:SetAttribute("GoldReady", false)
+		player:SetAttribute("Rebirths", nil)
 		player:SetAttribute("Gold", nil)
 	else
+		player:SetAttribute("Rebirths", data.Rebirths)
 		player:SetAttribute("Gold", data.Gold)
 		player:SetAttribute("GoldReady", true)
 	end
@@ -36,6 +38,7 @@ function Service.Start(): ()
 		for _, player in Players:GetPlayers() do
 			TutorialProgress.Publish(player, nil)
 			player:SetAttribute("GoldReady", false)
+			player:SetAttribute("Rebirths", nil)
 			player:SetAttribute("Gold", nil)
 		end
 	end)
