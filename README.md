@@ -255,6 +255,7 @@ depend on that running service context.
   - [ ] 1.6 Farms ([four-dropper assets installed and saved; purchase/farm suites passed; broader acceptance pending](docs/MILESTONE_1_6.md))
   - [ ] 1.7 HUD + settings ([implemented; focused cursor/touch acceptance pending](docs/MILESTONE_1_7.md))
   - [ ] 1.8 Shop + gamepasses ([three-pass implementation; real pass setup and live purchase acceptance pending](docs/ROYAL_SHOP.md))
+  - [ ] 1.9 Rebirth ([implemented; durable rejoin/device acceptance pending](docs/REBIRTH.md))
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)

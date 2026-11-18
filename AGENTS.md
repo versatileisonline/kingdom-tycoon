@@ -73,6 +73,16 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
+RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
+PlotService.ResetKingdom with preflight, interaction gate and existing cleanup.
+SessionEarnings carries half-Gold; schema v1 and permanent passes stay.
+Runtime KingdomRebirth remotes validate expected count/request identity.
+assets/hud/rebirth-atlas.png maps to 98116548422890; four equal quadrants:
+reward, reset, keep, launcher. No template/Rojo changes. docs/REBIRTH.md has
+asset replacement contract, tests, reset behavior and remaining acceptance.
+
+
 Shop/HUD refinement (2026-11-18): GoldBadge is now a TextButton containing
 CurrencyRow.Collect / Coin / Gold; owners show pending Collect Total, while
 nonowners retain original display-only Gold layout.
@@ -399,6 +409,12 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Rebirth: Studio Mock before claim, only RebirthConfig.RUN_TESTS_IN_STUDIO=true.
+Expect All rebirth economy/service/client checks passed. Optional Server attribute
+StudioRebirthRegression=true runs existing regressions sequentially. Clear both
+after stopping. Exact messages and manual walkthrough: docs/REBIRTH.md.
+
+
 Shop: in Studio Mock, enable only ShopConfig.RUN_TESTS_IN_STUDIO and set Server
 attribute StudioShopPreview=true before Play. Expect All shop and pass checks
 passed and All shop client checks passed. Optional StudioShopRegression=true
@@ -546,6 +562,17 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Rebirth (2026-11-18): implemented on feat/rebirth. Mock economy, service and
+client suites passed; sequential farm, purchase, first Mint chain, second Mint,
+tutorial, HUD and shop economy regressions all passed. Native desktop modal and
+artwork checked. Formatting/Selene/build pass; strict analysis retains only the
+14 existing unrelated plate-label diagnostics. Review arithmetic overflow fix
+verified with a new regression. Studio is stopped in Edit and available to the
+creator's other agent; tests/previews off, runtime kingdoms empty. No push,
+publish or cloud save. Persistent/multiplayer/device checks remain hands-on.
+See docs/REBIRTH.md for config, replacement artwork and verification.
+
 
 Main integration (2026-11-18): Royal Shop, hover fix, ribbon/card refinements and
 pending-total Collect badge merged in9908040. Modular history preserved. Fresh

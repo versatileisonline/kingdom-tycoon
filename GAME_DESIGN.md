@@ -109,6 +109,13 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Rebirth (2026-11-18): approved banked-Gold-only eligibility: 100,000 initially,
+  doubling per rebirth, without purchase-chain completion. Permanent bonus +0.5x
+  per rebirth, multiplied with the Gold pass. Reset all Gold, buildings and pending
+  production; preserve passes and same plot, return to Start Farm. Approved the
+  Shop-matching three-card HUD and realistic crown/keep/shield replacement artwork.
+  Targets are provisional pending fresh-run playtesting.
+
 - Collect display correction (2026-11-18): creator clarified that the owned
   Collect button's amount must equal the Collect Total plates' pending amount
   and reset to0 after collection. Nonowners retain the normal Gold display.
