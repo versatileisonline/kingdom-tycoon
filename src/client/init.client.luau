@@ -10,6 +10,7 @@ local logger = Logger.new("ClientBootstrap")
 -- Require and run controllers in this explicit order. Add controllers as milestones land.
 local controllers: { Types.Lifecycle } = {
 	require(script.Controllers.SettingsController),
+	require(script.Controllers.MainMenuController),
 	require(script.Controllers.HudController),
 	require(script.Controllers.ShopController),
 	require(script.Controllers.RebirthController),
@@ -46,5 +47,11 @@ end
 if game:GetService("RunService"):IsStudio() and require(Shared.RebirthConfig).RUN_TESTS_IN_STUDIO then
 	task.spawn(function()
 		require(script.UI.RebirthClientTests).Run()
+	end)
+end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.MainMenuConfig).RUN_TESTS_IN_STUDIO then
+	task.spawn(function()
+		require(script.UI.MainMenuClientTests).Run()
 	end)
 end

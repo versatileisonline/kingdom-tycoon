@@ -54,7 +54,7 @@ function View.new(parent: Instance, settings: any)
 	screen.ResetOnSpawn = false
 	screen.DisplayOrder = 10
 	screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-	screen.Parent = parent
+	screen.Parent = nil
 	local badge = Instance.new("TextButton")
 	badge.Text = ""
 	badge.Active = false
@@ -313,6 +313,9 @@ function View.new(parent: Instance, settings: any)
 	footnote.Size = UDim2.new(1, -80, 0, 20)
 	footnote.ZIndex = 12
 	local function refresh(): ()
+		badge.Visible = settings.Get("MainMenuOpen") ~= true
+		open.Visible = settings.Get("MainMenuOpen") ~= true
+		hint.Visible = settings.Get("MainMenuOpen") ~= true
 		shade.Visible = settings.Get("MenuOpen") == true
 		for _, render in renderers do
 			render()
@@ -355,6 +358,7 @@ function View.new(parent: Instance, settings: any)
 		end)
 	)
 	refresh()
+	screen.Parent = parent
 	return {
 		Screen = screen,
 		Gold = gold,
