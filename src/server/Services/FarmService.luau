@@ -270,7 +270,12 @@ local function bank(player: Player, state: Production, collectedSite: string?, s
 	local success, amount = state.Account.Collect(function(value: number): boolean
 		local updated, reason = DataService.Update(player, function(draft): ()
 			assert(draft.Gold <= Config.DATA.MAX_SAFE_INTEGER - value, "Gold would exceed safe integer range")
+			assert(
+				draft.LifetimeGold <= Config.DATA.MAX_SAFE_INTEGER - value,
+				"Lifetime Gold would exceed safe integer range"
+			)
 			draft.Gold += value
+			draft.LifetimeGold += value
 		end)
 		if not updated then
 			logger.Warn(string.format("Collection retained for %d: %s", player.UserId, tostring(reason)))

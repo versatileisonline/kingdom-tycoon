@@ -9,6 +9,7 @@ export type Lifecycle = {
 export type PlayerData = {
 	SchemaVersion: number,
 	Gold: number,
+	LifetimeGold: number,
 	Rebirths: number,
 	PurchasedBuildings: { [string]: boolean },
 }

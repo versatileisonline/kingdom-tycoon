@@ -11,6 +11,7 @@ function DataSchema.Create(): Types.PlayerData
 	return {
 		SchemaVersion = DATA.SCHEMA_VERSION,
 		Gold = DATA.STARTING_GOLD,
+		LifetimeGold = 0,
 		Rebirths = DATA.STARTING_REBIRTHS,
 		PurchasedBuildings = {},
 	}
@@ -35,14 +36,24 @@ function DataSchema.Validate(value: unknown): (boolean, string?)
 	if data.SchemaVersion ~= DATA.SCHEMA_VERSION then
 		return false, "Unsupported SchemaVersion"
 	end
-	if not DataSchema.IsInteger(data.Gold) or not DataSchema.IsInteger(data.Rebirths) then
-		return false, "Gold and Rebirths must be nonnegative safe integers"
+	if
+		not DataSchema.IsInteger(data.Gold)
+		or not DataSchema.IsInteger(data.LifetimeGold)
+		or not DataSchema.IsInteger(data.Rebirths)
+	then
+		return false, "Gold, LifetimeGold and Rebirths must be nonnegative safe integers"
 	end
 	if type(data.PurchasedBuildings) ~= "table" or getmetatable(data.PurchasedBuildings) ~= nil then
 		return false, "PurchasedBuildings must be a plain dictionary"
 	end
 	for key in data do
-		if key ~= "SchemaVersion" and key ~= "Gold" and key ~= "Rebirths" and key ~= "PurchasedBuildings" then
+		if
+			key ~= "SchemaVersion"
+			and key ~= "LifetimeGold"
+			and key ~= "Gold"
+			and key ~= "Rebirths"
+			and key ~= "PurchasedBuildings"
+		then
 			return false, "Unexpected profile field; add a schema migration"
 		end
 	end
@@ -58,6 +69,7 @@ function DataSchema.Copy(data: Types.PlayerData): Types.PlayerData
 	return {
 		SchemaVersion = data.SchemaVersion,
 		Gold = data.Gold,
+		LifetimeGold = data.LifetimeGold,
 		Rebirths = data.Rebirths,
 		PurchasedBuildings = table.clone(data.PurchasedBuildings),
 	}
@@ -94,7 +106,12 @@ function DataSchema.ValidateEnvelope(value: unknown): (boolean, string?)
 end
 
 function DataSchema.Equal(left: Types.PlayerData, right: Types.PlayerData): boolean
-	if left.SchemaVersion ~= right.SchemaVersion or left.Gold ~= right.Gold or left.Rebirths ~= right.Rebirths then
+	if
+		left.SchemaVersion ~= right.SchemaVersion
+		or left.Gold ~= right.Gold
+		or left.LifetimeGold ~= right.LifetimeGold
+		or left.Rebirths ~= right.Rebirths
+	then
 		return false
 	end
 	for id, purchased in left.PurchasedBuildings do

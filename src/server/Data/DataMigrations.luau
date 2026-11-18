@@ -7,9 +7,21 @@ local DataSchema = require(script.Parent.DataSchema)
 
 type Migration = (data: { [string]: any }) -> ()
 
--- A step indexed by N transforms version N into N + 1. No historical saves exist yet.
+-- A step indexed by N transforms version N into N + 1.
 -- Add each step here when bumping Config.DATA.SCHEMA_VERSION. Never skip a version.
-local STEPS: { [number]: Migration } = {}
+local STEPS: { [number]: Migration } = {
+	[1] = function(data: { [string]: any }): ()
+		-- Validate the old shape before adding a field; never repair damaged saves.
+		assert(DataSchema.IsInteger(data.Gold) and DataSchema.IsInteger(data.Rebirths), "Invalid legacy balances")
+		for key in data do
+			assert(
+				key == "SchemaVersion" or key == "Gold" or key == "Rebirths" or key == "PurchasedBuildings",
+				"Unexpected legacy field"
+			)
+		end
+		data.LifetimeGold = data.Gold
+	end,
+}
 local DataMigrations = {}
 
 local function copyRaw(value: any, ancestors: { [any]: boolean }, depth: number): any

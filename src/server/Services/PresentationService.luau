@@ -12,9 +12,11 @@ local function refresh(player: Player): ()
 		player:SetAttribute("GoldReady", false)
 		player:SetAttribute("Rebirths", nil)
 		player:SetAttribute("Gold", nil)
+		player:SetAttribute("LifetimeGold", nil)
 	else
 		player:SetAttribute("Rebirths", data.Rebirths)
 		player:SetAttribute("Gold", data.Gold)
+		player:SetAttribute("LifetimeGold", data.LifetimeGold)
 		player:SetAttribute("GoldReady", true)
 	end
 end
@@ -40,6 +42,7 @@ function Service.Start(): ()
 			player:SetAttribute("GoldReady", false)
 			player:SetAttribute("Rebirths", nil)
 			player:SetAttribute("Gold", nil)
+			player:SetAttribute("LifetimeGold", nil)
 		end
 	end)
 end

@@ -37,8 +37,27 @@ function Tests.RunSchema(): number
 	assertStudio()
 	local cases: { () -> () } = {
 		function(): ()
+			local legacy = { SchemaVersion = 1, Gold = 123, Rebirths = 2, PurchasedBuildings = { Probe = true } }
+			local migrated, reason = DataMigrations.Prepare(legacy)
+			assert(migrated ~= nil, reason)
+			assert(migrated.LifetimeGold == 123 and migrated.Rebirths == 2 and migrated.PurchasedBuildings.Probe)
+			assert(legacy.SchemaVersion == 1, "Migration mutated source")
+			local copy = DataSchema.Copy(migrated)
+			copy.LifetimeGold += 1
+			assert(not DataSchema.Equal(copy, migrated), "Lifetime total missing from equality")
+			assertInvalid({ SchemaVersion = 1, Gold = -1, Rebirths = 0, PurchasedBuildings = {} })
+			assertInvalid({ SchemaVersion = 1, Gold = 1, Rebirths = 0, PurchasedBuildings = {}, LifetimeGold = 99 })
+			for _, value in { -1, 0.5, math.huge, 0 / 0 } do
+				copy.LifetimeGold = value
+				assertInvalid(copy)
+			end
+		end,
+		function(): ()
 			local a, b = DataSchema.Create(), DataSchema.Create()
-			assert(a.SchemaVersion == 1 and a.Gold == 0 and a.Rebirths == 0, "Incorrect initial profile")
+			assert(
+				a.SchemaVersion == DATA.SCHEMA_VERSION and a.LifetimeGold == 0 and a.Gold == 0 and a.Rebirths == 0,
+				"Incorrect initial profile"
+			)
 			a.PurchasedBuildings.Probe = true
 			assert(b.PurchasedBuildings.Probe == nil, "Defaults share mutable tables")
 		end,

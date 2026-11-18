@@ -191,6 +191,10 @@ function Tests.Run(): ()
 		assert((earningsLabel.CurrencyRow.Amount :: TextLabel).Text == "0", "Collected label did not reset to zero")
 		local after = DataService.GetSnapshot(owner)
 		assert(after ~= nil and after.Gold == before.Gold + amount, "Saved Gold differs from collected amount")
+		assert(
+			after ~= nil and after.LifetimeGold == before.LifetimeGold + amount,
+			"Lifetime Gold differs from collection"
+		)
 		assert(not FarmService.TryCollect(owner), "Repeated collection accepted")
 		PlotService.Release(owner)
 		assert(releaseBeforeDestroy and kingdom.Parent == nil and bundles.Parent == nil, "Release order/cleanup failed")

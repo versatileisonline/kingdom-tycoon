@@ -35,7 +35,7 @@ return table.freeze({
 		RUN_TESTS_IN_STUDIO = false,
 	}),
 	DATA = table.freeze({
-		SCHEMA_VERSION = 1,
+		SCHEMA_VERSION = 2,
 		STARTING_GOLD = 0,
 		STARTING_REBIRTHS = 0,
 		LIVE_STORE_NAME = "KingdomTycoon_PlayerData",
