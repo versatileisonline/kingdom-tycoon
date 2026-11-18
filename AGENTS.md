@@ -103,6 +103,13 @@ archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
 and tools/RestylePlotForest.luau supply repeatable replacement. Saving this
 revision was deferred because another Play session started; version132 was not saved.
 
+Startup menu (2026-11-18): MainMenuConfig, Entry.EntrySession, Services.EntryService,
+client MainMenuController/UI.MainMenuView. Kingdom Awaits uses the existing royal
+palette with pixel lettering and a plain backdrop. Runtime KingdomEntry remotes
+validate Play; KingdomEntered is server-owned. Safe random free-plot entry does
+not claim/reserve land. No new assets, schema or Rojo mapping. docs/MAIN_MENU.md
+contains behavior, capacity caveat and verification.
+
 Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
 RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
 PlotService.ResetKingdom with preflight, interaction gate and existing cleanup.
@@ -449,6 +456,10 @@ a dry run; APPLY=true installs only when Environment does not already exist.
 Expect Landscaping installed: 1 plots; 250 grass, 40 ferns, 20 rocks, 8 trees;
 clearance checks passed. Existing folders are never replaced. See docs/PLOT_LANDSCAPING.md.
 
+Main menu: enable only MainMenuConfig.RUN_TESTS_IN_STUDIO in Studio Mock before
+Play. Expect All main menu entry checks passed, All main menu placement checks
+passed and All main menu client checks passed. Reset false afterward.
+
 Rebirth: Studio Mock before claim, only RebirthConfig.RUN_TESTS_IN_STUDIO=true.
 Expect All rebirth economy/service/client checks passed. Optional Server attribute
 StudioRebirthRegression=true runs existing regressions sequentially. Clear both
@@ -603,10 +614,16 @@ before players have a purchase to make.
 
 ## 12. Status
 
-Landscaping installed in Studio (2026-11-18): 318 decorative parts validated;
+Landscaping installed in Studio (2026-11-18): final 326 decorative parts validated;
 existing geometry readback unchanged and two Edit screenshots reviewed. Purchase/
 rebirth Play checks deferred because Studio is configured Persistent; Mock-only
 suite refused before fixture changes. Mobile performance remains unmeasured.
+
+Startup menu (2026-11-18): Studio Mock policy/placement/client tests passed;
+physical Settings/Play/touch Claim and post-entry death/respawn verified. Existing
+PlotService regression passed. selene src and Rojo build passed. Background art,
+physical mobile/gamepad and full-server multi-player acceptance remain. One
+installed plot: publishing capacity must match plots. See docs/MAIN_MENU.md.
 
 Rebirth (2026-11-18): implemented on feat/rebirth. Mock economy, service and
 client suites passed; sequential farm, purchase, first Mint chain, second Mint,

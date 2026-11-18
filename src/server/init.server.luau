@@ -13,6 +13,7 @@ local services: { Types.Lifecycle } = {
 	require(script.Services.PresentationService),
 	require(script.Services.EntitlementService),
 	require(script.Services.PlotService),
+	require(script.Services.EntryService),
 	require(script.Services.FarmService),
 	require(script.Services.PurchaseService),
 	require(script.Services.ShopService),
@@ -149,5 +150,11 @@ if game:GetService("RunService"):IsStudio() and require(Shared.RebirthConfig).RU
 			)
 			print("[KingdomTycoon][RebirthRegression] All rebirth regressions passed")
 		end
+	end)
+end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.MainMenuConfig).RUN_TESTS_IN_STUDIO then
+	task.spawn(function()
+		require(script.Tests.EntryServiceTests).Run()
 	end)
 end
