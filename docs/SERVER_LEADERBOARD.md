@@ -67,3 +67,10 @@ events and restores original FontFaces during cleanup; no template edits needed.
 Verify after a fresh Play: Shop/Rebirth/Gold text should be visibly larger/heavier,
 buttons should not overlap, and Sword Stand/medieval signs should use Arcade.
 Output should retain ClientBootstrap Ready without WorldTypographyController errors.
+
+Live client preview verification (2026-11-18): property readback confirmed both
+launchers at 22px/184×56 and eleven world labels switched to Arcade. Studio screen
+capture showed Shop/Rebirth fitting their buttons and Sword Stand/Medieval Practice
+signs using the matching font. No Play restart was performed during the concurrent
+animation session. A fresh Play is still needed to verify the new controller's
+clone/stream lifecycle and persistent runtime Gold sizing end to end.
