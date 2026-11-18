@@ -19,6 +19,8 @@ local controllers: { Types.Lifecycle } = {
 	require(script.Controllers.ExampleController),
 	require(script.Controllers.PlotController),
 	require(script.Controllers.CameraController),
+	require(script.Controllers.SprintController),
+	require(script.Controllers.EquipmentController),
 	require(script.Controllers.PurchaseGuidanceController),
 }
 
@@ -47,6 +49,14 @@ end
 if game:GetService("RunService"):IsStudio() and require(Shared.RebirthConfig).RUN_TESTS_IN_STUDIO then
 	task.spawn(function()
 		require(script.UI.RebirthClientTests).Run()
+	end)
+end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.SprintConfig).RUN_TESTS_IN_STUDIO then
+	task.spawn(function()
+		require(script.UI.SprintInputTests).Run(require(script.Movement.SprintInput))
+		require(script.UI.StaminaViewTests).Run()
+		require(script.UI.EquipmentInputTests).Run()
 	end)
 end
 

@@ -7,6 +7,23 @@ local Plots = require(script.Parent.Parent.Services.PlotService)
 local Farms = require(script.Parent.Parent.Services.FarmService)
 local Purchases = require(script.Parent.Parent.Services.PurchaseService)
 local Tests = {}
+-- Optional side offers coexist with the single production frontier.
+local function productionPlateCount(plates: Instance): number
+	local optional: { [string]: boolean } = {}
+	for _, entry in require(Shared.PurchaseConfig).PURCHASES do
+		if entry.Optional then
+			optional[entry.Id] = true
+		end
+	end
+	local count = 0
+	for _, plate in plates:GetChildren() do
+		if not optional[plate.Name] then
+			count += 1
+		end
+	end
+	return count
+end
+
 function Tests.Run(): ()
 	assert(game:GetService("RunService"):IsStudio() and Data.GetStorageMode() == "Mock", "Studio Mock only")
 	assert(
@@ -129,7 +146,7 @@ function Tests.Run(): ()
 					* pending.CFrame.Rotation
 			end
 			local id = string.format("RoyalMintUpgrader%02d", index)
-			assert(#plates:GetChildren() == 1 and plates:FindFirstChild(id), "Wrong purchase frontier")
+			assert(productionPlateCount(plates) == 1 and plates:FindFirstChild(id), "Wrong purchase frontier")
 			local snapshot = Data.GetSnapshot(player)
 			assert(snapshot, "Snapshot missing")
 			move(part(plates, id))
@@ -174,7 +191,10 @@ function Tests.Run(): ()
 		move(part(k, "FarmStartPlate"))
 		assert(Farms.TryStart(player), "Owned chain restart failed")
 		character:PivotTo(original)
-		assert(#plates:GetChildren() == 1 and plates:FindFirstChild("RoyalMint02"), "Second-lane frontier missing")
+		assert(
+			productionPlateCount(plates) == 1 and plates:FindFirstChild("RoyalMint02"),
+			"Second-lane frontier missing"
+		)
 		local mint = unlocks:FindFirstChild("RoyalMint") :: Model
 		local farm = k:FindFirstChild("StarterFarm") :: Model
 		local bundles = mint:FindFirstChild("ActiveBundles") :: Folder

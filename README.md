@@ -99,7 +99,7 @@ src/
 │       ├── GraphicsController.luau  # reversible local quality reduction
 │       ├── PurchaseGuidanceController.luau # affordable first-action gold tutorial trail
 │       ├── MainMenuController.luau # startup menu and Play/Settings presentation
-│       ├── CameraController.luau   # Left Shift camera lock, restoration, respawn handling
+│       ├── CameraController.luau   # R camera lock, restoration, respawn handling
 │       └── ExampleController.luau  # startup example; no gameplay
 └── shared/                         → ReplicatedStorage.Shared (Folder)
     ├── HudConfig.luau              # HUD palette, session defaults, music IDs

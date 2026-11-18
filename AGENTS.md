@@ -102,6 +102,14 @@ footprints/grounding retained; total326 decorative parts. Broadleaf originals
 archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
 and tools/RestylePlotForest.luau supply repeatable replacement. Saving this
 revision was deferred because another Play session started; version132 was not saved.
+Optional plate correction (2026-11-18): all six optional purchase plates now clone
+the exact RoyalMintDropper02 face/Outline/label template. BuildOptionalAdditions
+uses that source; tools/RepairOptionalPurchasePlates.luau repairs existing assets,
+retaining original six plates in OptionalPlateStyleBackup_20261118. Positions,
+prices, behavior, vegetation and mappings unchanged. Saved cloud version144.
+Face/rim source equality and live affordability checks passed.
+See docs/OPTIONAL_KINGDOM_ADDITIONS.md.
+
 
 Startup menu (2026-11-18): MainMenuConfig, Entry.EntrySession, Services.EntryService,
 client MainMenuController/UI.MainMenuView. Kingdom Awaits uses the existing royal
@@ -109,6 +117,21 @@ palette with pixel lettering and a plain backdrop. Runtime KingdomEntry remotes
 validate Play; KingdomEntered is server-owned. Safe random free-plot entry does
 not claim/reserve land. No new assets, schema or Rojo mapping. docs/MAIN_MENU.md
 contains behavior, capacity caveat and verification.
+
+Optional kingdom additions (2026-11-18): six independent Optional offers unlock
+after RoyalMintDropper08 alongside the production frontier: banners250, lanterns400,
+sword600, sprint1000, paddock1900, fountain4000 Gold. PurchaseOffers owns visibility;
+PurchaseService retains validated transactions. EquipmentService/EquipmentController
+grant a non-damaging sword; SprintService/Movement.Stamina and SprintController/
+UI.StaminaView own server stamina and owner HUD. Hold Left Shift sprints; double-tap
+locks sprint until stopping/exhaustion or another Shift press. R toggles camera lock.
+Client Movement.SprintInput owns 0.3-second double-tap/0.15-second stop grace.
+Rebirth revokes purchases and abilities; saves unchanged.
+tools/BuildOptionalAdditions.luau adds six model/plate pairs and a script-free
+ServerStorage.KingdomTrainingSword, preserving OptionalAdditionsBackup_20261118.
+Vegetation remains owned by the other agent. No schema or Rojo mapping changes.
+Asset contract, rollback and checks: docs/OPTIONAL_KINGDOM_ADDITIONS.md.
+
 
 Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
 RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
@@ -424,7 +447,7 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   One timed loop queries pit overlaps, expires bundles, and produces at most one
   bundle per interval. Per-farm cap 12; lifetime 20 seconds. Death preserves earnings;
   release/departure discards them. No saved schema change or request remotes.
-- CameraController owns Left Shift locking, starts unlocked, suspends during typing,
+- CameraController owns R camera locking, starts unlocked, suspends during typing,
   menus and death, and restores normal controls. PlotService disables native mouse
   lock per player to avoid competing toggles. The render callback is client-only.
 - Milestone 1.5 asset contract: optionally add `PurchasePlates` and `PurchaseUnlocks`
@@ -459,6 +482,14 @@ clearance checks passed. Existing folders are never replaced. See docs/PLOT_LAND
 Main menu: enable only MainMenuConfig.RUN_TESTS_IN_STUDIO in Studio Mock before
 Play. Expect All main menu entry checks passed, All main menu placement checks
 passed and All main menu client checks passed. Reset false afterward.
+
+Optional additions: in Mock enable only SprintConfig.RUN_TESTS_IN_STUDIO, sync and
+Play before claiming. Expect All optional additions and rebirth checks passed,
+All stamina HUD checks passed, All sword input bridge checks passed. Reset false.
+Expect All sprint input checks passed as well. Physical Shift/R, sword appearance
+and two-player safety remain hands-on
+acceptance. See docs/OPTIONAL_KINGDOM_ADDITIONS.md.
+
 
 Rebirth: Studio Mock before claim, only RebirthConfig.RUN_TESTS_IN_STUDIO=true.
 Expect All rebirth economy/service/client checks passed. Optional Server attribute

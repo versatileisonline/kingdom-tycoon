@@ -6,6 +6,7 @@ export type Purchase = {
 	Price: number,
 	Requires: string?,
 	StudioOnly: boolean?,
+	Optional: boolean?,
 	FarmDropper: boolean?,
 	ProductionSite: ("RoyalMint" | "RoyalMint02")?,
 	UpgraderSite: ("RoyalMint" | "RoyalMint02")?,
@@ -178,6 +179,27 @@ for index, price in secondPrices do
 	table.insert(purchases, insertion, table.freeze(entry))
 	insertion += 1
 	previous = id
+end
+
+local optionalOffers: { { string | number } } = {
+	{ "RoyalBanners", "Royal Banners", 250 },
+	{ "RoyalLanterns", "Lanterns", 400 },
+	{ "TrainingSword", "Sword", 600 },
+	{ "SprintTraining", "Sprint Training", 1000 },
+	{ "HorsePaddock", "Horse Paddock", 1900 },
+	{ "RoyalFountain", "Fountain", 4000 },
+}
+for _, offer in optionalOffers do
+	table.insert(
+		purchases,
+		table.freeze({
+			Id = offer[1] :: string,
+			Name = offer[2] :: string,
+			Price = offer[3] :: number,
+			Requires = "RoyalMintDropper08",
+			Optional = true,
+		})
+	)
 end
 
 return table.freeze({

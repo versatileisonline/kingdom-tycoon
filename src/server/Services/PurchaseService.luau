@@ -32,6 +32,8 @@ type KingdomPurchases = {
 	Slots: { Slot },
 }
 
+local Offers = require(script.Parent.Parent.Purchases.PurchaseOffers)
+
 local PurchaseService = {}
 local definitions: { [string]: Purchase } = {}
 local definitionOrder: { [string]: number } = {}
@@ -89,26 +91,19 @@ local function refresh(player: Player): ()
 			end
 		end
 	end
-	-- A single frontier: the earliest unfinished configured purchase is the only offer.
-	local nextSlot: Slot? = nil
+	-- Optional offers never participate in the production frontier.
+	local entries = {}
 	for _, slot in state.Slots do
-		if not slot.Shown then
-			nextSlot = slot
-			break
-		end
+		table.insert(entries, slot.Definition)
 	end
+	local nextDefinition = Offers.Next(entries, data.PurchasedBuildings)
 	for _, slot in state.Slots do
 		if slot.Shown then
 			continue
 		end
 		local purchase = slot.Definition
-		local requirement = purchase.Requires
-		slot.Visible = slot == nextSlot
-			and (requirement == nil or data.PurchasedBuildings[requirement] == true)
-			and (
-				(not purchase.FarmDropper and purchase.ProductionSite == nil and purchase.UpgraderSite == nil)
-				or FarmService.IsStarted(player)
-			)
+		slot.Visible =
+			Offers.IsVisible(purchase, nextDefinition, data.PurchasedBuildings, FarmService.IsStarted(player))
 		PlatePresentation.SetAmount(slot.Label, purchase.Name, purchase.Price)
 		slot.Plate.Color = if getUnavailableReason(player, data, purchase) == nil
 			then Config.PLATES.AVAILABLE_COLOR
