@@ -158,3 +158,19 @@ could not run because another Play session had started. Save was refused as Busy
 no cloud version was created for this revision at that time. Earlier claims of
 version132/content preload verification were premature and are corrected here.
 No gameplay, data, settings or other-agent files were edited.
+
+## Final open woodland revision
+
+Creator clarified the desired balance: approximately half exposed wood and half
+foliage, not a Christmas-tree cone. A Scots-pine-style mesh uses a clearly exposed
+lower trunk, crooked woody side branches and an irregular upper crown with dark
+needles. `tools/RestylePlotWoodland.luau` uses prepared
+ServerStorage.PlotLandscapeAssets.WoodlandPine, preserving the sixteen previous
+horizontal footprints, positions and grounded bases. Neutral grey tint preserves
+brown bark instead of tinting the wood green.
+
+Old spruce models are archived in SpruceForestBackup_20261118.<plot> with their
+RestoreParent attributes. New models carry ForestStyle=OpenWoodlandPine. Use
+APPLY=false for a dry run, then APPLY=true in Edit. Repeated execution refuses the
+backup. Rollback follows the spruce recipe: archive current trees, restore the
+previous models to recorded parents. No gameplay or other-agent code is modified.
