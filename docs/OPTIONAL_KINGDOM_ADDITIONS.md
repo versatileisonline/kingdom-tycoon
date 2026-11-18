@@ -164,3 +164,23 @@ acceptance are manual checks, not claims made by the automated suite.
 - Shared checkout was moved by the menu agent from feat/mint-optional-additions
   to feat/main-menu. Preserved that branch and all menu commits; only this task's
   own hunks/files were staged. No push or merge performed here.
+
+## Giving yourself Gold in the hands-on preview
+
+While the TutorialPreview-backed Mock hands-on stage is running, open Studio's
+Command Bar, select Server, and run:
+
+```lua
+game.ServerScriptService.Server:SetAttribute("StudioGrantGold", 100000)
+```
+
+This adds 100,000 banked Gold through DataService. Change the amount and repeat
+as needed; expect `Studio preview Gold granted` in Output.
+It only works while that preview's grant listener is active. Ending Play clears
+the temporary Mock progress and listener; this is not a published-game command.
+
+The accessory hands-on stage starts after the eight first-Mint droppers, before
+Upgrader1, with six optional plates and the next production plate. Player is placed
+beside the unpurchased HorsePaddock plate with 100,000 Gold. Buy the paddock/sword/
+sprint yourself; they are not pre-owned. Temporary staging bootstrap was removed
+from disk after setup, so the next ordinary Play will not auto-stage progression.
