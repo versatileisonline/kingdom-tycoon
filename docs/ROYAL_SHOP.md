@@ -11,8 +11,8 @@ Owned cards cannot be bought again. Unknown ownership and unavailable products
 never enable a live purchase. Refresh retries ownership and product information.
 
 Collect Now owners use the existing bottom-left Gold badge as their collection
-button. A gold Collect label appears before the existing coin icon and current
-Gold amount, centered together with a tight 4-pixel gap. Nonowners retain the
+button. A gold Collect label appears before the existing coin icon and pending
+Gold total, centered together with a tight 4-pixel gap. Nonowners retain the
 original display-only badge. It collects their own active kingdom's shared
 earnings from anywhere while alive, and disables at zero pending earnings,
 unavailable data, or death. There is no separate collection button.
@@ -151,7 +151,7 @@ unowned and Shop left open for creator testing. No live publish or Git push.
 
 Presentation revision (2026-11-18): Royal Shop title is anchored to the blue
 ribbon; offer grid has stroke clearance on every edge. Paid collection now uses
-the existing Gold badge with a centered Collect / coin / current Gold row.
+the existing Gold badge with a centered Collect / coin / pending Gold row.
 No server collection, prices, ownership or persistence behavior changed.
 
 
@@ -162,3 +162,13 @@ Gold. Owned row checks confirm4px gaps, horizontal centering and vertical icon
 centering; nonowners retain the original display. Normal Edit cloud version119
 saved with previews/tests disabled. Fresh scoped review found no important issues;
 format/lint/build pass, strict diagnostics remain the same14 pre-existing ones.
+
+
+Collect amount correction (2026-11-18): CollectNow owners see UncollectedGold,
+the exact shared pending balance published to every Collect Total plate. A
+successful collection displays0; new arrivals then increase all totals together.
+Nonowners still see their normal Gold balance. HudState.DisplayGold owns this
+selection; HudController observes ownership/pending changes as well as data
+readiness. Pure regression checks cover owner/nonowner, zero reset, new arrivals,
+unclaimed/unready states and reverting ownership. Native collection observed0,
+then HUD/farm/Mint all7 after fresh arrivals. No server accounting change.

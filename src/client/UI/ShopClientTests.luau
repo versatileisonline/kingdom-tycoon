@@ -8,6 +8,11 @@ function Tests.CheckCollectionRow(owned: boolean): ()
 	local gold = row.Gold
 	assert(collect.Visible == owned, "Collect label follows confirmed ownership")
 	if owned then
+		local pending = game.Players.LocalPlayer:GetAttribute("UncollectedGold")
+		assert(
+			gold.Text == require(script.Parent.HudState).FormatGold(if typeof(pending) == "number" then pending else 0),
+			"collection amount matches plate total"
+		)
 		local gap = require(game.ReplicatedStorage.Shared.HudConfig).UI.CoinGap
 		assert(
 			math.abs(coin.AbsolutePosition.X - collect.AbsolutePosition.X - collect.AbsoluteSize.X - gap) < 1,

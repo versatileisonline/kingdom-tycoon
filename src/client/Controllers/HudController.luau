@@ -41,13 +41,21 @@ function Controller.Start(): ()
 	view = View.new(player:WaitForChild("PlayerGui"), Settings)
 	local function render(): ()
 		local gold = player:GetAttribute("Gold")
-		local value = if player:GetAttribute("GoldReady") == true and typeof(gold) == "number" then gold else nil
+		local pending = player:GetAttribute("UncollectedGold")
+		local value = State.DisplayGold(
+			player:GetAttribute("GoldReady") == true,
+			player:GetAttribute("ShopCollectNow") == "Owned",
+			if typeof(gold) == "number" then gold else nil,
+			if typeof(pending) == "number" then pending else nil
+		)
 		local formatted = State.FormatGold(value)
 		view.Gold.Text = formatted
 		view.Gold.TextSize = math.clamp(math.floor(128 / math.max(1, #formatted * 0.6)), 10, 20)
 	end
 	table.insert(connections, player:GetAttributeChangedSignal("Gold"):Connect(render))
 	table.insert(connections, player:GetAttributeChangedSignal("GoldReady"):Connect(render))
+	table.insert(connections, player:GetAttributeChangedSignal("UncollectedGold"):Connect(render))
+	table.insert(connections, player:GetAttributeChangedSignal("ShopCollectNow"):Connect(render))
 	table.insert(
 		connections,
 		script.Destroying:Connect(function(): ()

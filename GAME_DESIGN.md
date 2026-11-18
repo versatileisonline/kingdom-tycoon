@@ -109,6 +109,9 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Collect display correction (2026-11-18): creator clarified that the owned
+  Collect button's amount must equal the Collect Total plates' pending amount
+  and reset to0 after collection. Nonowners retain the normal Gold display.
 - Shop presentation revision (2026-11-18): creator requested the Royal Shop
   heading centered in its blue ribbon and full borders on every offer card.
   Collect Now ownership converts the existing bottom-left Gold display into

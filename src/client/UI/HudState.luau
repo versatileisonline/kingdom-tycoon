@@ -27,6 +27,15 @@ function State.new(defaults: { [string]: Value })
 		end,
 	}
 end
+function State.DisplayGold(ready: boolean, collectOwned: boolean, gold: number?, pending: number?): number?
+	if not ready then
+		return nil
+	end
+	if collectOwned then
+		return pending or 0
+	end
+	return gold
+end
 function State.FormatGold(value: number?): string
 	if value == nil then
 		return "—"

@@ -74,7 +74,8 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 ## 10. Project structure
 
 Shop/HUD refinement (2026-11-18): GoldBadge is now a TextButton containing
-CurrencyRow.Collect / Coin / Gold; nonowners retain original display-only layout.
+CurrencyRow.Collect / Coin / Gold; owners show pending Collect Total, while
+nonowners retain original display-only Gold layout.
 CollectNow ownership reveals Collect and centers the text/icon/amount with4px
 gaps. HudController.GetGoldButton / SetCollectState supplies ShopController's
 existing validated collection action; separate CollectNowButton removed.
@@ -545,6 +546,13 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Collect amount correction (2026-11-18): paid GoldBadge now displays the shared
+UncollectedGold total rather than saved Gold; follows ownership/pending changes.
+Nonowners retain normal Gold. Pure HUD-state regression checks pass. Native
+badge click observed display0, then HUD/farm/Mint all7 after fresh production.
+Lint/build pass, same14 pre-existing strict diagnostics. No server/remotes/schema
+changes. See docs/ROYAL_SHOP.md; cloud save/test handoff recorded below.
 
 Shop/HUD refinement accepted for testing (2026-11-18): title centered on ribbon,
 all three card borders inset, paid collection moved into the existing Gold badge.
