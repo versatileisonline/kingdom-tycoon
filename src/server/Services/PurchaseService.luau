@@ -92,26 +92,18 @@ local function refresh(player: Player): ()
 		end
 	end
 	-- Optional offers never participate in the production frontier.
-	local nextSlot: Slot? = nil
+	local entries = {}
 	for _, slot in state.Slots do
-		if not slot.Shown and not slot.Definition.Optional then
-			nextSlot = slot
-			break
-		end
+		table.insert(entries, slot.Definition)
 	end
+	local nextDefinition = Offers.Next(entries, data.PurchasedBuildings)
 	for _, slot in state.Slots do
 		if slot.Shown then
 			continue
 		end
 		local purchase = slot.Definition
-		slot.Visible = Offers.IsVisible(
-			purchase,
-			if nextSlot then nextSlot.Definition else nil,
-			data.PurchasedBuildings,
-			FarmService.IsStarted(player)
-		) and ((not purchase.FarmDropper and purchase.ProductionSite == nil and purchase.UpgraderSite == nil) or FarmService.IsStarted(
-			player
-		))
+		slot.Visible =
+			Offers.IsVisible(purchase, nextDefinition, data.PurchasedBuildings, FarmService.IsStarted(player))
 		PlatePresentation.SetAmount(slot.Label, purchase.Name, purchase.Price)
 		slot.Plate.Color = if getUnavailableReason(player, data, purchase) == nil
 			then Config.PLATES.AVAILABLE_COLOR

@@ -181,16 +181,15 @@ for index, price in secondPrices do
 	previous = id
 end
 
-for _, offer in
-	{
-		{ "RoyalBanners", "Royal Banners", 250 },
-		{ "RoyalLanterns", "Lanterns", 400 },
-		{ "TrainingSword", "Sword", 600 },
-		{ "SprintTraining", "Sprint Training", 1000 },
-		{ "HorsePaddock", "Horse Paddock", 1900 },
-		{ "RoyalFountain", "Fountain", 4000 },
-	}
-do
+local optionalOffers: { { string | number } } = {
+	{ "RoyalBanners", "Royal Banners", 250 },
+	{ "RoyalLanterns", "Lanterns", 400 },
+	{ "TrainingSword", "Sword", 600 },
+	{ "SprintTraining", "Sprint Training", 1000 },
+	{ "HorsePaddock", "Horse Paddock", 1900 },
+	{ "RoyalFountain", "Fountain", 4000 },
+}
+for _, offer in optionalOffers do
 	table.insert(
 		purchases,
 		table.freeze({
