@@ -552,7 +552,10 @@ UncollectedGold total rather than saved Gold; follows ownership/pending changes.
 Nonowners retain normal Gold. Pure HUD-state regression checks pass. Native
 badge click observed display0, then HUD/farm/Mint all7 after fresh production.
 Lint/build pass, same14 pre-existing strict diagnostics. No server/remotes/schema
-changes. See docs/ROYAL_SHOP.md; cloud save/test handoff recorded below.
+changes. Saved normal Edit cloud version121 with previews off; restarted Mock
+production with CollectNow enabled for hands-on verification. Preview Edit flag
+is unsaved; clear after stopping before normal save. No push/publish.
+See docs/ROYAL_SHOP.md.
 
 Shop/HUD refinement accepted for testing (2026-11-18): title centered on ribbon,
 all three card borders inset, paid collection moved into the existing Gold badge.
