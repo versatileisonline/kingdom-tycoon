@@ -62,6 +62,19 @@ Luau runtime. StyLua, Selene (zero errors/warnings), Rojo build and independent
 code review passed. New-track playback and native transitions are checked
 separately from these pure selection tests.
 
+Native integration (2026-11-18): startup selected Viking Invasion, then seeking
+near each ending let native Sound.Ended advance to The Rise of Kings, Dungeon
+Quest, and back to Viking Invasion. All three were checked IsLoaded=true and
+IsPlaying=true; the cycle contained each ID once. The live music gain remained
+0.25 during transitions. Native Settings slider input changed the gain near zero
+and restored it to approximately 25% (0.2513); the panel was closed afterward.
+Exact-zero mute was not established by the automated drag and remains a manual
+acceptance check. Direct SettingsController.Set from the MCP execution context
+did not update the live controller's SoundGroup, so it was not used as volume
+verification evidence. No production volume behavior was changed. Listening
+preference remains with the creator; these checks establish asset permission and
+playback, not an auditory review.
+
 ## Historical verification: superseded playlist (2026-11-17)
 
 The results below apply only to the old IDs 139186694323000, 87479584695420,
