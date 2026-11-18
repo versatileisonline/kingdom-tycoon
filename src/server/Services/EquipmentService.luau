@@ -10,7 +10,6 @@ local logger = require(Shared.Logger).new("EquipmentService")
 local Service = {}
 type State = {
 	Tool: Tool?,
-	Activation: RBXScriptConnection?,
 	Character: RBXScriptConnection?,
 	LastSwing: number,
 	Tween: Tween?,
@@ -20,12 +19,9 @@ local states: { [Player]: State } = {}
 local connections: { RBXScriptConnection } = {}
 local unsubscribe: (() -> ())? = nil
 local started = false
+local swing: RemoteEvent
 local function remove(state: State): ()
 	state.Generation += 1
-	if state.Activation then
-		state.Activation:Disconnect()
-		state.Activation = nil
-	end
 	if state.Tween then
 		state.Tween:Cancel()
 		state.Tween = nil
@@ -69,7 +65,8 @@ function Service.TrySwing(player: Player): boolean
 	)
 	state.Tween = tween
 	tween:Play()
-	tool:SetAttribute("SwingSerial", (tool:GetAttribute("SwingSerial") or 0) + 1)
+	local serial = tool:GetAttribute("SwingSerial")
+	tool:SetAttribute("SwingSerial", (if typeof(serial) == "number" then serial else 0) + 1)
 	task.delay(Config.SWING_TIME, function()
 		if state.Generation ~= generation or state.Tool ~= tool then
 			return
@@ -113,9 +110,6 @@ local function refresh(player: Player): ()
 	tool.CanBeDropped = false
 	tool.Parent = backpack
 	state.Tool = tool
-	state.Activation = tool.Activated:Connect(function()
-		Service.TrySwing(player)
-	end)
 end
 local function register(player: Player): ()
 	if states[player] then
@@ -132,12 +126,29 @@ local function register(player: Player): ()
 	end)
 	refresh(player)
 end
-function Service.Init(): () end
+function Service.Init(): ()
+	local replicated = game:GetService("ReplicatedStorage")
+	assert(not replicated:FindFirstChild(Config.REMOTE_FOLDER), "Equipment remotes already exist")
+	local folder = Instance.new("Folder")
+	folder.Name = Config.REMOTE_FOLDER
+	swing = Instance.new("RemoteEvent")
+	swing.Name, swing.Parent = "Swing", folder
+	folder.Parent = replicated
+end
 function Service.Start(): ()
 	if started then
 		return
 	end
 	started = true
+	table.insert(
+		connections,
+		swing.OnServerEvent:Connect(function(player: Player, ...: any)
+			if select("#", ...) ~= 0 then
+				return
+			end
+			Service.TrySwing(player)
+		end)
+	)
 	table.insert(connections, Players.PlayerAdded:Connect(register))
 	table.insert(
 		connections,

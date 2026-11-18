@@ -12,6 +12,14 @@ function Tests.Run(player: Player, Equipment: any): ()
 	local health = humanoid.Health
 	task.wait(0.5)
 	assert(humanoid.Health == health, "Training sword damaged owner")
+	task.wait(0.3)
+	local serial = tool:GetAttribute("SwingSerial")
+	tool:SetAttribute("VerifyClientActivation", true)
+	local deadline = os.clock() + 12
+	repeat
+		task.wait(0.05)
+	until tool:GetAttribute("SwingSerial") ~= serial or os.clock() >= deadline
+	assert(tool:GetAttribute("SwingSerial") ~= serial, "Client tool activation did not reach server")
 	print("All training sword checks passed")
 end
 return Tests
