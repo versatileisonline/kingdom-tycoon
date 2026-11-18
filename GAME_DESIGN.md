@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Sprint animation (2026-11-18): creator requested a free Creator Store running
+  animation tied to sprint, consistent with the sword and existing movement.
+  Preserve current controls/stamina and default jump; layer a grounded sprint
+  track beneath sword actions. Free compatible fallback chosen after asset checks;
+  Store search did not establish the requested trending ranking.
+
 - Sword animation (2026-11-18): creator requested replacing the disliked grip-only
   swing with a free Creator Store animation consistent with existing movement.
   Use free R15 pack3083796281 SideSwipe567479941, keep upright grip, current

@@ -102,6 +102,15 @@ footprints/grounding retained; total326 decorative parts. Broadleaf originals
 archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
 and tools/RestylePlotForest.luau supply repeatable replacement. Saving this
 revision was deferred because another Play session started; version132 was not saved.
+Sprint animation (2026-11-18): SprintService publishes authoritative Player.Sprinting
+on state transitions. SprintAnimationController/Movement.SprintAnimationState play
+free R15 run507767714 at Movement priority, gated on grounded movement, life,
+focus and menus. One track per character; death/respawn cleanup; default jump and
+sword Action layering preserved. Config owns asset/fade/reference speed; no new
+remotes/schema/mappings/assets/frame loops. Native hold/run/sword/jump/release,
+respawn and exhaustion checks passed. Trending rank unavailable in Store search.
+See docs/SPRINT_ANIMATION.md for source, tests and multiplayer acceptance limit.
+
 Left HUD emphasis/world signs (2026-11-18): HudConfig.UI owns larger 22px
 Shop/Rebirth launchers, 21px Collect text, 16–26px Gold and matching weight.
 WorldTypographyController applies the shared Arcade font to BillboardGui and

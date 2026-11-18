@@ -33,6 +33,11 @@ local function restore(record: Record): ()
 	end
 	record.LastApplied = nil
 end
+local function publishActive(player: Player, active: boolean): ()
+	if player:GetAttribute("Sprinting") ~= active then
+		player:SetAttribute("Sprinting", active)
+	end
+end
 local function refresh(player: Player): ()
 	local record = records[player]
 	if not record then
@@ -43,6 +48,7 @@ local function refresh(player: Player): ()
 	if not record.Owned then
 		restore(record)
 		record.Meter = Stamina.New()
+		publishActive(player, false)
 	end
 end
 local function register(player: Player): ()
@@ -61,6 +67,7 @@ local function register(player: Player): ()
 		SentOwned = nil,
 		SentExhausted = nil,
 	}
+	publishActive(player, false)
 	refresh(player)
 end
 function Service.SetHeld(player: Player, held: unknown): boolean
@@ -117,6 +124,7 @@ local function tickPlayer(player: Player, record: Record, dt: number): ()
 	local velocity = if root then root.AssemblyLinearVelocity else Vector3.zero
 	local moving = Vector3.new(velocity.X, 0, velocity.Z).Magnitude > 0.5
 	Stamina.Step(record.Meter, dt, moving, allowed)
+	publishActive(player, record.Meter.Active)
 	if humanoid then
 		if record.Meter.Active then
 			if record.LastApplied == nil then
