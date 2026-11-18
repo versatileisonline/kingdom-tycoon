@@ -209,25 +209,24 @@ local positions = {
 	Vector3.new(64, 0.6, 0),
 }
 local stagedPlates = Instance.new("Folder")
+local plateTemplate = plates:FindFirstChild("RoyalMintDropper02") :: BasePart
+assert(plateTemplate and plateTemplate:FindFirstChild("Outline"), "Missing standard dropper plate template")
 for i, id in ids do
-	local p = part(
-		stagedPlates,
-		id,
-		Vector3.new(0.4, 4, 4),
-		positions[i],
-		Color3.fromRGB(255, 45, 45),
-		nil,
-		CFrame.Angles(0, 0, math.pi / 2)
-	)
-	p.Shape, p.CanCollide, p.CanTouch = Enum.PartType.Cylinder, false, true
-	local gui = Instance.new("BillboardGui")
-	gui.Name, gui.Size, gui.Adornee = "PurchaseBillboard", UDim2.fromOffset(128, 40), p
-	gui.StudsOffsetWorldSpace, gui.AlwaysOnTop = Vector3.new(0, 2, 0), true
-	gui.Parent = p
-	local label = Instance.new("TextLabel")
-	label.Name, label.Size, label.BackgroundTransparency = "PurchaseLabel", UDim2.fromScale(1, 1), 1
-	label.Text, label.TextColor3, label.Font, label.TextSize = id, cream, Enum.Font.GothamBold, 14
-	label.Parent = gui
+	-- Reuse the authored plate, rim and label hierarchy, not a parallel visual recipe.
+	local p = plateTemplate:Clone()
+	local original = p.CFrame
+	local destination = CFrame.new(pivot:PointToWorldSpace(positions[i])) * plateTemplate.CFrame.Rotation
+	for _, item in p:GetDescendants() do
+		if item:IsA("BasePart") then
+			item.CFrame = destination * original:ToObjectSpace(item.CFrame)
+		end
+	end
+	p.CFrame, p.Name = destination, id
+	p:SetAttribute("UsesDropperPlateTemplate", true)
+	local label = p:FindFirstChild("PurchaseLabel", true) :: TextLabel
+	assert(label, "Missing cloned PurchaseLabel")
+	label.Text = id
+	p.Parent = stagedPlates
 end
 local tool = Instance.new("Tool")
 tool.Name, tool.CanBeDropped, tool.RequiresHandle = "KingdomTrainingSword", false, true

@@ -73,6 +73,15 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Optional plate correction (2026-11-18): all six optional purchase plates now clone
+the exact RoyalMintDropper02 face/Outline/label template. BuildOptionalAdditions
+uses that source; tools/RepairOptionalPurchasePlates.luau repairs existing assets,
+retaining original six plates in OptionalPlateStyleBackup_20261118. Positions,
+prices, behavior, vegetation and mappings unchanged. Saved cloud version144.
+Face/rim source equality and live affordability checks passed.
+See docs/OPTIONAL_KINGDOM_ADDITIONS.md.
+
+
 Startup menu (2026-11-18): MainMenuConfig, Entry.EntrySession, Services.EntryService,
 client MainMenuController/UI.MainMenuView. Kingdom Awaits uses the existing royal
 palette with pixel lettering and a plain backdrop. Runtime KingdomEntry remotes

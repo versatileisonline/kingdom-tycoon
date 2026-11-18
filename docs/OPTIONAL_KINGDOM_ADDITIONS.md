@@ -184,3 +184,24 @@ Upgrader1, with six optional plates and the next production plate. Player is pla
 beside the unpurchased HorsePaddock plate with 100,000 Gold. Buy the paddock/sword/
 sprint yourself; they are not pre-owned. Temporary staging bootstrap was removed
 from disk after setup, so the next ordinary Play will not auto-stage progression.
+
+## Purchase plate correction (2026-11-18)
+Creator requested the exact existing red/green dropper plates, including their
+black outer rim. The initial optional recipe constructed plain faces and omitted
+Outline; shared PlatePresentation.Style only adjusts existing rims.
+BuildOptionalAdditions now clones PurchasePlates.RoyalMintDropper02, including its
+complete rim/label hierarchy, then relocates descendants and renames the plate.
+tools/RepairOptionalPurchasePlates.luau applies the same clone to all six existing
+optional plate slots in Edit. It archives the original six plates in
+ServerStorage.OptionalPlateStyleBackup_20261118, preserving positions and unrelated
+template/vegetation objects. Repeat runs skip already repaired plates.
+No runtime/purchase/economy/schema/mapping changes.
+Studio before/after checks confirmed all six were missing Outline before repair;
+all six now match reference face/rim dimensions, material, color, reflectance,
+transparency, shape, and collision/touch/query properties. Rim offset matches the
+source and original positions are unchanged. Cloud save144 contains the correction.
+Runtime preview checks confirm the remaining funded offers are green with the
+same black rim. Previous HorsePaddock purchase restored; five optional offers
+remain alongside Upgrader1. StyLua/Selene and code-only build passed.
+Rollback: archive repaired pairs and restore only the six original plate instances
+from OptionalPlateStyleBackup_20261118; preserve all later unrelated changes.

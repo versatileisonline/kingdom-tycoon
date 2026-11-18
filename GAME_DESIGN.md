@@ -109,6 +109,9 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Optional plate correction (2026-11-18): creator requested the exact pre-existing
+  red/green dropper purchase plate appearance, including black outer rim, for all
+  optional purchases. Clone the authored dropper plate; preserve prices/positions.
 - Startup menu (2026-11-18): approved provisional title Kingdom Awaits, blocky
   pixel-style menu with the Shop/Rebirth palette, Play and existing Settings.
   Plain dark background first; castle imagery/live panorama deferred. Play
