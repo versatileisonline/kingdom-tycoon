@@ -115,6 +115,18 @@ Roaming ambient NPCs; counts capped per server for performance.
   spawns beside a random free Claim plate without reserving or owning it;
   players may roam and still touch Claim, then Start Farm. No-free-plot entry
   reports an error; publishing capacity should match installed plots.
+- Optional kingdom additions (2026-11-18): creator approved six independently
+  purchasable floor plates after RoyalMintDropper08, alongside normal upgraders;
+  optional purchases never block production. This is an explicit exception to
+  single-next-plate disclosure for these side offers only. Starting prices follow
+  upgrader scale: banners250, lanterns400, sword600, sprint1000, paddock1900,
+  fountain4000 Gold. Sword equips/swings without damage; PvP/NPC combat and
+  horse riding remain Layer 2. Sprint is purchased: hold Shift, 1.5x speed,
+  six seconds stamina, one-second delay/four-second refill, release after
+  exhaustion. Left Control replaces Shift camera lock. Centered stamina bar
+  below the lock cursor fades at full and reappears on use. Rebirth removes
+  purchases/abilities; existing save/rejoin behavior remains. Approved additive
+  backed-up Studio asset recipes; other agent retains vegetation ownership.
 - Rebirth (2026-11-18): approved banked-Gold-only eligibility: 100,000 initially,
   doubling per rebirth, without purchase-chain completion. Permanent bonus +0.5x
   per rebirth, multiplied with the Gold pass. Reset all Gold, buildings and pending

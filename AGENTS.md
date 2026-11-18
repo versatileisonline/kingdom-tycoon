@@ -80,6 +80,19 @@ validate Play; KingdomEntered is server-owned. Safe random free-plot entry does
 not claim/reserve land. No new assets, schema or Rojo mapping. docs/MAIN_MENU.md
 contains behavior, capacity caveat and verification.
 
+Optional kingdom additions (2026-11-18): six independent Optional offers unlock
+after RoyalMintDropper08 alongside the production frontier: banners250, lanterns400,
+sword600, sprint1000, paddock1900, fountain4000 Gold. PurchaseOffers owns visibility;
+PurchaseService retains validated transactions. EquipmentService/EquipmentController
+grant a non-damaging sword; SprintService/Movement.Stamina and SprintController/
+UI.StaminaView own server stamina and owner HUD. Hold Shift sprints; Left Control
+now toggles camera lock. Rebirth revokes purchases and abilities; saves unchanged.
+tools/BuildOptionalAdditions.luau adds six model/plate pairs and a script-free
+ServerStorage.KingdomTrainingSword, preserving OptionalAdditionsBackup_20261118.
+Vegetation remains owned by the other agent. No schema or Rojo mapping changes.
+Asset contract, rollback and checks: docs/OPTIONAL_KINGDOM_ADDITIONS.md.
+
+
 Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
 RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
 PlotService.ResetKingdom with preflight, interaction gate and existing cleanup.
@@ -419,6 +432,13 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 Main menu: enable only MainMenuConfig.RUN_TESTS_IN_STUDIO in Studio Mock before
 Play. Expect All main menu entry checks passed, All main menu placement checks
 passed and All main menu client checks passed. Reset false afterward.
+
+Optional additions: in Mock enable only SprintConfig.RUN_TESTS_IN_STUDIO, sync and
+Play before claiming. Expect All optional additions and rebirth checks passed,
+All stamina HUD checks passed, All sword input bridge checks passed. Reset false.
+Physical Shift/Control, sword appearance and two-player safety remain hands-on
+acceptance. See docs/OPTIONAL_KINGDOM_ADDITIONS.md.
+
 
 Rebirth: Studio Mock before claim, only RebirthConfig.RUN_TESTS_IN_STUDIO=true.
 Expect All rebirth economy/service/client checks passed. Optional Server attribute
