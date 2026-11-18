@@ -100,7 +100,7 @@ function CameraController.Start(): ()
 		UserInputService.InputBegan:Connect(function(input: InputObject, processed: boolean): ()
 			if
 				not processed
-				and input.KeyCode == Enum.KeyCode.LeftShift
+				and input.KeyCode == Enum.KeyCode.LeftControl
 				and UserInputService:GetFocusedTextBox() == nil
 				and not GuiService.MenuIsOpen
 				and Preferences.Get("MenuOpen") ~= true
@@ -136,7 +136,7 @@ function CameraController.Start(): ()
 	)
 	table.insert(connections, script.Destroying:Connect(CameraController.Shutdown))
 	RunService:BindToRenderStep(BINDING, Enum.RenderPriority.Camera.Value + 1, update)
-	logger.Info("Started (Left Shift toggles camera lock)")
+	logger.Info("Started (Left Control toggles camera lock)")
 end
 
 function CameraController.Shutdown(): ()

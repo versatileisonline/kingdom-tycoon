@@ -1,0 +1,17 @@
+--!strict
+return table.freeze({
+	PURCHASE_ID = "SprintTraining",
+	REMOTE_FOLDER = "KingdomSprint",
+	CAPACITY = 6,
+	REFILL_SECONDS = 4,
+	RECOVERY_DELAY = 1,
+	SPEED_MULTIPLIER = 1.5,
+	TICK_SECONDS = 0.1,
+	INPUT_BURST = 12,
+	INPUT_PER_SECOND = 8,
+	BAR_WIDTH = 100,
+	BAR_HEIGHT = 6,
+	BAR_OFFSET = 30,
+	FADE_SECONDS = 0.35,
+	RUN_TESTS_IN_STUDIO = false,
+})

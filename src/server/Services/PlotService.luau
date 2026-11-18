@@ -340,7 +340,7 @@ function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string
 end
 
 local function addPlayer(player: Player): ()
-	player.DevEnableMouseLock = false -- CameraController owns the approved Left Shift toggle.
+	player.DevEnableMouseLock = false -- CameraController owns the approved Left Control toggle.
 	if arrival ~= nil then
 		player.RespawnLocation = arrival
 	end
