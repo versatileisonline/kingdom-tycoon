@@ -109,6 +109,10 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Sword animation (2026-11-18): creator requested replacing the disliked grip-only
+  swing with a free Creator Store animation consistent with existing movement.
+  Use free R15 pack3083796281 SideSwipe567479941, keep upright grip, current
+  cooldown and no damage, and preserve existing walk/jump/control animations.
 - Server leaderboard and typography (2026-11-18): creator approved replacing
   Roblox's player list with a custom upper-right Tab panel in the existing royal
   palette, real player portraits, Lifetime Gold ranking and Rebirths; highlight

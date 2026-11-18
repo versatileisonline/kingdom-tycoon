@@ -1,7 +1,6 @@
 --!strict
 local Players = game:GetService("Players")
 local ServerStorage = game:GetService("ServerStorage")
-local TweenService = game:GetService("TweenService")
 local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.EquipmentConfig)
 local Data = require(script.Parent.DataService)
@@ -12,8 +11,10 @@ type State = {
 	Tool: Tool?,
 	Character: RBXScriptConnection?,
 	LastSwing: number,
-	Tween: Tween?,
-	Generation: number,
+	Track: AnimationTrack?,
+	Animation: Animation?,
+	Unequipped: RBXScriptConnection?,
+	Died: RBXScriptConnection?,
 }
 local states: { [Player]: State } = {}
 local connections: { RBXScriptConnection } = {}
@@ -21,15 +22,49 @@ local unsubscribe: (() -> ())? = nil
 local started = false
 local swing: RemoteEvent
 local function remove(state: State): ()
-	state.Generation += 1
-	if state.Tween then
-		state.Tween:Cancel()
-		state.Tween = nil
+	if state.Unequipped then
+		state.Unequipped:Disconnect()
+		state.Unequipped = nil
+	end
+	if state.Died then
+		state.Died:Disconnect()
+		state.Died = nil
+	end
+	if state.Track then
+		state.Track:Stop(0)
+		state.Track:Destroy()
+		state.Track = nil
+	end
+	if state.Animation then
+		state.Animation:Destroy()
+		state.Animation = nil
 	end
 	if state.Tool then
 		state.Tool:Destroy()
 		state.Tool = nil
 	end
+end
+local function prepareAnimation(state: State, humanoid: Humanoid): ()
+	local animator: Animator? = humanoid:FindFirstChildOfClass("Animator")
+	if not animator then
+		local created = Instance.new("Animator")
+		created.Parent = humanoid
+		animator = created
+	end
+	local animation = Instance.new("Animation")
+	animation.Name, animation.AnimationId = "KingdomSwordSideSwipe", Config.SWING_ANIMATION_ID
+	local ok, result = pcall(function(): AnimationTrack
+		return (animator :: Animator):LoadAnimation(animation)
+	end)
+	if not ok then
+		animation:Destroy()
+		logger.Warn("Sword animation could not load: " .. tostring(result))
+		return
+	end
+	local track = result :: AnimationTrack
+	track.Name = "KingdomSwordSideSwipe"
+	track.Priority, track.Looped = Config.ANIMATION_PRIORITY, false
+	state.Animation, state.Track = animation, track
 end
 function Service.TrySwing(player: Player): boolean
 	local state = states[player]
@@ -51,31 +86,18 @@ function Service.TrySwing(player: Player): boolean
 	then
 		return false
 	end
-	state.LastSwing = os.clock()
-	state.Generation += 1
-	local generation = state.Generation
-	local rest = Config.REST_GRIP
-	if state.Tween then
-		state.Tween:Cancel()
+	local track = state.Track
+	if not track then
+		return false
 	end
-	-- Grip-only swing: deliberately no touched/raycast/damage path.
-	local tween = TweenService:Create(
-		tool,
-		TweenInfo.new(Config.SWING_TIME),
-		{ Grip = rest * CFrame.Angles(0, 0, math.rad(-80)) }
-	)
-	state.Tween = tween
-	tween:Play()
+	state.LastSwing = os.clock()
+	-- One reusable upper-body track; the sword's upright grip never changes.
+	if track.IsPlaying then
+		track:Stop(0)
+	end
+	track:Play(Config.ANIMATION_FADE, 1, 1)
 	local serial = tool:GetAttribute("SwingSerial")
 	tool:SetAttribute("SwingSerial", (if typeof(serial) == "number" then serial else 0) + 1)
-	task.delay(Config.SWING_TIME, function()
-		if state.Generation ~= generation or state.Tool ~= tool then
-			return
-		end
-		local back = TweenService:Create(tool, TweenInfo.new(Config.SWING_TIME), { Grip = rest })
-		state.Tween = back
-		back:Play()
-	end)
 	return true
 end
 local function refresh(player: Player): ()
@@ -112,13 +134,29 @@ local function refresh(player: Player): ()
 	tool.Grip = Config.REST_GRIP
 	tool.Parent = backpack
 	state.Tool = tool
+	prepareAnimation(state, humanoid :: Humanoid)
+	state.Unequipped = tool.Unequipped:Connect(function()
+		if state.Track then
+			state.Track:Stop(Config.ANIMATION_FADE)
+		end
+	end)
+	state.Died = (humanoid :: Humanoid).Died:Connect(function()
+		remove(state)
+	end)
 end
 local function register(player: Player): ()
 	if states[player] then
 		return
 	end
-	local state: State =
-		{ Tool = nil, Activation = nil, Character = nil, LastSwing = -math.huge, Tween = nil, Generation = 0 }
+	local state: State = {
+		Tool = nil,
+		Character = nil,
+		LastSwing = -math.huge,
+		Track = nil,
+		Animation = nil,
+		Unequipped = nil,
+		Died = nil,
+	}
 	states[player] = state
 	state.Character = player.CharacterAdded:Connect(function()
 		task.spawn(function()

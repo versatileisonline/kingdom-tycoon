@@ -102,6 +102,13 @@ footprints/grounding retained; total326 decorative parts. Broadleaf originals
 archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
 and tools/RestylePlotForest.luau supply repeatable replacement. Saving this
 revision was deferred because another Play session started; version132 was not saved.
+Free sword animation (2026-11-18): EquipmentConfig selects SideSwipe567479941 from
+free Creator Store pack3083796281. EquipmentService uses one nonlooping server
+Animator track at Action priority, replacing grip-only tween; upright grip and
+0.65s cooldown remain. Native client playback/unequip/reuse checks passed.
+No damage/schema/remotes/mapping changes. See docs/SWORD_ANIMATION.md.
+
+
 Server leaderboard/pixel typography (2026-11-18): shared HudConfig.FONT uses the
 starter menu's Arcade font across screen UI and runtime plate labels. Larger text
 and subtle outlines retain the royal palette. LeaderboardConfig, client
