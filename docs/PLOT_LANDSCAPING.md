@@ -150,12 +150,11 @@ ForestStyle=DarkSpruce. Repeated installation refuses the existing backup.
 Rollback by archiving the new spruce trees and restoring the backed-up models to
 their recorded containers. Earlier source assets and backups stay untouched.
 
-Spruce revision installed and verified: generated source model 84489544364656
-(requested 4500-triangle budget), sixteen spruce meshes, 70–82 studs tall, tint
-RGB(61,88,72). All sixteen original X/Z dimensions, X/Z positions and bottom heights
-matched the archived broadleaf trees exactly. Total remains 326 decorative parts;
-all script-free and physics-disabled. Both spruce content requests loaded. Dry-run,
-StyLua/Selene and overhead/player-height visual checks passed. Saved cloud version
-132, not published. Output: `Dark spruce forest installed: 16 trees; footprints
-and grounding preserved`. Device performance and normal gameplay checks remain
-hands-on; no gameplay, data, settings or other-agent files were edited.
+Spruce revision installed: generated source model 84489544364656 (requested
+4500-triangle budget), sixteen spruce meshes, heights 70–82, tint RGB(61,88,72).
+Dry-run footprint/grounding assertions and StyLua/Selene passed. Overhead and
+player-height screenshots reviewed. A subsequent Edit readback/preload check
+could not run because another Play session had started. Save was refused as Busy;
+no cloud version was created for this revision at that time. Earlier claims of
+version132/content preload verification were premature and are corrected here.
+No gameplay, data, settings or other-agent files were edited.

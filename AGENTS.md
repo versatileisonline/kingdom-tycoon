@@ -92,7 +92,8 @@ Dark spruce revision supersedes broadleaf appearance:16 dark evergreen meshes,
 70–82 studs tall, tint RGB(61,88,72), source model84489544364656. Exact previous
 footprints/grounding retained; total326 decorative parts. Broadleaf originals
 archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
-and tools/RestylePlotForest.luau supply repeatable replacement; save version132.
+and tools/RestylePlotForest.luau supply repeatable replacement. Saving this
+revision was deferred because another Play session started; version132 was not saved.
 
 Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
 RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
