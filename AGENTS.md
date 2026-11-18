@@ -73,6 +73,27 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Shop/HUD refinement (2026-11-18): GoldBadge is now a TextButton containing
+CurrencyRow.Collect / Coin / Gold; owners show pending Collect Total, while
+nonowners retain original display-only Gold layout.
+CollectNow ownership reveals Collect and centers the text/icon/amount with4px
+gaps. HudController.GetGoldButton / SetCollectState supplies ShopController's
+existing validated collection action; separate CollectNowButton removed.
+Royal Shop title is parented/centered within RoyalBanner; offer padding prevents
+stroke clipping. No server/schema/remotes/mapping changes. See docs/ROYAL_SHOP.md.
+
+Royal Shop (2026-11-17): ShopConfig, server Shop.EntitlementRegistry /
+Services.EntitlementService / Services.ShopService, client ShopController /
+UI.ShopView / UI.ShopState. Three permanent offers: CollectNow49, DoubleGold99,
+AutoCollect149 Robux; live PassIds unset, sales unavailable until configured.
+Runtime ReplicatedStorage.KingdomShop remotes validate/rate-limit requests.
+FarmService.TryCollectAnywhere validates the living owner; shared banking also
+serves Auto-Collect after existing production ticks. SessionEarnings optional
+multiplier applies only at arrival. No schema, map/template or Rojo changes.
+Atlas assets/hud/shop-atlas.png maps to83808747914581; equal quadrant contract,
+setup, rollback and verification: docs/ROYAL_SHOP.md. Shop/Settings are exclusive
+and both suspend camera lock. Preview grants require explicit Studio Mock setup.
+
 Mint plate clearance saved in cloud version 104; coordinated Studio readback reports
 30 corrected plates and minimum 2.244-stud lamp clearance. Creator accepted the plate-clearance
 fix after native walking/visual verification in the temporary Mock stage.
@@ -378,6 +399,14 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Shop: in Studio Mock, enable only ShopConfig.RUN_TESTS_IN_STUDIO and set Server
+attribute StudioShopPreview=true before Play. Expect All shop and pass checks
+passed and All shop client checks passed. Optional StudioShopRegression=true
+runs farm/purchase/Mint chains/tutorial/HUD sequentially. Reset all afterward.
+With tests false, StudioShopPreview alone starts the hands-on fixture and logs
+Shop preview ready (Studio Mock). All simulated passes start unowned; Shop's
+Reset preview clears them. No Robux charged. See docs/ROYAL_SHOP.md.
+
 Second Mint: enable only MintConfig.RUN_SECOND_LANE_TESTS_IN_STUDIO in Mock, sync
 and Play before claiming. Expect All second Royal Mint lane checks passed. Reset
 the switch afterward. Run old farm/purchase/Mint suites separately.
@@ -517,6 +546,61 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Collect amount correction (2026-11-18): paid GoldBadge now displays the shared
+UncollectedGold total rather than saved Gold; follows ownership/pending changes.
+Nonowners retain normal Gold. Pure HUD-state regression checks pass. Native
+badge click observed display0, then HUD/farm/Mint all7 after fresh production.
+Lint/build pass, same14 pre-existing strict diagnostics. No server/remotes/schema
+changes. Saved normal Edit cloud version121 with previews off; restarted Mock
+production with CollectNow enabled for hands-on verification. Preview Edit flag
+is unsaved; clear after stopping before normal save. No push/publish.
+See docs/ROYAL_SHOP.md.
+
+Shop/HUD refinement accepted for testing (2026-11-18): title centered on ribbon,
+all three card borders inset, paid collection moved into the existing Gold badge.
+Tight centered Collect/coin/current-amount row verified for owners; nonowner
+layout/disabled state retained. Normal-bootstrap shop client/service suites pass;
+native Mock purchase followed by GoldBadge click banked108Gold. Geometry helper
+checks4px spacing, horizontal group center and vertical coin center. Fresh review
+found no important issues. Formatting, Selene and build pass; same14 pre-existing
+strict plate-label diagnostics, no new ones. Saved normal Edit cloud version119,
+tests/previews off. Current Play is producing Mock fixture with CollectNow owned
+so creator can inspect/use the revised badge; Shop Reset preview clears ownership.
+Unsaved Edit preview flag remains for repeat tests; clear it before normal save.
+No push/publish. Details: docs/ROYAL_SHOP.md.
+
+Shop test relaunch (2026-11-18): creator requested another hands-on Mock session.
+Started with25,000Gold, farm/Mint production and all passes unowned; Shop preview
+ready (Studio Mock) confirmed. Caught and fixed RoyalStyle.Feedback's ambiguous
+Create(...)(tween):Play() expression by retaining a local Tween before Play.
+Standalone feedback reproduction fails on prior source and passes hover,
+restoration/cancellation and destruction on corrected source. Selene/build pass.
+Fix synced to Studio and Play left running for creator testing; no push/publish.
+Save the updated Edit source after stopping/acceptance; preview flag remains
+unsaved and should be cleared before a normal save. Native hover remains a
+hands-on visual check; automated mouse highlight assertion was inconclusive
+because the shop had closed during the test.
+
+Royal Shop implementation (2026-11-17): three permanent passes and approved
+three-card royal HUD implemented on feat/royal-shop-gamepasses in modular commits.
+Ownership/economy/client/normal-bootstrap service suites pass, including exact
+remote credit, malformed request rejection, missing-root/death rejection,
+automatic banking failure retention, contributing-site tutorial advancement and
+preview mode reset. Native preview purchase/Collect Now tested. Formatting,
+Selene (zero warnings/errors), code-only build pass; strict analysis has only the
+same14 existing plate-label diagnostics. Fresh review findings corrected.
+Live pass IDs remain unset; real sales are intentionally unavailable. Device,
+real-purchase/rejoin and two-player pass acceptance remain hands-on checks.
+Sequential final regressions passed: farm, purchase, first eight-arch Mint chain,
+second Mint lane, tutorial and HUD; All shop regression checks passed observed.
+Normal Edit state saved as cloud version114: all tests/previews off, no runtime
+kingdoms. Current Play is a temporary Studio Mock shop fixture (25,000+Gold, farm
+and first Mint droppers producing, all simulated passes reset unowned, Shop open).
+Native final preview purchase/Auto-Collect banking passed. Unsaved Edit preview
+flag remains enabled for repeat testing because Edit cannot be changed during
+Play; clear StudioShopPreview after stopping before a normal save/session.
+No push or publish. See docs/ROYAL_SHOP.md.
 
 Main integration (2026-11-17): second conveyor5201d9c and tutorial4b66513 merged.
 Fresh sequential normal-context tutorial/second-lane regression suites, engine

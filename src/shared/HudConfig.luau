@@ -11,6 +11,10 @@ return table.freeze({
 		OrnamentSize = 96,
 		Margin = 32,
 		BadgeCoinSize = 18,
+		BadgeWidth = 220,
+		BadgeHeight = 58,
+		BadgeInset = 18,
+		BadgeCollectExtraWidth = 78,
 		CoinSize = 16,
 		CoinGap = 4,
 	}),
@@ -20,6 +24,7 @@ return table.freeze({
 		HelperArrow = true,
 		LowGraphics = false,
 		MenuOpen = false,
+		ShopOpen = false,
 	}),
 	COLORS = table.freeze({
 		Panel = "201F25",

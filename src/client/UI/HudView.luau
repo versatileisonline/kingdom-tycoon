@@ -17,6 +17,7 @@ local function stroke(item: GuiObject): ()
 	s.Color = color(C.Border)
 	s.Transparency = 0.25
 	s.Thickness = 2
+	s.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	s.Parent = item
 end
 local function text(parent: Instance, name: string, content: string, size: number): TextLabel
@@ -54,11 +55,15 @@ function View.new(parent: Instance, settings: any)
 	screen.DisplayOrder = 10
 	screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	screen.Parent = parent
-	local badge = Instance.new("Frame")
+	local badge = Instance.new("TextButton")
+	badge.Text = ""
+	badge.Active = false
+	badge.Selectable = false
+	badge.AutoButtonColor = false
 	badge.Name = "GoldBadge"
 	badge.AnchorPoint = Vector2.new(0, 1)
 	badge.Position = UDim2.new(0, 28, 1, -28)
-	badge.Size = UDim2.fromOffset(220, 58)
+	badge.Size = UDim2.fromOffset(Config.UI.BadgeWidth, Config.UI.BadgeHeight)
 	badge.BackgroundColor3 = color(C.Panel)
 	badge.BorderSizePixel = 0
 	badge.Parent = screen
@@ -66,15 +71,38 @@ function View.new(parent: Instance, settings: any)
 	stroke(badge)
 	Style.Gradient(badge, "313039", "141720")
 	Style.Corners(badge, 42, 2)
-	local coin = Style.Image(badge, "Coin", Config.ART.Coin, 3)
-	coin.AnchorPoint = Vector2.new(0, 0.5)
-	coin.Position = UDim2.new(0, 18, 0.5, 0)
+	local currencyRow = Instance.new("Frame")
+	currencyRow.Name = "CurrencyRow"
+	currencyRow.BackgroundTransparency = 1
+	currencyRow.AnchorPoint = Vector2.new(0.5, 0.5)
+	currencyRow.Position = UDim2.fromScale(0.5, 0.5)
+	currencyRow.Size = UDim2.new(1, -2 * Config.UI.BadgeInset, 0, 28)
+	currencyRow.ZIndex = 3
+	currencyRow.Parent = badge
+	local rowLayout = Instance.new("UIListLayout")
+	rowLayout.FillDirection = Enum.FillDirection.Horizontal
+	rowLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	rowLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+	rowLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+	rowLayout.Padding = UDim.new(0, 2 * Config.UI.CoinGap)
+	rowLayout.Parent = currencyRow
+	local collectLabel = text(currencyRow, "Collect", "Collect", 18)
+	collectLabel.Font = Enum.Font.GothamBold
+	collectLabel.TextColor3 = color(C.Gold)
+	collectLabel.Size = UDim2.fromOffset(0, 28)
+	collectLabel.AutomaticSize = Enum.AutomaticSize.X
+	collectLabel.LayoutOrder = 1
+	collectLabel.ZIndex = 3
+	collectLabel.Visible = false
+	local coin = Style.Image(currencyRow, "Coin", Config.ART.Coin, 3)
 	coin.Size = UDim2.fromOffset(Config.UI.BadgeCoinSize, Config.UI.BadgeCoinSize)
-	local gold = text(badge, "Gold", "—", 20)
+	coin.LayoutOrder = 2
+	local gold = text(currencyRow, "Gold", "—", 20)
 	gold.Font = Enum.Font.GothamBold
 	gold.TextColor3 = color(C.Gold)
-	gold.Position = UDim2.fromOffset(44, 0)
-	gold.Size = UDim2.new(1, -56, 1, 0)
+	gold.Size = UDim2.fromOffset(0, 28)
+	gold.AutomaticSize = Enum.AutomaticSize.X
+	gold.LayoutOrder = 3
 	gold.ZIndex = 3
 	local open = button(screen, "SettingsButton", "⚙")
 	open.TextSize = 27
@@ -327,6 +355,14 @@ function View.new(parent: Instance, settings: any)
 		end)
 	)
 	refresh()
-	return { Screen = screen, Gold = gold, Hint = hint }
+	return {
+		Screen = screen,
+		Gold = gold,
+		Hint = hint,
+		GoldButton = badge,
+		CollectLabel = collectLabel,
+		Coin = coin,
+		RowLayout = rowLayout,
+	}
 end
 return View
