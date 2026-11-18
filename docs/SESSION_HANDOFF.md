@@ -1,79 +1,104 @@
-# Kingdom Tycoon session handoff — 2026-11-17
+# Kingdom Tycoon session handoff — 2026-11-18
 
 Read AGENTS.md and GAME_DESIGN.md first. Continue from **main** in
 `/Users/bryantorres/projects/roblox_projects/kingdom_tycoon`.
 
-## Completed and accepted
+## Completed this session
 
-- Second Royal Mint conveyor: eight droppers followed by eight doubling
-  pass-through upgraders, after the first lane is complete. First-lane base coins
-  remain3 Gold; second-lane coins are9. Separate token caps/ledgers feed shared
-  collection. Prices/contracts: SECOND_ROYAL_MINT.md.
-- First-action helper: translucent gold triangle trail from waist height to the
-  real floor plate, with a brighter pulse flowing toward the objective. Existing
-  Display Helper Arrow setting controls it. Affordable/new actions only; one
-  target at a time, successful collection completes its step. Full behavior and
-  preview instructions: TUTORIAL_GUIDANCE.md.
-- Both dropper/upgrader purchase rows moved four studs left: first-lane local
-  X=-68, second-lane X=-20.30 plates; entries/collectors preserved. Minimum
-  conservative lamp-base clearance2.244 studs. Creator accepted visuals and
-  purchased through the final second-lane upgrader.
-- Existing royal HUD work on main is preserved.
+Royal Shop and HUD refinements merged into main in9908040, preserving the modular
+feature/fix/test commits. Feature branch: feat/royal-shop-gamepasses.
 
-Integration commits:5201d9c (second conveyor),4b66513 (tutorial trail). Both
-feature histories are merged; no cherry-picking is needed to continue from main.
+- Three permanent offers: Collect Now49, 2× Gold99, Auto-Collect149 Robux.
+- Dedicated royal Shop panel; title centered within the blue ribbon, all three
+  offer borders inset to prevent scrolling-area clipping. Transparent four-cell
+  illustration atlas assets/hud/shop-atlas.png maps to83808747914581.
+- Collect Now ownership converts the existing bottom-left Gold badge into a
+  button. Tight centered row: gold Collect text, coin, pending amount. No separate
+  CollectNowButton. Nonowners retain the original display-only Gold badge.
+- Important final clarification: owned Collect amount is **UncollectedGold**,
+  exactly the same shared total as floor Collect Total plates. Collection resets
+  it to0; new arrivals increase all totals together. Do not change it back to saved
+  Gold for CollectNow owners. HudState.DisplayGold owns the selection.
+- 2× applies once when a bundle/coin arrives at its pit, after Mint arch upgrades;
+  old pending earnings are unchanged. Auto-Collect banks all sites together after
+  each production tick, retains failed credits and uses bounded retries. No extra
+  production loop. Successful automatic deposits do not spam Output.
+- Remote/automatic banking advances tutorial collection only for sites that
+  contributed pending earnings. Floor collectors retain exact-site semantics.
+- Roblox owns pass entitlements; server validation/rate limits remain authoritative.
+  Lookup generations reject stale responses. Studio preview mode changes invalidate
+  simulated grants. No schema, map/template or Rojo mapping changes.
+- Fixed RoyalStyle hover Tween creation/Play expression; a separate local Tween
+  avoids accidentally calling the returned Instance.
 
-## Saved Studio state
+Previous accepted systems remain: four farm droppers, wooden walls, two Royal
+Mint lanes with eight droppers/eight arches each, shared collection, progressive
+purchase plates, animated first-action tutorial and royal HUD/settings/music.
+Details: SECOND_ROYAL_MINT.md, TUTORIAL_GUIDANCE.md, ROYAL_SHOP.md.
 
-Place77311816657817, cloud **version107**, saved in **Edit** mode. This is a
-Studio save, not a live publish. All65 authored script source checksums/lengths
-match merged main. All test switches are false; StudioTutorialPreview,
-StudioPreviewFrontier and StudioPreviewGold are cleared. No runtime kingdoms,
-temporary verification bootstrap, or temporary config audit models remain.
+## Studio state and testing
 
-Assets remain Studio-owned and are not included in Rojo's code-only builds.
-Do not rerun one-time asset builders over the accepted place. Keep the existing
-SecondRoyalMintBackup_20261117 and MintPlateClearanceBackup_20261117 archives.
-The clearance archive contains the complete original template and30 old plates.
+Place77311816657817, experience10769565462. Normal Edit state last saved as cloud
+**version121**, with test switches and preview flag disabled. This is a save,
+not a live publish. Assets are Studio-owned and absent from code-only Rojo builds.
 
-## Verification
+Studio currently remains in **Play**, in an explicitly requested **Mock** shop
+fixture: claimed Plot01, four farm/eight first-lane Mint droppers, initial25,000
+Gold, CollectNow simulated ownership enabled. Last readback confirmed owned
+Collect display0/pending0. Creator may continue interacting; inspect state before
+resetting. No Robux charged and no real ownership/profile grants are saved.
 
-Fresh merged-tree formatting, Selene (zero warnings/errors) and code-only build
-passed. Normal-bootstrap Studio Mock verification ran tutorial then second-lane
-suites sequentially and printed:
+The unsaved Edit Server.StudioShopPreview flag remains enabled for repeat tests.
+Studio MCP exposes only Client/Server while playing, so clear the flag after Stop
+before saving or starting a normal session. Cloud version121 is already clean.
+Do not save/publish the fixture as actual progression.
 
-- All tutorial service checks passed
-- All second Royal Mint lane checks passed
-- All merged main regression checks passed
+To reopen: Studio Mock, all config test switches false, set Server attribute
+StudioShopPreview=true in Edit, then Play. Expect:
+`[KingdomTycoon][ShopPreview] Shop preview ready (Studio Mock)`.
+Shop starts open with all passes unowned; preview purchase buttons grant session
+benefits. Reset preview clears simulated ownership, not previously banked Gold.
+The fixture ends at RoyalMintUpgrader01 with all eight first-lane droppers bought.
 
-The second-lane suite covers all16 purchases, exact4590-Gold wave,30-second natural
-coin transit, shared collection, restoration and cleanup. Pure two-lane ledger
-checks cover exact6120 combined payout. Engine trail tests cover bounded markers,
-pulse direction, camera projection, hide/recovery and destruction.
+## Verification and limits
 
-Strict analysis still reports14 existing PlatePresentation/CurrencyRow issues
-in files unchanged from pre-merge main bebfa50; there are no new tutorial/Mint
-strict errors. Studio also retains the existing asset-type warning for203785492
-and Assistant plugin-version warning. The rejected safe-integer collection in
-tutorial tests is intentional. Do not claim global strict analysis is clean.
+Fresh merged-main formatting, Selene (zero warnings/errors), code-only Rojo build,
+pure HUD-state, ownership-registry and economy/ledger tests passed. Source/assets
+are identical to the verified feature tip after merge.
 
-Plugin-context require caches can retain an older config table after Source edits;
-final switches were verified with fresh cloned config modules, then removed.
-Service suites must run through the normal server Script context, not by requiring
-live services directly from a plugin/MCP execution context.
+During implementation, normal-bootstrap Mock shop service/client suites passed;
+sequential existing farm, purchase, first Mint chain, second Mint lane, tutorial
+and HUD suites passed. Fresh reviews found no unresolved important issues.
+Native preview purchases and clicking the actual Gold badge banked earnings.
+Final correction observed reset to0, then HUD/farm/Mint totals all7 on new arrivals.
+Owned/unowned layout tests check4px spacing, horizontal center, vertical coin
+center, title anchoring and full offer-border clearance.
 
-## Working preferences and next scope
+Strict analysis retains the same14 unique pre-existing PlatePresentation/
+CurrencyRow diagnostics; there are no new shop/HUD errors. Do not call global
+strict analysis clean. Existing asset-type warning203785492 and Assistant
+plugin-version warning also remain. Overflow tests intentionally reject a credit.
 
-Creator prefers to test visuals/gameplay and reply with short feedback. Avoid
-repeated screenshots/computer control unless requested or needed for a specific
-blocker. Automated code checks and focused Studio tests remain appropriate.
-Coordinate before touching Studio with another agent; keep one Studio owner.
+Live pass IDs are still **0** in ShopConfig: actual sales intentionally show
+Unavailable. Create/configure the three Roblox passes and provide their IDs
+before enabling live purchases. Real purchase completion/rejoin, two-player pass
+isolation and full touch/device acceptance remain unverified. These limits are
+not established by the Mock preview. No ProcessReceipt is required for these
+permanent passes; no repeatable developer products were implemented.
 
-No further feature is approved. Horse/speed unlock is a separate milestone;
-weapons, defenses, decorations, floor two, shop and rebirth are not part of this
-completed change. Remaining hands-on checks include multiplayer ownership,
-Persistent test-store rejoin, device/input and helper-toggle walkthrough.
+Service suites run through the normal bootstrap, never by requiring live services
+from plugin contexts (separate module caches). Fresh cloned config checks need the
+clone parented beside its original so relative requires work; destroy it afterward.
 
-To return to a test stage, follow TUTORIAL_GUIDANCE.md's opt-in Studio Mock preview.
-Default is RoyalMintDropper02 with1000000Gold. StudioPreviewFrontier can target
-RoyalMint02Dropper03. Server Command Bar grants work only during that preview.
+## Next work and preferences
+
+No additional feature implementation is approved. Creator wants shop/gamepasses,
+rebirth, global leaderboards and horses prioritized for a substantial first demo;
+rebirth is the next Layer1 gameplay milestone to plan. Horse is a separately scoped
+feature brought forward from Layer2; do not build the whole open world implicitly.
+Do not resolve open rebirth numbers or analytics decisions without asking.
+
+Creator prefers hands-on visual testing and short feedback. Avoid repeated
+screenshots/computer control unless needed. Keep one Studio owner. Continue with
+small modular Conventional Commits, dedicated branch for the next milestone,
+plan before non-trivial edits, and never push without an explicit request.

@@ -547,6 +547,14 @@ before players have a purchase to make.
 
 ## 12. Status
 
+Main integration (2026-11-18): Royal Shop, hover fix, ribbon/card refinements and
+pending-total Collect badge merged in9908040. Modular history preserved. Fresh
+merged-main format/lint/build, pure HUD/ownership/economy tests pass; source/assets
+match verified feature tip. Normal Studio cloud version121 saved; Mock Play left
+running for creator, CollectNow owned, latest display/pending0. Continuation notes
+updated: docs/SESSION_HANDOFF.md. User explicitly requested main push and history
+clearance; real pass IDs/live purchases remain pending.
+
 Collect amount correction (2026-11-18): paid GoldBadge now displays the shared
 UncollectedGold total rather than saved Gold; follows ownership/pending changes.
 Nonowners retain normal Gold. Pure HUD-state regression checks pass. Native
