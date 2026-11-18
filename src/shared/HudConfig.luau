@@ -24,6 +24,7 @@ return table.freeze({
 		HelperArrow = true,
 		LowGraphics = false,
 		MenuOpen = false,
+		MainMenuOpen = true,
 		ShopOpen = false,
 		RebirthOpen = false,
 	}),
