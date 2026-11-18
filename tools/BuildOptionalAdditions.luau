@@ -231,7 +231,7 @@ end
 local tool = Instance.new("Tool")
 tool.Name, tool.CanBeDropped, tool.RequiresHandle = "KingdomTrainingSword", false, true
 tool.ToolTip = "Training sword — equip and swing"
-tool.Grip = CFrame.Angles(math.pi / 2, 0, 0)
+tool.Grip = CFrame.identity
 local handle = part(tool, "Handle", Vector3.new(0.35, 1.3, 0.35), Vector3.zero, wood)
 local blade = part(tool, "Blade", Vector3.new(0.5, 3.6, 0.18), Vector3.new(0, 2.4, 0), cream, Enum.Material.Metal)
 local guard = part(tool, "Guard", Vector3.new(1.7, 0.25, 0.4), Vector3.new(0, 0.7, 0), gold, Enum.Material.Metal)

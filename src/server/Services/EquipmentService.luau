@@ -54,7 +54,7 @@ function Service.TrySwing(player: Player): boolean
 	state.LastSwing = os.clock()
 	state.Generation += 1
 	local generation = state.Generation
-	local rest = (ServerStorage:FindFirstChild(Config.TEMPLATE_NAME) :: Tool).Grip
+	local rest = Config.REST_GRIP
 	if state.Tween then
 		state.Tween:Cancel()
 	end
@@ -109,6 +109,7 @@ local function refresh(player: Player): ()
 	end
 	local tool = source:Clone()
 	tool.CanBeDropped = false
+	tool.Grip = Config.REST_GRIP
 	tool.Parent = backpack
 	state.Tool = tool
 end
