@@ -108,7 +108,18 @@ function Controller.Start(): ()
 	table.insert(connections, player:GetAttributeChangedSignal("ShopPreview"):Connect(loadCatalog))
 
 	for _, offer in Config.OFFERS do
-		table.insert(connections, player:GetAttributeChangedSignal("Shop" .. offer.Key):Connect(render))
+		table.insert(
+			connections,
+			player:GetAttributeChangedSignal("Shop" .. offer.Key):Connect(function()
+				if player:GetAttribute("Shop" .. offer.Key) == "Owned" then
+					if promptKey == offer.Key then
+						promptKey = nil
+					end
+					message(offer.Name .. " active")
+				end
+				render()
+			end)
+		)
 		table.insert(
 			connections,
 			view.Cards[offer.Key].Activated:Connect(function()
@@ -124,8 +135,17 @@ function Controller.Start(): ()
 				if preview() then
 					local event = folder:FindFirstChild("PreviewPurchase")
 					if event and event:IsA("RemoteEvent") then
+						promptKey = offer.Key
 						event:FireServer(offer.Key)
-						message("Preview purchase: " .. offer.Name .. " • No Robux charged")
+						message("Requesting preview • No Robux charged")
+						render()
+						task.delay(Config.REQUEST_TIMEOUT_SECONDS, function()
+							if alive and promptKey == offer.Key then
+								promptKey = nil
+								message("Preview request unavailable. Please try again.")
+								render()
+							end
+						end)
 					end
 					return
 				end
@@ -151,7 +171,13 @@ function Controller.Start(): ()
 			for _, offer in Config.OFFERS do
 				if passId == offer.PassId then
 					promptKey = nil
-					message(if purchased then "Confirming ownership…" else "Purchase cancelled.")
+					message(
+						if purchased
+							then (if player:GetAttribute("Shop" .. offer.Key) == "Owned"
+								then offer.Name .. " active"
+								else "Confirming ownership…")
+							else "Purchase cancelled."
+					)
 					render()
 				end
 			end
@@ -193,7 +219,7 @@ function Controller.Start(): ()
 			local generation = requestGeneration
 			render()
 			collectRemote:FireServer()
-			task.delay(5, function()
+			task.delay(Config.REQUEST_TIMEOUT_SECONDS, function()
 				if alive and busyCollect and requestGeneration == generation then
 					busyCollect = false
 					message("Collection unavailable. Please try again.")

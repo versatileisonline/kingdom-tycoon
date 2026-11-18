@@ -8,6 +8,7 @@ local GameConfig = require(Shared.Config)
 local Registry = require(script.Parent.Parent.Shop.EntitlementRegistry)
 local Service = {}
 local states: { [Player]: Registry.Registry } = {}
+local previewModes: { [Player]: boolean } = {}
 local refreshing: { [Player]: { [string]: boolean } } = {}
 local changed = Instance.new("BindableEvent")
 local connections: { RBXScriptConnection } = {}
@@ -26,7 +27,7 @@ local function publish(player: Player, key: string): ()
 end
 function Service.Owns(player: Player, key: string): boolean
 	local state = states[player]
-	return state ~= nil and state.Owns(key)
+	return state ~= nil and previewModes[player] == Service.IsPreview() and state.Owns(key)
 end
 function Service.Observe(callback: (Player, string) -> ()): RBXScriptConnection
 	return changed.Event:Connect(callback)
@@ -90,6 +91,7 @@ local function added(player: Player): ()
 	end
 	states[player] = Registry.new()
 	refreshing[player] = {}
+	previewModes[player] = Service.IsPreview()
 	player:SetAttribute("ShopPreview", Service.IsPreview())
 	if Service.IsPreview() then
 		for _, offer in Config.OFFERS do
@@ -115,6 +117,7 @@ function Service.Start(): ()
 			end
 			states[player] = nil
 			refreshing[player] = nil
+			previewModes[player] = nil
 		end)
 	)
 	table.insert(
@@ -136,6 +139,21 @@ function Service.Start(): ()
 	for _, player in Players:GetPlayers() do
 		added(player)
 	end
+	table.insert(
+		connections,
+		script.Parent.Parent:GetAttributeChangedSignal("StudioShopPreview"):Connect(function()
+			for player, state in states do
+				if previewModes[player] ~= Service.IsPreview() then
+					state.Destroy()
+					states[player] = nil
+					if not Service.IsPreview() then
+						player:SetAttribute("ShopPreviewReady", nil)
+					end
+					added(player)
+				end
+			end
+		end)
+	)
 	game:BindToClose(function()
 		for _, connection in connections do
 			connection:Disconnect()
@@ -146,6 +164,7 @@ function Service.Start(): ()
 		end
 		table.clear(states)
 		table.clear(refreshing)
+		table.clear(previewModes)
 	end)
 end
 return Service
