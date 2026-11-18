@@ -73,6 +73,13 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Startup menu (2026-11-18): MainMenuConfig, Entry.EntrySession, Services.EntryService,
+client MainMenuController/UI.MainMenuView. Kingdom Awaits uses the existing royal
+palette with pixel lettering and a plain backdrop. Runtime KingdomEntry remotes
+validate Play; KingdomEntered is server-owned. Safe random free-plot entry does
+not claim/reserve land. No new assets, schema or Rojo mapping. docs/MAIN_MENU.md
+contains behavior, capacity caveat and verification.
+
 Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
 RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
 PlotService.ResetKingdom with preflight, interaction gate and existing cleanup.
@@ -409,6 +416,10 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Main menu: enable only MainMenuConfig.RUN_TESTS_IN_STUDIO in Studio Mock before
+Play. Expect All main menu entry checks passed, All main menu placement checks
+passed and All main menu client checks passed. Reset false afterward.
+
 Rebirth: Studio Mock before claim, only RebirthConfig.RUN_TESTS_IN_STUDIO=true.
 Expect All rebirth economy/service/client checks passed. Optional Server attribute
 StudioRebirthRegression=true runs existing regressions sequentially. Clear both
@@ -562,6 +573,12 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Startup menu (2026-11-18): Studio Mock policy/placement/client tests passed;
+physical Settings/Play/touch Claim and post-entry death/respawn verified. Existing
+PlotService regression passed. selene src and Rojo build passed. Background art,
+physical mobile/gamepad and full-server multi-player acceptance remain. One
+installed plot: publishing capacity must match plots. See docs/MAIN_MENU.md.
 
 Rebirth (2026-11-18): implemented on feat/rebirth. Mock economy, service and
 client suites passed; sequential farm, purchase, first Mint chain, second Mint,

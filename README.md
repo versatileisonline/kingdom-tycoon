@@ -72,6 +72,7 @@ src/
 │   ├── Services/
 │   │   ├── PresentationService.luau # Gold/GoldReady presentation from server data
 │   │   ├── DataService.luau        # server-only player sessions and validated updates
+│   │   ├── EntryService.luau       # startup Play validation and character entry
 │   │   ├── PlotService.luau        # server-authoritative claims, template clones, respawns, cleanup
 │   │   ├── FarmService.luau        # wheat production, pit accounting, owner gold collection, cleanup
 │   │   ├── PurchaseService.luau    # owner-only purchase plates and saved unlocks
@@ -97,6 +98,7 @@ src/
 │       ├── AudioController.luau     # music/world volume
 │       ├── GraphicsController.luau  # reversible local quality reduction
 │       ├── PurchaseGuidanceController.luau # affordable first-action gold tutorial trail
+│       ├── MainMenuController.luau # startup menu and Play/Settings presentation
 │       ├── CameraController.luau   # Left Shift camera lock, restoration, respawn handling
 │       └── ExampleController.luau  # startup example; no gameplay
 └── shared/                         → ReplicatedStorage.Shared (Folder)

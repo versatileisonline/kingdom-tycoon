@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Startup menu (2026-11-18): approved provisional title Kingdom Awaits, blocky
+  pixel-style menu with the Shop/Rebirth palette, Play and existing Settings.
+  Plain dark background first; castle imagery/live panorama deferred. Play
+  spawns beside a random free Claim plate without reserving or owning it;
+  players may roam and still touch Claim, then Start Farm. No-free-plot entry
+  reports an error; publishing capacity should match installed plots.
 - Rebirth (2026-11-18): approved banked-Gold-only eligibility: 100,000 initially,
   doubling per rebirth, without purchase-chain completion. Permanent bonus +0.5x
   per rebirth, multiplied with the Gold pass. Reset all Gold, buildings and pending
