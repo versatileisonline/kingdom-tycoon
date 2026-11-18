@@ -119,9 +119,11 @@ starts unowned. Set the flag in Edit for normal use; the preview-only purchase
 remote is created during bootstrap, not dynamically added later.
 
 Stop Play to discard the fixture. Clear StudioShopPreview/StudioShopRegression
-before saving the normal place. The intended handoff saves a normal Edit version
-first, then enables preview only for the running test; the Edit flag is cleared
-once Play has cloned it, so subsequent sessions start normally.
+before saving the normal place. The handoff saves a normal Edit version first (cloud version 114), then enables
+the preview flag for hands-on Play. Studio MCP cannot edit the Edit DataModel
+while Play runs, so the current unsaved Edit flag remains enabled for repeat
+testing. After stopping, clear StudioShopPreview before saving or starting a
+normal session; cloud version 114 already has it disabled.
 
 ## Verification record
 
@@ -133,3 +135,12 @@ once Play has cloned it, so subsequent sessions start normally.
 - Desktop panel inspected; button gradient issue corrected and artwork loaded.
 - Final regression/static results and cloud-save version are recorded in AGENTS.md.
 - Full device/touch and multi-player pass acceptance remain hands-on checks.
+
+
+Final verification: sequential farm, purchase, first Mint chain, second Mint,
+tutorial and HUD regression suites passed. Formatting, zero-warning Selene and
+Rojo build pass. Strict analysis has the same 14 unique pre-existing plate-label
+diagnostics and no new shop diagnostics. Cloud version114 saved normal Edit state,
+all test switches false, no preview flag/runtime kingdoms. Final Mock preview
+native purchases confirmed owner controls and Auto-Collect banking; passes reset
+unowned and Shop left open for creator testing. No live publish or Git push.

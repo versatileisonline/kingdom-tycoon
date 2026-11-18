@@ -550,7 +550,13 @@ Live pass IDs remain unset; real sales are intentionally unavailable. Device,
 real-purchase/rejoin and two-player pass acceptance remain hands-on checks.
 Sequential final regressions passed: farm, purchase, first eight-arch Mint chain,
 second Mint lane, tutorial and HUD; All shop regression checks passed observed.
-Normal Edit save and temporary Mock handoff recorded below when completed.
+Normal Edit state saved as cloud version114: all tests/previews off, no runtime
+kingdoms. Current Play is a temporary Studio Mock shop fixture (25,000+Gold, farm
+and first Mint droppers producing, all simulated passes reset unowned, Shop open).
+Native final preview purchase/Auto-Collect banking passed. Unsaved Edit preview
+flag remains enabled for repeat testing because Edit cannot be changed during
+Play; clear StudioShopPreview after stopping before a normal save/session.
+No push or publish. See docs/ROYAL_SHOP.md.
 
 Main integration (2026-11-17): second conveyor5201d9c and tutorial4b66513 merged.
 Fresh sequential normal-context tutorial/second-lane regression suites, engine

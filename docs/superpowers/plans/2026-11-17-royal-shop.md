@@ -25,3 +25,6 @@ preview/documentation/verification. Keep map and Rojo mappings unchanged.
 - Task 4: Studio Mock fixture, regression driver, pass setup and asset docs implemented. Final sequential regression suite passed; handoff pending normal save and test-stage verification.
 - Performance: automatic banking reuses production ticks and combines sites; successful automatic deposits do not spam Output. Failed deposits retain balance and use bounded retries.
 - External limit: actual Roblox pass IDs are not provided. Live sales stay unavailable; preview never charges Robux. Device/two-player/real-purchase acceptance remains explicit.
+
+- Task 4: complete — normal Edit cloud version114 saved with tests/preview off; final native Mock preview purchase/Auto-Collect checks passed, reset unowned, Shop left open.
+- Handoff limitation: Studio MCP exposes only Client/Server during Play, so unsaved Edit preview flag cannot be cleared until stopping. Saved cloud version114 is clean; documented clear-before-normal-session step.
