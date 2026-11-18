@@ -12,6 +12,7 @@ local controllers: { Types.Lifecycle } = {
 	require(script.Controllers.SettingsController),
 	require(script.Controllers.HudController),
 	require(script.Controllers.ShopController),
+	require(script.Controllers.RebirthController),
 	require(script.Controllers.AudioController),
 	require(script.Controllers.GraphicsController),
 	require(script.Controllers.ExampleController),
@@ -39,5 +40,11 @@ end
 if game:GetService("RunService"):IsStudio() and require(Shared.ShopConfig).RUN_TESTS_IN_STUDIO then
 	task.spawn(function()
 		require(script.UI.ShopClientTests).Run()
+	end)
+end
+
+if game:GetService("RunService"):IsStudio() and require(Shared.RebirthConfig).RUN_TESTS_IN_STUDIO then
+	task.spawn(function()
+		require(script.UI.RebirthClientTests).Run()
 	end)
 end

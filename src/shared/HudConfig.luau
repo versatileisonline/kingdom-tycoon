@@ -25,6 +25,7 @@ return table.freeze({
 		LowGraphics = false,
 		MenuOpen = false,
 		ShopOpen = false,
+		RebirthOpen = false,
 	}),
 	COLORS = table.freeze({
 		Panel = "201F25",
