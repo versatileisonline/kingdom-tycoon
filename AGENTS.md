@@ -73,6 +73,15 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Plot landscaping (2026-11-18): permanent Plots.<plot>.Environment holds 250 grass,
+40 ferns, 20 rocks and 8 exterior trees (318 anchored decorative parts), visible
+to everyone independently of kingdom ownership. ServerStorage.PlotLandscapeAssets
+stores prepared Tree/Grass/Fern/Rock and archived RawSources. All foliage has
+collision/touch/query disabled and no scripts. Six-stud clearance protects the
+full wall/farm/path/purchase reservations; entrance stays clear. No template,
+gameplay, schema, remotes or Rojo changes. Recipe: tools/BuildPlotLandscaping.luau;
+contract, source IDs, checks and rollback: docs/PLOT_LANDSCAPING.md.
+
 Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
 RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
 PlotService.ResetKingdom with preflight, interaction gate and existing cleanup.
@@ -409,6 +418,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
 
 ## 11. Commands
 
+Landscaping: run tools/BuildPlotLandscaping.luau in Edit with APPLY=false for
+a dry run; APPLY=true installs only when Environment does not already exist.
+Expect Landscaping installed: 1 plots; 250 grass, 40 ferns, 20 rocks, 8 trees;
+clearance checks passed. Existing folders are never replaced. See docs/PLOT_LANDSCAPING.md.
+
 Rebirth: Studio Mock before claim, only RebirthConfig.RUN_TESTS_IN_STUDIO=true.
 Expect All rebirth economy/service/client checks passed. Optional Server attribute
 StudioRebirthRegression=true runs existing regressions sequentially. Clear both
@@ -562,6 +576,11 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Landscaping installed in Studio (2026-11-18): 318 decorative parts validated;
+existing geometry readback unchanged and two Edit screenshots reviewed. Purchase/
+rebirth Play checks deferred because Studio is configured Persistent; Mock-only
+suite refused before fixture changes. Mobile performance remains unmeasured.
 
 Rebirth (2026-11-18): implemented on feat/rebirth. Mock economy, service and
 client suites passed; sequential farm, purchase, first Mint chain, second Mint,
