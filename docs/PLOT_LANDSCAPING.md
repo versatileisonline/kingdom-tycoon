@@ -13,8 +13,10 @@ hill, pond or gameplay work.
   copies retain geometry and texture children only; no scripts are cloned.
 - `Workspace.Plots.<plot>.Environment`: permanent scenery, `LandscapeVersion=2`,
   `Seed=18112026`. It belongs to the plot, not the player's runtime kingdom.
-- Each 320x320 plot receives 250 Grass, 40 Fern, 20 Rock and 8 Tree Models: 318
-  parts total. Existing objects are preserved. Duplicating the entire plot carries
+- Base installation adds 250 Grass, 40 Fern, 20 Rock and 8 Tree Models (318
+  parts). The round-tree replacement adds eight more tall trees and archives the
+  sixteen original crown/trunk parts: final scenery is 16 tall trees and 326
+  decorative parts. Other existing objects are preserved. Duplicating the entire plot carries
   its scenery; no new runtime service is needed. Workspace replicates to everyone.
 
 Sources: generated tree model **87155412557584** (requested 3500 triangles),
@@ -106,3 +108,26 @@ Tree revision verification: all eight bases at Y39.9, full bounds/clearance pass
 318 scenery objects retained, eight originals archived. Grass/fern/rock objects
 were not replaced. StyLua/Selene pass; overhead screenshot reviewed.
 Output for revision begins `Landscaping trees revised:`.
+
+## Original round tree replacement (2026-11-18)
+
+Creator requested replacing the original circular trees while retaining the new
+tall trees for a fuller perimeter. `tools/ReplacePlotCircleTrees.luau` pairs the
+eight original TreeCrown/TreeTrunk parts by horizontal position and creates one
+67–73-stud tall mesh at each location. Replacement canopy bounds are smaller than
+the old 14x14 crown footprint and remain on Ground. Anchored, no collision/touch/
+query, script-free. The eight earlier tall trees and all understory stay intact.
+
+Run in Edit, first with APPLY=false, then APPLY=true. Recipe refuses an existing
+backup or missing/ambiguous original pairs. All originals are moved intact into
+ServerStorage.RoundPlotTreesBackup_20261118.<plot>. New trees live inside
+Environment.ReplacementTrees; to roll back, archive that folder and restore the
+original crown/trunk parts to their plot. Do not rerun the initial tree revision
+against an already revised landscape.
+
+Verified final count: 16 tall trees, 326 decorative parts, no round TreeCrown or
+TreeTrunk left directly under Plot01, all 16 original parts backed up. Dry-run,
+footprint/ground checks, StyLua and Selene passed; overhead screenshot reviewed.
+Saved to Roblox version 131, not published. Output:
+`Round tree replacement installed: 8 tall trees; original footprints preserved`.
+Player-height appearance and mobile performance remain hands-on checks.

@@ -74,7 +74,7 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 ## 10. Project structure
 
 Plot landscaping (2026-11-18): permanent Plots.<plot>.Environment holds 250 grass,
-40 ferns, 20 rocks and 8 tall on-plate trees (318 anchored decorative parts), visible
+40 ferns, 20 rocks and 16 tall on-plate trees (326 anchored decorative parts), visible
 to everyone independently of kingdom ownership. ServerStorage.PlotLandscapeAssets
 stores prepared Tree/Grass/Fern/Rock and archived RawSources. All foliage has
 collision/touch/query disabled and no scripts. Six-stud clearance protects the
@@ -84,6 +84,10 @@ contract, source IDs, checks and rollback: docs/PLOT_LANDSCAPING.md.
 Tree revision: version2, 68–76-stud trees on side margins; original eight archived
 in ServerStorage.PlotTreePlacementBackup_20261118. REVISE_TREES_ONLY=true
 applies only the tree revision to an existing version1 Environment.
+Original eight circular trees subsequently replaced at the same locations with
+67–73-stud tall meshes; originals retained in RoundPlotTreesBackup_20261118.
+New trees live in Environment.ReplacementTrees. Companion recipe:
+tools/ReplacePlotCircleTrees.luau. Cloud save version131.
 
 Rebirth (2026-11-18): RebirthConfig, Services.RebirthService, client
 RebirthController/UI.RebirthView/RebirthState. Same-plot reset uses
