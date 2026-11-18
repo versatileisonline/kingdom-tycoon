@@ -186,6 +186,71 @@ function PlotService.Release(player: Player): ()
 	end
 end
 
+-- Entry chooses land without reserving ownership. This path never yields.
+function PlotService.TryEnter(player: Player): (boolean, string)
+	if not started or closing then
+		return false, "Tycoon entry is unavailable. Please retry."
+	end
+	local character = player.Character
+	local root = if character then character:FindFirstChild("HumanoidRootPart") else nil
+	local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
+	if not character or not root or not root:IsA("BasePart") or not humanoid or humanoid.Health <= 0 then
+		return false, "Your character is still loading. Please retry."
+	end
+	local menu = require(Shared.MainMenuConfig)
+	local free: { Plot } = {}
+	for id, plot in plots do
+		if registry.GetOwner(id) == nil then
+			table.insert(free, plot)
+		end
+	end
+	if #free == 0 then
+		logger.Warn("Entry failed: no free tycoon; check server capacity against plot count")
+		return false, "No free tycoon is available. Please retry."
+	end
+	-- Shuffle so the first usable plot is uniformly selected.
+	for i = #free, 2, -1 do
+		local j = math.random(i)
+		free[i], free[j] = free[j], free[i]
+	end
+	local ray = RaycastParams.new()
+	ray.FilterType = Enum.RaycastFilterType.Exclude
+	ray.FilterDescendantsInstances = { character }
+	ray.RespectCanCollide = true
+	local overlap = OverlapParams.new()
+	overlap.FilterType = Enum.RaycastFilterType.Exclude
+	overlap.FilterDescendantsInstances = { character }
+	overlap.RespectCanCollide = true
+	for _, plot in free do
+		local outward = plot.Marker.Position - plot.Origin.Position
+		outward = Vector3.new(outward.X, 0, outward.Z)
+		if outward.Magnitude < 0.01 then
+			outward = Vector3.new(0, 0, 1)
+		end
+		outward = outward.Unit
+		for _, direction in { outward, Vector3.new(-outward.Z, 0, outward.X), Vector3.new(outward.Z, 0, -outward.X) } do
+			local point = plot.Marker.Position + direction * menu.ENTRY_OFFSET
+			local hit =
+				workspace:Raycast(point + Vector3.new(0, menu.RAY_HEIGHT, 0), Vector3.new(0, -menu.RAY_DEPTH, 0), ray)
+			if hit and hit.Normal.Y > 0.8 then
+				local center = hit.Position + Vector3.new(0, menu.CLEARANCE.Y / 2 + 0.2, 0)
+				if #workspace:GetPartBoundsInBox(CFrame.new(center), menu.CLEARANCE, overlap) == 0 then
+					local position = hit.Position + Vector3.new(0, humanoid.HipHeight + root.Size.Y / 2 + 0.5, 0)
+					character:PivotTo(
+						CFrame.lookAt(position, Vector3.new(plot.Marker.Position.X, position.Y, plot.Marker.Position.Z))
+					)
+					root.AssemblyLinearVelocity = Vector3.zero
+					root.AssemblyAngularVelocity = Vector3.zero
+					logger.Info(string.format("Entry placed %d beside %s (unclaimed)", player.UserId, plot.Model.Name))
+					return true, "Welcome to your kingdom."
+				end
+			end
+		end
+	end
+	logger.Warn("Entry failed: no clear grounded position beside a free Claim plate")
+	return false, "A safe arrival point is unavailable. Please retry."
+end
+
 -- Called by server-bound plates only; no client-supplied position or ownership.
 -- Do not add yields between reservation and commit/rollback.
 function PlotService.TryClaim(player: Player, plotId: unknown): (boolean, string)
@@ -353,7 +418,7 @@ function PlotService.Start(): ()
 			plot.Marker.Touched:Connect(function(hit: BasePart): ()
 				local character = hit:FindFirstAncestorOfClass("Model")
 				local player = if character ~= nil then Players:GetPlayerFromCharacter(character) else nil
-				if player == nil or registry.GetOwner(id) ~= nil then
+				if player == nil or player:GetAttribute("KingdomEntered") ~= true or registry.GetOwner(id) ~= nil then
 					return
 				end
 				local previous = lastRequests[player]
