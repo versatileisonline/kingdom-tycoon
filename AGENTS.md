@@ -73,6 +73,14 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Shop/HUD refinement (2026-11-18): GoldBadge is now a TextButton containing
+CurrencyRow.Collect / Coin / Gold; nonowners retain original display-only layout.
+CollectNow ownership reveals Collect and centers the text/icon/amount with4px
+gaps. HudController.GetGoldButton / SetCollectState supplies ShopController's
+existing validated collection action; separate CollectNowButton removed.
+Royal Shop title is parented/centered within RoyalBanner; offer padding prevents
+stroke clipping. No server/schema/remotes/mapping changes. See docs/ROYAL_SHOP.md.
+
 Royal Shop (2026-11-17): ShopConfig, server Shop.EntitlementRegistry /
 Services.EntitlementService / Services.ShopService, client ShopController /
 UI.ShopView / UI.ShopState. Three permanent offers: CollectNow49, DoubleGold99,
@@ -537,6 +545,19 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Shop/HUD refinement accepted for testing (2026-11-18): title centered on ribbon,
+all three card borders inset, paid collection moved into the existing Gold badge.
+Tight centered Collect/coin/current-amount row verified for owners; nonowner
+layout/disabled state retained. Normal-bootstrap shop client/service suites pass;
+native Mock purchase followed by GoldBadge click banked108Gold. Geometry helper
+checks4px spacing, horizontal group center and vertical coin center. Fresh review
+found no important issues. Formatting, Selene and build pass; same14 pre-existing
+strict plate-label diagnostics, no new ones. Saved normal Edit cloud version119,
+tests/previews off. Current Play is producing Mock fixture with CollectNow owned
+so creator can inspect/use the revised badge; Shop Reset preview clears ownership.
+Unsaved Edit preview flag remains for repeat tests; clear it before normal save.
+No push/publish. Details: docs/ROYAL_SHOP.md.
 
 Shop test relaunch (2026-11-18): creator requested another hands-on Mock session.
 Started with25,000Gold, farm/Mint production and all passes unowned; Shop preview

@@ -88,12 +88,6 @@ function View.new(parent: Instance, settings: any)
 	local shopIcon = illustration(open, "ShopIcon", 0, 3)
 	shopIcon.Position = UDim2.fromOffset(6, 3)
 	shopIcon.Size = UDim2.fromOffset(42, 42)
-	local collect = button(screen, "CollectNowButton", "Collect Now\n—", 2, connections)
-	collect.AnchorPoint = Vector2.new(0, 1)
-	collect.Position = UDim2.new(0, 28, 1, -94)
-	collect.Size = UDim2.fromOffset(220, 68)
-	collect.Visible = false
-	collect.TextSize = 17
 	local autoStatus = label(screen, "AutoCollectStatus", "Auto-Collect active", 13, 2)
 	autoStatus.AnchorPoint = Vector2.new(0, 1)
 	autoStatus.Position = UDim2.new(0, 28, 1, -100)
@@ -122,10 +116,11 @@ function View.new(parent: Instance, settings: any)
 	banner.AnchorPoint = Vector2.new(0.5, 0)
 	banner.Position = UDim2.new(0.5, 0, 0, -20)
 	banner.Size = UDim2.new(1, -76, 0, 100)
-	local title = label(panel, "Title", "Royal Shop", 28, 16)
+	local title = label(banner, "Title", "Royal Shop", 28, 16)
 	title.Font = Enum.Font.Fondamento
-	title.Position = UDim2.fromOffset(52, 8)
-	title.Size = UDim2.new(1, -104, 0, 46)
+	title.AnchorPoint = Vector2.new(0.5, 0.5)
+	title.Position = UDim2.fromScale(0.5, 0.42)
+	title.Size = UDim2.new(0.78, 0, 0, 40)
 	local close = button(panel, "Close", "×", 17, connections)
 	close.Position = UDim2.new(1, -50, 0, 12)
 	close.Size = UDim2.fromOffset(36, 36)
@@ -142,6 +137,12 @@ function View.new(parent: Instance, settings: any)
 	scroll.ScrollingDirection = Enum.ScrollingDirection.Y
 	scroll.ZIndex = 12
 	scroll.Parent = panel
+	local padding = Instance.new("UIPadding")
+	padding.PaddingTop = UDim.new(0, 4)
+	padding.PaddingBottom = UDim.new(0, 4)
+	padding.PaddingLeft = UDim.new(0, 4)
+	padding.PaddingRight = UDim.new(0, 4)
+	padding.Parent = scroll
 	local layout = Instance.new("UIGridLayout")
 	layout.CellPadding = UDim2.fromOffset(14, 14)
 	layout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -202,14 +203,12 @@ function View.new(parent: Instance, settings: any)
 		local width = math.min(840, viewport.X - 32)
 		local height = math.min(560, viewport.Y - 48)
 		panel.Size = UDim2.fromOffset(width, height)
-		local cardWidth = if narrow then width - 44 else math.floor((width - 72) / 3)
+		local cardWidth = if narrow then width - 48 else math.floor((width - 76) / 3)
 		layout.FillDirectionMaxCells = if narrow then 1 else 3
 		layout.CellSize = UDim2.fromOffset(cardWidth, 338)
-		scroll.CanvasSize = UDim2.fromOffset(0, if narrow then 3 * 338 + 2 * 14 else 338)
+		scroll.CanvasSize = UDim2.fromOffset(0, if narrow then 3 * 338 + 2 * 14 + 8 else 346)
 		-- Keep controls clear of the native touch thumbstick/jump area.
 		open.Position = UDim2.new(0, if narrow then 12 else 28, 0.30, 0)
-		collect.Position = UDim2.new(0, if narrow then 12 else 28, 1, if narrow then -220 else -94)
-		collect.Size = UDim2.fromOffset(if narrow then 170 else 220, 60)
 		autoStatus.Position = UDim2.new(0, if narrow then 12 else 28, 1, if narrow then -226 else -100)
 	end
 	local cameraConnection: RBXScriptConnection? = nil
@@ -275,7 +274,6 @@ function View.new(parent: Instance, settings: any)
 		Shade = shade,
 		Panel = panel,
 		Cards = cards,
-		Collect = collect,
 		Auto = autoStatus,
 		Message = message,
 		Retry = retry,

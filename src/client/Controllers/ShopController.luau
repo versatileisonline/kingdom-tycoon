@@ -4,6 +4,7 @@ local Marketplace = game:GetService("MarketplaceService")
 local Shared = game:GetService("ReplicatedStorage"):WaitForChild("Shared")
 local Config = require(Shared.ShopConfig)
 local Settings = require(script.Parent.SettingsController)
+local Hud = require(script.Parent.HudController)
 local View = require(script.Parent.Parent.UI.ShopView)
 local State = require(script.Parent.Parent.UI.ShopState)
 local Format = require(script.Parent.Parent.UI.HudState)
@@ -28,6 +29,7 @@ function Controller.Start(): ()
 	local resultRemote = folder:WaitForChild("CollectResult") :: RemoteEvent
 	local refreshRemote = folder:WaitForChild("RefreshOwnership") :: RemoteEvent
 	view = View.new(player:WaitForChild("PlayerGui"), Settings)
+	local collectButton = Hud.GetGoldButton()
 	local function preview(): boolean
 		return player:GetAttribute("ShopPreview") == true
 	end
@@ -58,19 +60,14 @@ function Controller.Start(): ()
 		local amount = if typeof(pending) == "number" then pending else 0
 		local character = player.Character
 		local humanoid = if character then character:FindFirstChildOfClass("Humanoid") else nil
-		view.Collect.Visible = owns
-		view.Collect.Active = owns
+		local enabled = owns
 			and not busyCollect
 			and amount > 0
 			and player:GetAttribute("GoldReady") == true
 			and player:GetAttribute("StarterFarmStarted") == true
 			and humanoid ~= nil
 			and humanoid.Health > 0
-		view.Collect.AutoButtonColor = view.Collect.Active
-		view.Collect.TextTransparency = if view.Collect.Active then 0 else 0.35
-		view.Collect.Text = if busyCollect
-			then "Collecting…"
-			else "Collect Now\n" .. Format.FormatGold(amount) .. " Gold"
+		Hud.SetCollectState(owns, enabled, busyCollect)
 		view.Auto.Visible = player:GetAttribute("ShopAutoCollect") == "Owned" and not owns
 		view.PreviewReset.Visible = preview()
 		view.Subtitle.Text = if preview()
@@ -210,8 +207,8 @@ function Controller.Start(): ()
 	end
 	table.insert(
 		connections,
-		view.Collect.Activated:Connect(function()
-			if not view.Collect.Active then
+		collectButton.Activated:Connect(function()
+			if not collectButton.Active then
 				return
 			end
 			busyCollect = true

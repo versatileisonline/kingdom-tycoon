@@ -4,7 +4,10 @@ function Tests.Run(Settings: any): ()
 	local gui = game.Players.LocalPlayer.PlayerGui:WaitForChild("KingdomHUD")
 	local panel = gui.SettingsShade.SettingsPanel
 	local art = require(game.ReplicatedStorage.Shared.HudConfig).ART
-	assert(gui.GoldBadge.Coin:IsA("ImageLabel") and gui.GoldBadge.Coin.Image == art.Coin, "HUD coin artwork missing")
+	assert(
+		gui.GoldBadge.CurrencyRow.Coin:IsA("ImageLabel") and gui.GoldBadge.CurrencyRow.Coin.Image == art.Coin,
+		"HUD coin artwork missing"
+	)
 	assert(
 		panel.RoyalBanner.Image == art.Banner and panel.GoldCorner1.Image == art.Corner,
 		"Royal settings artwork missing"

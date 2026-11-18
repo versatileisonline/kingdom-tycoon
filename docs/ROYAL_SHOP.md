@@ -10,9 +10,12 @@ shift lock. Desktop shows three cards; narrow viewports scroll vertically.
 Owned cards cannot be bought again. Unknown ownership and unavailable products
 never enable a live purchase. Refresh retries ownership and product information.
 
-Collect Now owners see a button above their Gold badge, displaying pending Gold.
-It collects their own active kingdom's shared earnings from any distance while
-alive. It is disabled with zero pending earnings, unavailable data, or death.
+Collect Now owners use the existing bottom-left Gold badge as their collection
+button. A gold Collect label appears before the existing coin icon and current
+Gold amount, centered together with a tight 4-pixel gap. Nonowners retain the
+original display-only badge. It collects their own active kingdom's shared
+earnings from anywhere while alive, and disables at zero pending earnings,
+unavailable data, or death. There is no separate collection button.
 Auto-Collect banks once after each production tick, even during death; no extra
 server loop or per-token data update is added. If both passes are owned, the
 manual button remains, normally disabled because automatic banking has emptied
@@ -105,7 +108,7 @@ The shop clearly says STUDIO PREVIEW / No Robux charged. Purchase buttons grant
 session-only simulated ownership. Reset preview clears all simulated passes so
 you can test independently. It does not reverse already banked Gold. Test:
 
-1. Buy Collect Now: owner button appears; close Shop and collect pending earnings.
+1. Buy Collect Now: the Gold badge gains Collect; close Shop and click that badge to collect earnings.
 2. Reset, buy 2× Gold: new arrivals earn double; old pending Gold stays unchanged.
 3. Reset, buy Auto-Collect: pending balance banks, then Gold increases without
    touching a plate. Buy both collection passes to see their combined state.
@@ -144,3 +147,18 @@ diagnostics and no new shop diagnostics. Cloud version114 saved normal Edit stat
 all test switches false, no preview flag/runtime kingdoms. Final Mock preview
 native purchases confirmed owner controls and Auto-Collect banking; passes reset
 unowned and Shop left open for creator testing. No live publish or Git push.
+
+
+Presentation revision (2026-11-18): Royal Shop title is anchored to the blue
+ribbon; offer grid has stroke clearance on every edge. Paid collection now uses
+the existing Gold badge with a centered Collect / coin / current Gold row.
+No server collection, prices, ownership or persistence behavior changed.
+
+
+Refinement verification (2026-11-18): normal-bootstrap shop client and service
+checks passed, including visible card-border clearance and owner-only badge.
+Native preview purchase changed the badge to a button; clicking it credited108
+Gold. Owned row checks confirm4px gaps, horizontal centering and vertical icon
+centering; nonowners retain the original display. Normal Edit cloud version119
+saved with previews/tests disabled. Fresh scoped review found no important issues;
+format/lint/build pass, strict diagnostics remain the same14 pre-existing ones.

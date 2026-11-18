@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Shop presentation revision (2026-11-18): creator requested the Royal Shop
+  heading centered in its blue ribbon and full borders on every offer card.
+  Collect Now ownership converts the existing bottom-left Gold display into
+  the collection button, adding gold Collect text before the coin and current
+  amount. Center the three together with tight spacing; remove the separate
+  Collect Now control. Nonowners retain the original display-only badge.
 - Royal Shop (2026-11-17): approved the three-card royal mockup and dedicated HUD
   Shop button. Three permanent passes: Collect Now 49 Robux (owner-only HUD
   button, remote manual collection), 2× Gold 99 Robux (new arrivals only; old
