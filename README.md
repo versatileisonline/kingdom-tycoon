@@ -91,6 +91,8 @@ src/
 │       ├── PurchaseServiceTests.luau # opt-in authored farm progression checks
 │       └── FarmServiceTests.luau   # standalone accounting and opt-in physical collection checks
 ├── client/                         → StarterPlayer.StarterPlayerScripts.Client (LocalScript)
+│   ├── UI/LeaderboardView.luau    # custom server Tab rankings and player portraits
+│   ├── UI/LeaderboardState.luau   # stable lifetime Gold sorting and formatting
 │   ├── init.client.luau            # thin client bootstrap
 │   └── Controllers/
 │       ├── PlotController.luau     # claim guidance and server feedback; no authority

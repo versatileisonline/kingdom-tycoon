@@ -109,6 +109,15 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Server leaderboard and typography (2026-11-18): creator approved replacing
+  Roblox's player list with a custom upper-right Tab panel in the existing royal
+  palette, real player portraits, Lifetime Gold ranking and Rebirths; highlight
+  the local player. Only connected server players are listed; global rankings
+  are deferred. Lifetime Gold counts successful banking including multipliers,
+  persists through purchases/rebirth, and initializes existing saves at banked
+  Gold because past earnings cannot be reconstructed. Creator approved the
+  starter screen's Arcade font throughout game-owned HUD and world labels,
+  then requested text two points larger with stronger visual weight.
 - Medieval courtyard rework (2026-11-18): creator approved upright held sword;
   reference timber Sword Stand counter/sign with clone of the existing farmer;
   recognizable stylized low-poly decorative horses; six bound hay bales and

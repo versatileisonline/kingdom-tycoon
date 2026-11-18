@@ -102,6 +102,17 @@ footprints/grounding retained; total326 decorative parts. Broadleaf originals
 archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
 and tools/RestylePlotForest.luau supply repeatable replacement. Saving this
 revision was deferred because another Play session started; version132 was not saved.
+Server leaderboard/pixel typography (2026-11-18): shared HudConfig.FONT uses the
+starter menu's Arcade font across screen UI and runtime plate labels. Larger text
+and subtle outlines retain the royal palette. LeaderboardConfig, client
+LeaderboardController/UI.LeaderboardView/LeaderboardState replace native PlayerList
+with a Tab/X/Ranks panel, headshots, Lifetime Gold and Rebirths. Narrow viewports
+reflow rows; SettingsController owns menu exclusivity and camera/sprint suspension.
+Schema v2 adds LifetimeGold, migrates v1 from banked Gold, and increments both
+balances atomically in FarmService banking. PresentationService publishes read-only
+LifetimeGold. No new remotes, Rojo mappings or Studio template changes.
+Global ranking deferred by creator. See docs/SERVER_LEADERBOARD.md for checks and
+migration/rollback limits. Supersedes older schema-v1 and Gotham typography notes.
 
 Medieval courtyard rework (2026-11-18): TrainingCourseConfig, server
 Training.CourseState/Services.TrainingCourseService and client
@@ -1045,7 +1056,7 @@ Studio verification (2026-11-11):
 - [ ] 1.7 HUD + settings
 - [ ] 1.8 Shop + gamepasses
 - [ ] 1.9 Rebirth
-- [ ] 1.10 Leaderboards
+- [ ] 1.10 Leaderboards — server Tab UI implemented; global rankings deferred by creator
 - [ ] 1.11 Polish + playtest
 
 Milestone 1.4 implementation (2026-10-21):
