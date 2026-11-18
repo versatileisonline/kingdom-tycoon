@@ -538,6 +538,18 @@ before players have a purchase to make.
 
 ## 12. Status
 
+Shop test relaunch (2026-11-18): creator requested another hands-on Mock session.
+Started with25,000Gold, farm/Mint production and all passes unowned; Shop preview
+ready (Studio Mock) confirmed. Caught and fixed RoyalStyle.Feedback's ambiguous
+Create(...)(tween):Play() expression by retaining a local Tween before Play.
+Standalone feedback reproduction fails on prior source and passes hover,
+restoration/cancellation and destruction on corrected source. Selene/build pass.
+Fix synced to Studio and Play left running for creator testing; no push/publish.
+Save the updated Edit source after stopping/acceptance; preview flag remains
+unsaved and should be cleared before a normal save. Native hover remains a
+hands-on visual check; automated mouse highlight assertion was inconclusive
+because the shop had closed during the test.
+
 Royal Shop implementation (2026-11-17): three permanent passes and approved
 three-card royal HUD implemented on feat/royal-shop-gamepasses in modular commits.
 Ownership/economy/client/normal-bootstrap service suites pass, including exact

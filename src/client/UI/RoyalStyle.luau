@@ -35,11 +35,13 @@ function Style.Feedback(button: TextButton, connections: { RBXScriptConnection }
 		if tween then
 			tween:Cancel()
 		end
-		tween = TweenService:Create(
+		local nextTween = TweenService:Create(
 			button,
 			TweenInfo.new(0.12),
 			{ BackgroundColor3 = if bright then base:Lerp(Color3.fromHex(Config.COLORS.Gold), 0.22) else base }
-		)(tween :: Tween):Play()
+		)
+		tween = nextTween
+		nextTween:Play()
 	end
 	table.insert(
 		connections,
