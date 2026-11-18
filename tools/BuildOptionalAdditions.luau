@@ -265,3 +265,7 @@ if reservations then
 	reservations:SetAttribute("OptionalAdditionsMax", Vector3.new(100, 12, 60))
 end
 print("Installed six optional additions; original snapshot retained in " .. backupName)
+
+print(
+	"For the current courtyard revision, run tools/ReworkMedievalCourtyard.luau after preparing MedievalHorseTemplate"
+)
