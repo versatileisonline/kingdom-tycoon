@@ -614,6 +614,18 @@ before players have a purchase to make.
 
 ## 12. Status
 
+Shop preview entry fix (2026-11-18): ShopPreview now waits for server-owned
+KingdomEntered before staging/claiming the plot, leaving land free for Play.
+Leaving or disabling preview cancels the wait. No normal entry/remotes/assets/
+schema/Rojo changes. Source-bound ShopPreviewEntryTests observed RED before fix,
+then GREEN for delayed/already-entered players, long menu waits and cancellation.
+Selene src (zero errors/warnings), focused StyLua and code-only Rojo build passed.
+Native startup retest awaits coordinated Studio ownership; original failure was
+reproduced in the acceptance walkthrough. With StudioShopPreview enabled before
+Play, press menu Play; expect Entered game before Shop preview ready (Studio Mock),
+then an interactive Shop instead of No free tycoon is available. Clear preview
+flag after testing. Concurrent courtyard work remains separate.
+
 Landscaping installed in Studio (2026-11-18): final 326 decorative parts validated;
 existing geometry readback unchanged and two Edit screenshots reviewed. Purchase/
 rebirth Play checks deferred because Studio is configured Persistent; Mock-only
