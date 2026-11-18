@@ -75,6 +75,7 @@ src/
 │   │   ├── EntryService.luau       # startup Play validation and character entry
 │   │   ├── PlotService.luau        # server-authoritative claims, template clones, respawns, cleanup
 │   │   ├── FarmService.luau        # wheat production, pit accounting, owner gold collection, cleanup
+│   │   ├── TrainingCourseService.luau # server-owned timed practice and recovery
 │   │   ├── PurchaseService.luau    # owner-only purchase plates and saved unlocks
 │   │   └── ExampleService.luau     # startup example; no gameplay
 │   ├── Plots/

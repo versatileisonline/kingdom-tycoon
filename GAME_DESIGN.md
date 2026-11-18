@@ -109,6 +109,15 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Medieval courtyard rework (2026-11-18): creator approved upright held sword;
+  reference timber Sword Stand counter/sign with clone of the existing farmer;
+  recognizable stylized low-poly decorative horses; six bound hay bales and
+  trough details; central fountain plaza with benches/planters; banners relocated
+  for clearance. SprintTraining becomes an optional timed medieval obby with hay,
+  spruce firewood, balance beam and plank jumps. Falls return to last checkpoint
+  while timer continues; no damage/rewards/new purchases. Best clears on kingdom
+  release/rebirth. Sprint unlock remains immediate and controls stay owned by the
+  concurrent sprint agent. Approved asset backups, modular commits and preview.
 - Sprint controls (2026-11-18): creator approved R camera-lock toggle, hold Left
   Shift for temporary sprint, and double-tap Left Shift to lock sprint (0.3-second
   window). Shift again, stopping movement (0.15-second grace), exhaustion, or

@@ -102,6 +102,20 @@ footprints/grounding retained; total326 decorative parts. Broadleaf originals
 archived in ServerStorage.BroadleafForestBackup_20261118. Prepared Spruce asset
 and tools/RestylePlotForest.luau supply repeatable replacement. Saving this
 revision was deferred because another Play session started; version132 was not saved.
+
+Medieval courtyard rework (2026-11-18): TrainingCourseConfig, server
+Training.CourseState/Services.TrainingCourseService and client
+TrainingCourseController add a purchased, optional timed obby with ordered
+checkpoints and server-owned fall recovery. Hay steps, spruce logs, beam and
+planks sit within SprintTraining; no sprint/stamina/economy changes.
+EquipmentConfig.REST_GRIP supplies the upright sword resting orientation.
+tools/ReworkMedievalCourtyard.luau preserves affected assets under
+MedievalCourtyardBackup_20261118; requires script-free MedievalHorseTemplate.
+Reference sword counter clones StarterFarm.Scenery.Farmer; fountain plaza moves
+near kingdom center. Exact dropper purchase plates remain. Contract, preview,
+rollback and verification: docs/MEDIEVAL_COURTYARD.md.
+
+
 Optional plate correction (2026-11-18): all six optional purchase plates now clone
 the exact RoyalMintDropper02 face/Outline/label template. BuildOptionalAdditions
 uses that source; tools/RepairOptionalPurchasePlates.luau repairs existing assets,
@@ -478,6 +492,15 @@ Landscaping: run tools/BuildPlotLandscaping.luau in Edit with APPLY=false for
 a dry run; APPLY=true installs only when Environment does not already exist.
 Expect Landscaping installed: 1 plots; 250 grass, 40 ferns, 20 rocks, 8 trees;
 clearance checks passed. Existing folders are never replaced. See docs/PLOT_LANDSCAPING.md.
+
+Courtyard: in Studio Mock set Server attribute StudioCourtyardPreview=true before
+Play, then enter from the menu. Preview supplies all accessories and100000Gold.
+Only TrainingCourseConfig.RUN_TESTS_IN_STUDIO enables the standalone course
+state/service checks; run with the explicit preview, no other suites.
+Expect All medieval course state checks passed and All medieval course service
+checks passed. Stop and clear preview attributes/test switch afterward.
+Full asset contract and hand-on acceptance: docs/MEDIEVAL_COURTYARD.md.
+
 
 Main menu: enable only MainMenuConfig.RUN_TESTS_IN_STUDIO in Studio Mock before
 Play. Expect All main menu entry checks passed, All main menu placement checks
