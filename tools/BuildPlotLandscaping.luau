@@ -31,6 +31,13 @@ local function overlaps(a: Rect, b: Rect, gap: number): boolean
 	return math.abs(a.x - b.x) < a.hx + b.hx + gap and math.abs(a.z - b.z) < a.hz + b.hz + gap
 end
 -- Reserve the entire interior even before any walls or machinery are purchased.
+local reservations = template:FindFirstChild("LayoutReservations")
+assert(reservations, "Missing LayoutReservations")
+assert(
+	reservations:GetAttribute("WallCenter") == Vector3.new(0, 0, -32)
+		and reservations:GetAttribute("WallFootprint") == Vector3.new(216, 0, 216),
+	"Wall reservation changed; review landscaping masks"
+)
 local masks: { Rect } = { { x = 0, z = -32, hx = 108, hz = 108 } }
 local templateFrame = template:GetPivot()
 for _, name in { "StarterFarm", "Paths" } do
@@ -85,6 +92,14 @@ local ok, reason = xpcall(function()
 		assert(origin and ground, "Missing plot origin/ground")
 		assert(math.abs(ground.Size.X - 320) < 0.01 and math.abs(ground.Size.Z - 320) < 0.01, "Expected 320x320 plot")
 		local frame = origin.CFrame
+		local relative = frame:ToObjectSpace(ground.CFrame)
+		assert(
+			math.abs(relative.Position.X) < 0.01
+				and math.abs(relative.Position.Z) < 0.01
+				and (relative.RightVector - Vector3.xAxis).Magnitude < 0.01
+				and (relative.UpVector - Vector3.yAxis).Magnitude < 0.01,
+			"Ground must be centered and aligned with Origin"
+		)
 		local environment = Instance.new("Folder")
 		environment.Name = "Environment"
 		environment:SetAttribute("LandscapeVersion", 1)
@@ -152,10 +167,10 @@ local ok, reason = xpcall(function()
 			assert(hit and hit.Material ~= Enum.Material.Water, "Tree needs dry terrain")
 			local p = frame:PointToObjectSpace(hit.Position)
 			local model = make("Tree", rng:NextNumber(0.85, 1.15), p - Vector3.new(0, 0.1, 0))
+			model.Parent = environment
 			local rect = bounds(model, frame)
 			assert(not overlaps(rect, { x = 0, z = 0, hx = 165, hz = 165 }, 2), "Tree canopy overlaps plateau")
 			model.Name = string.format("Tree%02d", index)
-			model.Parent = environment
 			totals.Tree += 1
 		end
 	end

@@ -35,6 +35,9 @@ Default `APPLY=false` constructs, validates and destroys an off-scene dry run.
 Set `APPLY=true` in the command copy to install. It refuses existing Environment
 folders rather than replacing them. Do not install during another agent's Play test.
 
+The recipe asserts the documented wall reservation and centered/aligned Ground
+before proceeding; changed layouts require a new placement review.
+
 The full 216x216 wall reservation, entire farm, paths, every purchase plate and
 unlock model, plus the broad entrance/spawn corridor are excluded. All grass,
 ferns and rocks have six studs of horizontal bounding-box clearance from these
@@ -49,8 +52,12 @@ plot trees and the earlier preview tree are preserved.
 
 ## Verification and limits
 
+- Saved to Roblox cloud version 129 (not published).
 - StyLua and Selene pass for the placement recipe.
 - Dry run and installation both passed all geometry and asset safety assertions.
+- Reinstallation was refused with Environment already exists. A final dry-run
+  verification bypassed only that duplicate guard and preserved installed scenery.
+- ContentProvider preloaded all six foliage mesh/texture requests successfully.
 - Readback: 250 grass, 40 ferns, 20 rocks, 8 trees; 318 parts, no scripts, all
   anchored and collision/touch/query disabled.
 - Compared existing plot, KingdomTemplate and KingdomMap descendant paths,
