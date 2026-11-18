@@ -26,8 +26,8 @@ local function text(parent: Instance, name: string, content: string, size: numbe
 	l.BackgroundTransparency = 1
 	l.Text = content
 	l.TextColor3 = color(C.Text)
-	l.Font = Enum.Font.GothamMedium
-	l.TextSize = size
+	l.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
+	l.TextSize = math.max(10, math.floor(size * 0.75))
 	l.TextXAlignment = Enum.TextXAlignment.Left
 	l.Parent = parent
 	return l
@@ -36,8 +36,8 @@ local function button(parent: Instance, name: string, content: string): TextButt
 	local b = Instance.new("TextButton")
 	b.Name = name
 	b.Text = content
-	b.TextSize = 15
-	b.Font = Enum.Font.GothamBold
+	b.TextSize = 11
+	b.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 	b.TextColor3 = color(C.Text)
 	b.BackgroundColor3 = color(C.Raised)
 	b.BorderSizePixel = 0
@@ -87,7 +87,7 @@ function View.new(parent: Instance, settings: any)
 	rowLayout.Padding = UDim.new(0, 2 * Config.UI.CoinGap)
 	rowLayout.Parent = currencyRow
 	local collectLabel = text(currencyRow, "Collect", "Collect", 18)
-	collectLabel.Font = Enum.Font.GothamBold
+	collectLabel.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 	collectLabel.TextColor3 = color(C.Gold)
 	collectLabel.Size = UDim2.fromOffset(0, 28)
 	collectLabel.AutomaticSize = Enum.AutomaticSize.X
@@ -98,14 +98,14 @@ function View.new(parent: Instance, settings: any)
 	coin.Size = UDim2.fromOffset(Config.UI.BadgeCoinSize, Config.UI.BadgeCoinSize)
 	coin.LayoutOrder = 2
 	local gold = text(currencyRow, "Gold", "—", 20)
-	gold.Font = Enum.Font.GothamBold
+	gold.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 	gold.TextColor3 = color(C.Gold)
 	gold.Size = UDim2.fromOffset(0, 28)
 	gold.AutomaticSize = Enum.AutomaticSize.X
 	gold.LayoutOrder = 3
 	gold.ZIndex = 3
 	local open = button(screen, "SettingsButton", "⚙")
-	open.TextSize = 27
+	open.TextSize = 20
 	open.AnchorPoint = Vector2.new(1, 0)
 	open.Position = UDim2.new(1, -20, 0, game:GetService("GuiService"):GetGuiInset().Y + 16)
 	open.Size = UDim2.fromOffset(52, 52)
@@ -168,13 +168,13 @@ function View.new(parent: Instance, settings: any)
 	banner.Position = UDim2.new(0.5, 0, 0, -24)
 	banner.Size = UDim2.new(1, -64, 0, 108)
 	local title = text(panel, "Title", "Settings", 25)
-	title.Font = Enum.Font.Fondamento
+	title.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 	title.Position = UDim2.fromOffset(72, 2)
 	title.Size = UDim2.new(1, -144, 0, 48)
 	title.TextXAlignment = Enum.TextXAlignment.Center
 	title.TextStrokeTransparency = 0.6
 	title.ZIndex = 16
-	local close = button(panel, "Close", "×")
+	local close = button(panel, "Close", "X")
 	close.Position = UDim2.new(1, -44, 0, -6)
 	close.Size = UDim2.fromOffset(34, 34)
 	close.ZIndex = 17

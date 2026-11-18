@@ -7,8 +7,8 @@ return table.freeze({
 	PLATES = table.freeze({
 		DIAMETER = 4,
 		THICKNESS = 0.4,
-		LABEL_SIZE = 14,
-		LABEL_WIDTH = 128,
+		LABEL_SIZE = 11,
+		LABEL_WIDTH = 240,
 		LABEL_HEIGHT = 40,
 		LABEL_OFFSET = 2,
 		LABEL_DISTANCE = 65,

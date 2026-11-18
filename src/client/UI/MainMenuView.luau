@@ -24,7 +24,7 @@ function View.new(parent: Instance)
 	local function label(name: string, value: string, y: number, height: number, size: number): TextLabel
 		local item = Instance.new("TextLabel")
 		item.Name, item.Text = name, value
-		item.BackgroundTransparency, item.Font = 1, Enum.Font.Arcade
+		item.BackgroundTransparency, item.Font = 1, require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 		item.TextColor3, item.TextSize = Color3.fromHex(Colors.Gold), size
 		item.Position, item.Size = UDim2.fromOffset(0, y), UDim2.new(1, 0, 0, height)
 		item.Parent = panel
@@ -44,7 +44,8 @@ function View.new(parent: Instance)
 		shadow.Position, shadow.Size = UDim2.new(0.5, -174, 0, y + 6), UDim2.fromOffset(354, 58)
 		shadow.BackgroundColor3, shadow.Parent = Color3.fromHex("080A0F"), panel
 		local item = Instance.new("TextButton")
-		item.Name, item.Text, item.Font = name, value, Enum.Font.Arcade
+		item.Name, item.Text, item.Font =
+			name, value, require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 		item.TextSize, item.TextColor3 = 24, Color3.fromHex(Colors.Text)
 		item.BackgroundColor3, item.BorderSizePixel = Color3.fromHex(Colors.Raised), 0
 		item.Position, item.Size = UDim2.new(0.5, -178, 0, y), UDim2.fromOffset(356, 56)
@@ -59,7 +60,7 @@ function View.new(parent: Instance)
 	local settings = button("Settings", "SETTINGS", 278)
 	play.NextSelectionDown, settings.NextSelectionUp = settings, play
 	local status = label("Status", "Loading…", 356, 38, 14)
-	status.Font, status.TextWrapped = Enum.Font.GothamMedium, true
+	status.Font, status.TextWrapped = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT, true
 	status.TextColor3 = Color3.fromHex(Colors.Muted)
 	local cameraConnection: RBXScriptConnection? = nil
 	local function fit(): ()

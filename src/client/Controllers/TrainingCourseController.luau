@@ -25,7 +25,7 @@ function Controller.Start(): ()
 	label.Position, label.Size = UDim2.new(0.5, 0, 0, Config.UI_OFFSET_Y), UDim2.fromOffset(360, 50)
 	label.BackgroundTransparency, label.TextColor3, label.TextStrokeTransparency =
 		1, Color3.fromRGB(240, 207, 127), 0.35
-	label.Font, label.TextSize = Enum.Font.GothamBold, 18
+	label.Font, label.TextSize = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT, 18
 	label.Parent = gui
 	local function blocked(): boolean
 		return Settings.Get("MenuOpen") == true

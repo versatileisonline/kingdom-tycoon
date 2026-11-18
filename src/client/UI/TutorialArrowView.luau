@@ -45,7 +45,7 @@ function View.new(parent: Instance): Arrow
 		marker.BackgroundTransparency = 1
 		marker.BorderSizePixel = 0
 		marker.Text = "▲"
-		marker.Font = Enum.Font.GothamBold
+		marker.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 		marker.TextScaled = true
 		marker.TextColor3 = Color3.fromHex(Style.Gold)
 		marker.TextStrokeColor3 = Color3.fromHex(Style.OutlineColor)

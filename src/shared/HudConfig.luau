@@ -1,5 +1,6 @@
 --!strict
 return table.freeze({
+	FONT = Enum.Font.Arcade,
 	ART = table.freeze({
 		Coin = "rbxassetid://94873438043725",
 		Corner = "rbxassetid://81173608072407",

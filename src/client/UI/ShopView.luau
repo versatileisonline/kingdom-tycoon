@@ -9,8 +9,8 @@ local function label(parent: Instance, name: string, text: string, size: number,
 	local item = Instance.new("TextLabel")
 	item.Name = name
 	item.Text = text
-	item.TextSize = size
-	item.Font = Enum.Font.GothamBold
+	item.TextSize = math.max(10, math.floor(size * 0.75))
+	item.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 	item.BackgroundTransparency = 1
 	item.TextColor3 = Color3.fromHex(C.Text)
 	item.ZIndex = z
@@ -48,8 +48,8 @@ local function button(
 	local item = Instance.new("TextButton")
 	item.Name = name
 	item.Text = text
-	item.Font = Enum.Font.GothamBold
-	item.TextSize = 17
+	item.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
+	item.TextSize = 13
 	item.TextColor3 = Color3.fromHex(C.Text)
 	item.ZIndex = z
 	item.Parent = parent
@@ -117,11 +117,11 @@ function View.new(parent: Instance, settings: any)
 	banner.Position = UDim2.new(0.5, 0, 0, -20)
 	banner.Size = UDim2.new(1, -76, 0, 100)
 	local title = label(banner, "Title", "Royal Shop", 28, 16)
-	title.Font = Enum.Font.Fondamento
+	title.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 	title.AnchorPoint = Vector2.new(0.5, 0.5)
 	title.Position = UDim2.fromScale(0.5, 0.42)
 	title.Size = UDim2.new(0.78, 0, 0, 40)
-	local close = button(panel, "Close", "×", 17, connections)
+	local close = button(panel, "Close", "X", 17, connections)
 	close.Position = UDim2.new(1, -50, 0, 12)
 	close.Size = UDim2.fromOffset(36, 36)
 	local subtitle = label(panel, "Subtitle", "Permanent passes • Yours to keep", 14, 13)
@@ -156,7 +156,7 @@ function View.new(parent: Instance, settings: any)
 		card.Parent = scroll
 		surface(card, false, 13)
 		local heading = label(card, "Name", offer.Name, 22, 14)
-		heading.Font = Enum.Font.Fondamento
+		heading.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 		heading.Position = UDim2.fromOffset(8, 14)
 		heading.Size = UDim2.new(1, -16, 0, 32)
 		local icon = illustration(card, "Illustration", index, 14)
@@ -164,7 +164,7 @@ function View.new(parent: Instance, settings: any)
 		icon.Position = UDim2.new(0.5, 0, 0, 48)
 		icon.Size = UDim2.fromOffset(146, 146)
 		local description = label(card, "Description", offer.Description, 14, 14)
-		description.Font = Enum.Font.GothamMedium
+		description.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 		description.TextWrapped = true
 		description.Position = UDim2.fromOffset(14, 199)
 		description.Size = UDim2.new(1, -28, 0, 68)
@@ -180,12 +180,12 @@ function View.new(parent: Instance, settings: any)
 	retry.AnchorPoint = Vector2.new(1, 1)
 	retry.Position = UDim2.new(1, -20, 1, -12)
 	retry.Size = UDim2.fromOffset(88, 28)
-	retry.TextSize = 12
+	retry.TextSize = 10
 	local previewReset = button(panel, "PreviewReset", "Reset preview", 13, connections)
 	previewReset.AnchorPoint = Vector2.new(0, 1)
 	previewReset.Position = UDim2.new(0, 20, 1, -12)
 	previewReset.Size = UDim2.fromOffset(120, 28)
-	previewReset.TextSize = 12
+	previewReset.TextSize = 10
 	previewReset.Visible = false
 	local message = label(screen, "ShopMessage", "", 13, 30)
 	message.AnchorPoint = Vector2.new(0.5, 1)

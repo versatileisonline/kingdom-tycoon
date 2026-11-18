@@ -13,8 +13,8 @@ local function text(parent: Instance, name: string, value: string, size: number,
 	item.Name = name
 	item.Text = value
 	item.TextColor3 = Color3.fromHex(C.Text)
-	item.Font = Enum.Font.GothamBold
-	item.TextSize = size
+	item.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
+	item.TextSize = math.max(10, math.floor(size * 0.75))
 	item.BackgroundTransparency = 1
 	item.ZIndex = z
 	item.Parent = parent
@@ -46,8 +46,8 @@ local function button(
 	item.Name = name
 	item.Text = value
 	item.TextColor3 = Color3.fromHex(C.Text)
-	item.Font = Enum.Font.GothamBold
-	item.TextSize = 17
+	item.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
+	item.TextSize = 13
 	item.ZIndex = z
 	item.Parent = parent
 	surface(item, true)
@@ -106,11 +106,11 @@ function View.new(parent: Instance, settings: any)
 	banner.Position = UDim2.new(0.5, 0, 0, -20)
 	banner.Size = UDim2.new(1, -76, 0, 100)
 	local title = text(banner, "Title", copy("Title", "Rebirth"), 28, 16)
-	title.Font = Enum.Font.Fondamento
+	title.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 	title.AnchorPoint = Vector2.new(0.5, 0.5)
 	title.Position = UDim2.fromScale(0.5, 0.42)
 	title.Size = UDim2.new(0.78, 0, 0, 40)
-	local close = button(panel, "Close", "×", 17, connections)
+	local close = button(panel, "Close", "X", 17, connections)
 	close.Position = UDim2.new(1, -50, 0, 12)
 	close.Size = UDim2.fromOffset(36, 36)
 	local subtitle = text(panel, "Subtitle", copy("Subtitle", "Start fresh. Build faster."), 16, 13)
@@ -147,7 +147,7 @@ function View.new(parent: Instance, settings: any)
 		surface(card, false)
 		local heading =
 			text(card, "Heading", copy(key .. "Title", ({ "Your reward", "Resets", "You keep" })[index]), 22, 14)
-		heading.Font = Enum.Font.Fondamento
+		heading.Font = require(game:GetService("ReplicatedStorage").Shared.HudConfig).FONT
 		heading.Position = UDim2.fromOffset(8, 12)
 		heading.Size = UDim2.new(1, -16, 0, 32)
 		local picture = art(card, "Illustration", index - 1, 14)

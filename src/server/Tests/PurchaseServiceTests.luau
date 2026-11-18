@@ -136,7 +136,7 @@ function Tests.Run(): ()
 			assert(label.Parent ~= nil and label.Parent:IsA("BillboardGui"), "Label is not hovering over the plate")
 			assert(
 				label.BackgroundTransparency == 1
-					and label.Font == Enum.Font.GothamBold
+					and label.Font == require(Shared.HudConfig).FONT
 					and label.TextSize == Config.PLATES.LABEL_SIZE,
 				"Label style regressed"
 			)

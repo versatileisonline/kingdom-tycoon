@@ -64,7 +64,7 @@ function PlatePresentation.Style(plate: BasePart): ()
 	label.TextSize = settings.LABEL_SIZE
 	label.TextScaled = false
 	label.TextWrapped = false
-	label.Font = Enum.Font.GothamBold
+	label.Font = HudConfig.FONT
 	label.TextXAlignment = Enum.TextXAlignment.Center
 	label.TextYAlignment = if label:FindFirstChild("CurrencyRow")
 		then Enum.TextYAlignment.Top
