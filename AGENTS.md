@@ -73,6 +73,14 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Shop/Rebirth launcher trim (2026-11-18): both left buttons use the same 30px
+gold corner artwork as Settings/Ranks, with separate caption labels so padding
+cannot move the ornaments. HudConfig.UI.LauncherCornerSize owns their size;
+LauncherGap is 24px to clear the trim. The bottom-left GoldBadge now uses the
+same royal-blue Raised color without its old dark gradient. Existing assets,
+icons, dimensions, amount/collection behavior and panel backgrounds remain.
+No schema/remotes/mappings/Studio asset changes.
+
 Leaderboard launcher polish (2026-11-18): compact 132x52 Ranks button sits 24px
 left of Settings, sharing its position, royal blue fill and gold ornaments.
 Transparent assets/hud/leaderboard-trophy.png maps to130383942041603; one centered
@@ -718,6 +726,16 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Shop/Rebirth trim and royal-blue Gold badge (2026-11-18): formatting, Selene
+(zero errors/warnings), code-only Rojo build and diff checks passed. Runtime-only
+client preview confirmed four gold corners per launcher, unchanged text/icons,
+24px stack gap and GoldBadge color183E65 matching Settings/Ranks. No restart
+during the concurrent sprint preview; fresh-bootstrap/native-input verification
+of these source changes remains a next-Play check. Existing collection and menu
+logic were not changed. Eight static ImageLabels; no new connections/frame loops.
+Committed on fix/shop-rebirth-royal-trim; merge into main after creator approval.
+No push, cloud save or publish.
 
 Leaderboard launcher polish (2026-11-18): fresh Mock Play verified matching
 Settings alignment/color, trophy loading, 132x52 launcher and736x451 panel.

@@ -66,12 +66,11 @@ function View.new(parent: Instance, settings: any)
 	badge.AnchorPoint = Vector2.new(0, 1)
 	badge.Position = UDim2.new(0, 28, 1, -28)
 	badge.Size = UDim2.fromOffset(Config.UI.BadgeWidth, Config.UI.BadgeHeight)
-	badge.BackgroundColor3 = color(C.Panel)
+	badge.BackgroundColor3 = color(C.Raised)
 	badge.BorderSizePixel = 0
 	badge.Parent = screen
 	round(badge, 16)
 	stroke(badge)
-	Style.Gradient(badge, "313039", "141720")
 	Style.Corners(badge, 42, 2)
 	local currencyRow = Instance.new("Frame")
 	currencyRow.Name = "CurrencyRow"

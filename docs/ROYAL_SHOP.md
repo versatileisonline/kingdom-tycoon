@@ -1,5 +1,32 @@
 # Royal Shop — milestone 1.8
 
+## Launcher trim and Gold badge refinement (2026-11-18)
+
+Shop and Rebirth launchers reuse the Settings/Ranks gold corner artwork at 30px.
+Their captions are separate labels, keeping corner placement independent of text
+padding. The existing 184x56 size, 22px lettering and 42px icons remain. Shared
+LauncherGap is 24px so the exterior ornaments clear one another.
+The bottom-left Gold badge now uses HudConfig.COLORS.Raised (`183E65`), matching
+the royal-blue launcher fill; its dark gradient was removed. Currency text,
+icons, ownership, collection, and Shop/Rebirth window backgrounds stay unchanged.
+No new asset, Rojo mapping, server or schema changes.
+
+Check a fresh Play: both left launchers should have four gold corners without
+covering their text/icons; the bottom-left amount should sit on royal blue.
+Shop/Rebirth should still open and close normally; unowned Gold remains display
+only, and Collect Now owners retain their existing collection control.
+
+Verification: formatting, Selene (zero errors/warnings), code-only Rojo build
+and diff checks passed. A temporary client preview in the ongoing sprint session
+confirmed the intended appearance and color `183E65`, with four corners on each
+launcher and a 24px stack gap. The source was edited only on disk; preview changes
+were runtime UI properties/instances. No Play restart or native menu input was
+performed during the other task's animation checks. Fresh Play remains the
+source/bootstrap acceptance check; expect normal `ClientBootstrap ... Ready`
+without HUD/Shop/Rebirth errors. No new frame work or connections; eight static
+corner ImageLabels reuse the existing asset. No push or publish; main integration
+waits for creator approval of the result.
+
 Approved: royal three-card mockup, permanent Collect Now 49 Robux, 2× Gold 99,
 Auto-Collect 149. Cosmetics, rebirth, leaderboards and horses are later milestones.
 

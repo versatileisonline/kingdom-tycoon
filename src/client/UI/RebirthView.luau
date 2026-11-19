@@ -81,16 +81,18 @@ function View.new(parent: Instance, settings: any)
 	screen.Parent = parent
 	local open = button(screen, "RebirthButton", copy("Title", "Rebirth"), 2, connections)
 	open.Size = UDim2.fromOffset(Hud.UI.LauncherWidth, Hud.UI.LauncherHeight)
-	open.TextSize = Hud.UI.LauncherTextSize
-	open.TextXAlignment = Enum.TextXAlignment.Left
-	open.TextStrokeColor3 = open.TextColor3
-	open.TextStrokeTransparency = Hud.UI.LauncherStrokeTransparency
-	local textPadding = Instance.new("UIPadding")
-	textPadding.PaddingLeft = UDim.new(0, Hud.UI.LauncherTextInset)
-	textPadding.Parent = open
+	open.Text = ""
+	local caption = text(open, "Caption", copy("Title", "Rebirth"), Hud.UI.LauncherTextSize, 4)
+	caption.TextSize = Hud.UI.LauncherTextSize
+	caption.TextXAlignment = Enum.TextXAlignment.Left
+	caption.TextStrokeColor3 = caption.TextColor3
+	caption.TextStrokeTransparency = Hud.UI.LauncherStrokeTransparency
+	caption.Position = UDim2.fromOffset(Hud.UI.LauncherTextInset, 0)
+	caption.Size = UDim2.new(1, -Hud.UI.LauncherTextInset, 1, 0)
+	Style.Corners(open, Hud.UI.LauncherCornerSize, 3)
 	local launcher = art(open, "RebirthIcon", 3, 3)
 	launcher.Size = UDim2.fromOffset(42, 42)
-	launcher.Position = UDim2.fromOffset(6 - Hud.UI.LauncherTextInset, 7)
+	launcher.Position = UDim2.fromOffset(6, 7)
 	local shade = Instance.new("TextButton")
 	shade.Name = "RebirthShade"
 	shade.Text = ""

@@ -89,15 +89,17 @@ function View.new(parent: Instance, settings: any)
 	local open = button(screen, "ShopButton", "Shop", 2, connections)
 	open.Position = UDim2.new(0, 28, 0.38, 0)
 	open.Size = UDim2.fromOffset(Config.UI.LauncherWidth, Config.UI.LauncherHeight)
-	open.TextSize = Config.UI.LauncherTextSize
-	open.TextXAlignment = Enum.TextXAlignment.Left
-	open.TextStrokeColor3 = open.TextColor3
-	open.TextStrokeTransparency = Config.UI.LauncherStrokeTransparency
-	local textPadding = Instance.new("UIPadding")
-	textPadding.PaddingLeft = UDim.new(0, Config.UI.LauncherTextInset)
-	textPadding.Parent = open
+	open.Text = ""
+	local caption = label(open, "Caption", "Shop", Config.UI.LauncherTextSize, 4)
+	caption.TextSize = Config.UI.LauncherTextSize
+	caption.TextXAlignment = Enum.TextXAlignment.Left
+	caption.TextStrokeColor3 = caption.TextColor3
+	caption.TextStrokeTransparency = Config.UI.LauncherStrokeTransparency
+	caption.Position = UDim2.fromOffset(Config.UI.LauncherTextInset, 0)
+	caption.Size = UDim2.new(1, -Config.UI.LauncherTextInset, 1, 0)
+	Style.Corners(open, Config.UI.LauncherCornerSize, 3)
 	local shopIcon = illustration(open, "ShopIcon", 0, 3)
-	shopIcon.Position = UDim2.fromOffset(6 - Config.UI.LauncherTextInset, 7)
+	shopIcon.Position = UDim2.fromOffset(6, 7)
 	shopIcon.Size = UDim2.fromOffset(42, 42)
 	local autoStatus = label(screen, "AutoCollectStatus", "Auto-Collect active", 13, 2)
 	autoStatus.AnchorPoint = Vector2.new(0, 1)
