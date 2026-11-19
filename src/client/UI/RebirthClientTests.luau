@@ -13,7 +13,7 @@ function Tests.CheckLayout(): ()
 	local camera = workspace.CurrentCamera
 	assert(camera ~= nil and layout ~= nil, "viewport and grid available")
 	local viewport = camera.ViewportSize
-	assert(layout.FillDirectionMaxCells == (if viewport.X < 740 then 1 else 3), "narrow screens stack cards")
+	assert(layout.FillDirectionMaxCells == (if gui.AbsoluteSize.X < 840 then 1 else 3), "narrow screens stack cards")
 	assert(cards.AbsoluteSize.Y > 80, "cards remain scrollable on short screens")
 	assert(panel.AbsolutePosition.X >= 0 and panel.AbsolutePosition.Y >= 0, "panel clears viewport origin")
 	assert(panel.AbsolutePosition.Y >= shade.AbsolutePosition.Y, "panel clears usable GUI origin")
@@ -31,7 +31,7 @@ function Tests.CheckLayout(): ()
 		confirm.AbsolutePosition.Y + confirm.AbsoluteSize.Y <= panel.AbsolutePosition.Y + panel.AbsoluteSize.Y,
 		"confirmation fits panel"
 	)
-	if viewport.X < 740 then
+	if gui.AbsoluteSize.X < 840 then
 		assert(cards.AbsoluteCanvasSize.Y > cards.AbsoluteSize.Y, "stacked cards can scroll")
 	end
 end
@@ -70,6 +70,7 @@ function Tests.Run(): ()
 	assert(gui ~= nil, "rebirth HUD constructed")
 	local shade = gui:FindFirstChild("RebirthShade") :: TextButton
 	assert(shade.Visible, "rebirth opens")
+	assert(not game.Players.LocalPlayer.PlayerGui.KingdomShopHUD.ShopButton.Visible, "shop launcher covers rebirth")
 	local panel = shade:FindFirstChild("RebirthPanel") :: Frame
 	local banner = panel:FindFirstChild("RoyalBanner") :: ImageLabel
 	local title = banner:FindFirstChild("Title") :: TextLabel
@@ -83,6 +84,7 @@ function Tests.Run(): ()
 	Settings.Set("RebirthOpen", false)
 	task.wait()
 	assert(not shade.Visible, "rebirth closes")
+	assert(game.Players.LocalPlayer.PlayerGui.KingdomShopHUD.ShopButton.Visible, "shop launcher did not return")
 	print("[KingdomTycoon][RebirthTests] All rebirth client checks passed")
 end
 return Tests

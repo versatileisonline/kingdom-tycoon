@@ -297,6 +297,9 @@ function View.new(parent: Instance, settings: any)
 		connections,
 		settings.Observe(function()
 			shade.Visible = settings.Get("RebirthOpen") == true
+			open.Visible = settings.Get("MenuOpen") ~= true
+				and settings.Get("ShopOpen") ~= true
+				and settings.Get("LeaderboardOpen") ~= true
 		end)
 	)
 	table.insert(

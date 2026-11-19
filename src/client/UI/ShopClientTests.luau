@@ -69,6 +69,7 @@ function Tests.Run(): ()
 	Settings.Set("ShopOpen", true)
 	task.wait()
 	assert(shade.Visible, "shop opens")
+	assert(not player.PlayerGui.KingdomRebirthHUD.RebirthButton.Visible, "rebirth launcher covers shop")
 	local firstCard = offers:FindFirstChild("CollectNow") :: Frame
 	local layoutDeadline = os.clock() + 3
 	repeat
@@ -91,6 +92,7 @@ function Tests.Run(): ()
 	task.wait()
 	assert(Settings.Get("MenuOpen") == false and shade.Visible, "shop replaces settings")
 	Settings.Set("ShopOpen", false)
+	assert(player.PlayerGui.KingdomRebirthHUD.RebirthButton.Visible, "rebirth launcher did not return")
 	assert(not badge.CurrencyRow.Collect.Visible and not badge.Active, "unowned collection stays disabled")
 	Tests.CheckCollectionRow(false)
 	print("[KingdomTycoon][ShopTests] All shop client checks passed")
