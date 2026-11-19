@@ -109,6 +109,11 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Leaderboard palette/borders (2026-11-19): creator approved the existing HUD's
+  royal-blue fill with alternating blue rows and retained gold trim, plus the
+  clipped highlighted-row border fix. Approved full-capacity simulated UI QA and
+  showcase; preserve existing ranking, server data and configured capacity.
+
 - Sprint style refinement (2026-11-18): creator selected free Evade animation
   source74987847468722 and clarified that the run needs more sway. Adapt its R6
   Run motion to the existing R15 avatar while retaining the current sword,
