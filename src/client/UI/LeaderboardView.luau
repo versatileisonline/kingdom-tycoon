@@ -46,10 +46,9 @@ function View.new(parent: Instance, localId: number)
 	local panel = Instance.new("Frame")
 	panel.Name, panel.AnchorPoint = "Panel", Vector2.new(1, 0)
 	panel.Position, panel.Size = UDim2.new(1, -24, 0, 24), UDim2.fromOffset(Config.WIDTH, Config.HEIGHT)
-	panel.BackgroundColor3, panel.BorderSizePixel = Color3.fromHex(C.Panel), 0
+	panel.BackgroundColor3, panel.BorderSizePixel = Color3.fromHex(C.Raised), 0
 	panel.Visible, panel.Parent = false, screen
 	border(panel, C.Border)
-	Style.Gradient(panel, "333039", "141821")
 	Style.Corners(panel, 55, 3)
 	local scale = Instance.new("UIScale")
 	scale.Parent = panel
@@ -79,8 +78,16 @@ function View.new(parent: Instance, localId: number)
 	scroll.Name, scroll.BackgroundTransparency, scroll.BorderSizePixel = "Players", 1, 0
 	scroll.Position, scroll.Size = UDim2.fromOffset(16, 148), UDim2.new(1, -32, 1, -200)
 	scroll.AutomaticCanvasSize, scroll.CanvasSize = Enum.AutomaticSize.Y, UDim2.new()
-	scroll.ScrollBarThickness, scroll.ScrollBarImageColor3 = 4, Color3.fromHex(C.Border)
+	scroll.ScrollingDirection = Enum.ScrollingDirection.Y
+	scroll.ScrollBarThickness, scroll.ScrollBarImageColor3 = Config.SCROLLBAR_WIDTH, Color3.fromHex(C.Gold)
 	scroll.Parent = panel
+	-- UIStroke extends outside the row. Keep both endpoints inside the clipped
+	-- viewport and reserve a separate lane for the scrollbar on the right.
+	local padding = Instance.new("UIPadding")
+	padding.PaddingTop, padding.PaddingBottom = UDim.new(0, Config.ROW_INSET), UDim.new(0, Config.ROW_INSET)
+	padding.PaddingLeft = UDim.new(0, Config.ROW_INSET)
+	padding.PaddingRight = UDim.new(0, Config.SCROLLBAR_WIDTH + Config.SCROLLBAR_GAP)
+	padding.Parent = scroll
 	local layout = Instance.new("UIListLayout")
 	layout.SortOrder, layout.Padding, layout.Parent = Enum.SortOrder.LayoutOrder, UDim.new(0, 4), scroll
 	local footer = label(panel, "Footer", "Tab to close", 160, Config.HEIGHT - 48, 480, 12)
@@ -115,12 +122,12 @@ function View.new(parent: Instance, localId: number)
 			if not row then
 				row = Instance.new("Frame")
 				row.Name, row.Size, row.BorderSizePixel =
-					tostring(entry.UserId), UDim2.new(1, -4, 0, Config.ROW_HEIGHT), 0
+					tostring(entry.UserId), UDim2.new(1, 0, 0, Config.ROW_HEIGHT), 0
 				row.Parent = scroll
 				rows[entry.UserId] = row
 				local avatar = Instance.new("ImageLabel")
 				avatar.Name, avatar.Position, avatar.Size = "Avatar", UDim2.fromOffset(48, 4), UDim2.fromOffset(48, 48)
-				avatar.BackgroundColor3, avatar.BorderSizePixel = Color3.fromHex(C.Track), 0
+				avatar.BackgroundColor3, avatar.BorderSizePixel = Color3.fromHex(C.Raised), 0
 				avatar.ZIndex, avatar.Parent = 4, row
 				label(row, "Rank", "", 4, 4, 40, 17)
 				label(row, "Player", entry.Name, 102, 4, 270, 13)
@@ -135,8 +142,12 @@ function View.new(parent: Instance, localId: number)
 				end
 			end
 			row.LayoutOrder = index
-			row.BackgroundColor3 =
-				Color3.fromHex(if entry.UserId == localId then C.Raised elseif index % 2 == 0 then C.Track else C.Panel)
+			row.BackgroundColor3 = Color3.fromHex(
+				if entry.UserId == localId
+					then Config.ROW_COLORS.LocalPlayer
+					elseif index % 2 == 0 then Config.ROW_COLORS.Even
+					else Config.ROW_COLORS.Odd
+			)
 			local rankLabel = row:FindFirstChild("Rank") :: TextLabel
 			rankLabel.Text = if entry.LifetimeGold ~= nil then tostring(index) else "-"
 			local nameLabel = row:FindFirstChild("Player") :: TextLabel
