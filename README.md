@@ -2,7 +2,7 @@
 
 A medieval knight tycoon for Roblox. Build a kingdom with droppers, farms, and walls, rebirth for permanent multipliers, then (in later layers) ride horses across a large open world to outposts, opt-in PvP, guard armies, houses, and cosmetic dragons.
 
-> **Status:** Layer 1 (core tycoon) in development. See the [roadmap](#roadmap).
+> **Status:** Layer 1 has a playable tycoon loop, Shop implementation, rebirth, and server leaderboard. Live pass setup, global rankings, and release playtesting remain. See the [roadmap](#roadmap).
 
 ## Highlights (engineering goals)
 
@@ -15,7 +15,26 @@ These are the goals this project is built around. Items are checked off only whe
 - [ ] Server-authoritative combat (Layer 2; the current training sword does no damage)
 - [ ] Global leaderboards via OrderedDataStore (KOs, rebirths, gold)
 - [ ] Analytics: retention, session length, funnel drop-off
-- [ ] Documented performance work (NPC and army caps)
+- [x] Documented production caps, event-driven presentation, and cleanup
+- [ ] NPC/army performance testing (future layers)
+
+## Current gameplay
+
+- Claim a plot, start the free farm, and buy four farm droppers, timber walls,
+  and two Royal Mint lanes. Each Mint has eight droppers and eight doubling arches.
+- Collect shared pending Gold from the floor collectors. The first-action trail
+  points owners toward the next relevant action; future purchase plates stay hidden.
+- Buy optional banners, lanterns, a training sword, sprint training, a decorative
+  paddock, and a fountain. Run the medieval checkpoint course as an optional activity.
+- Rebirth on the same plot for a permanent multiplier. Gold, buildings and pending
+  production reset; passes and Lifetime Gold remain.
+- Use the Shop, Rebirth, Settings, and Ranks menus in the matching blue/gold HUD.
+  Tab opens the server leaderboard; R toggles camera lock; hold or double-tap
+  Left Shift to sprint after purchasing training.
+
+The training sword does no damage, and decorative horses cannot be ridden yet.
+The three permanent Shop offers are implemented, but real sales remain unavailable
+until their Roblox pass IDs are configured and live purchases are verified.
 
 ## Game design
 
@@ -300,24 +319,54 @@ depend on that running service context.
 
 ## Roadmap
 
-- [ ] **Layer 1: Core tycoon** (dropper, collector, farms, shop, rebirth, saving, leaderboards)
-  - [x] 1.1 Project setup
-  - [x] 1.2 Data layer (mock runtime and durable persistence verified)
-  - [x] 1.3 Plot system ([full-platform touch claim, release, and reclaim verified in Studio](docs/KINGDOM_LAYOUT.md))
-  - [x] 1.4 Starter farm/dropper loop ([solo and multiplayer Play acceptance verified in Mock mode](docs/KINGDOM_LAYOUT.md))
-  - [x] 1.5 Purchase buttons (installed farm/Mint/optional unlocks; progressive plates verified in Mock)
-  - [ ] 1.6 Farms ([four-dropper assets installed and saved; purchase/farm suites passed; broader acceptance pending](docs/MILESTONE_1_6.md))
-  - [ ] 1.7 HUD + settings ([implemented; focused cursor/touch acceptance pending](docs/MILESTONE_1_7.md))
-  - [ ] 1.8 Shop + gamepasses ([three-pass implementation; real pass setup and live purchase acceptance pending](docs/ROYAL_SHOP.md))
-  - [ ] 1.9 Rebirth ([implemented; durable rejoin/device acceptance pending](docs/REBIRTH.md))
-  - [ ] 1.10 Leaderboards ([server Tab panel and Lifetime Gold implemented; global rankings deferred](docs/SERVER_LEADERBOARD.md))
-  - [ ] 1.11 Polish + playtest (analytics, exploit pass and broader playtesting pending)
-- [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
-- [ ] **Layer 3: Armies and defense** (formations, base defense)
-- [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)
+Implementation status and release acceptance are tracked separately below.
+Layer 1 remains in development; an implemented system can still need multiplayer,
+persistence, or physical-device acceptance before release.
+
+### Layer 1: Core tycoon
+
+| Milestone | Implementation status | Current scope |
+| --- | --- | --- |
+| 1.1 Project setup | Implemented | Rojo, Git, modular Luau, pinned tooling and packages |
+| 1.2 Data layer | Implemented | ProfileStore session locking, schema v2, v1 migration and detached updates |
+| 1.3 Plot system | Implemented | Play entry, touch claim, kingdom cloning, respawn, release and cleanup |
+| 1.4 Dropper loop | Implemented | Physical production, conveyor/pit accounting and shared Gold collection |
+| 1.5 Purchase buttons | Implemented | Server validation, saved unlocks, progressive visibility and affordability colors |
+| 1.6 Farms and Mint progression | Implemented | Four farm droppers, timber walls, two eight-dropper/eight-upgrader Mint lanes |
+| 1.7 HUD + settings | Implemented | Royal blue/gold UI, Arcade typography, helper trail, audio/graphics preferences and camera lock |
+| 1.8 Shop + gamepasses | Code implemented; live setup pending | Collect Now, 2× Gold and Auto-Collect; Roblox pass IDs still unset |
+| 1.9 Rebirth | Implemented | Same-plot reset, escalating Gold target, permanent multiplier and reset/keep explanation |
+| 1.10 Leaderboards | Partially implemented | Server Tab/Ranks panel, portraits, Lifetime Gold and Rebirths; global OrderedDataStore rankings deferred |
+| 1.11 Polish + playtest | In progress | HUD/courtyard refinement and focused Studio checks; analytics, exploit review and broader playtesting remain |
+
+Additional implemented work: startup menu, optional courtyard purchases, training
+sword and sprint animations, stamina/Shift controls, timed checkpoint course,
+woodland landscaping, and shuffled medieval music.
+
+### Remaining release checks
+
+- [ ] Configure the three real pass IDs; verify purchases, entitlement isolation,
+  and rejoin behavior with actual Roblox ownership.
+- [ ] Complete broader farm/plot visitor and persistent-rejoin acceptance, plus
+  durable schema-v1 migration and multi-client leaderboard checks.
+- [ ] Finish physical-device/touch/gamepad checks, including menu layout, camera
+  lock, sprint, audio/graphics restoration, and the newest HUD trim/Gold badge.
+- [ ] Tune economy pacing and rebirth targets from fresh-run playtests.
+- [ ] Scope analytics, complete exploit review, and run the planned broader playtest.
+- [ ] Implement global leaderboard work when the creator resumes that deferred scope.
+
+System verification details: [farms](docs/MILESTONE_1_6.md),
+[HUD/settings](docs/MILESTONE_1_7.md), [Shop](docs/ROYAL_SHOP.md),
+[rebirth](docs/REBIRTH.md), [server leaderboard](docs/SERVER_LEADERBOARD.md),
+and [latest handoff](docs/SESSION_HANDOFF.md).
+
+### Later layers
+
+- [ ] **Layer 2: Open world** — rideable horses, roaming NPCs, outposts, opt-in PvP,
+  combat, bounties and spawn protection.
+- [ ] **Layer 3: Armies and defense** — capped soldier formations and base defense.
+- [ ] **Layer 4: Houses and dragons** — alliances, outpost buffs and cosmetic dragons.
 
 ## License
 
 TBD
-
-Second Royal Mint lane: [asset contract, economy and verification](docs/SECOND_ROYAL_MINT.md).
