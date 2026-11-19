@@ -182,6 +182,8 @@ function View.new(parent: Instance, localId: number)
 		local width = math.min(Config.WIDTH, math.max(280, (viewport.X - 48) / Config.PANEL_SCALE))
 		local height = math.min(Config.HEIGHT, math.max(220, (viewport.Y - inset - 64) / Config.PANEL_SCALE))
 		local compact = width < Config.WIDTH
+		local rowWidth = width - 32 - Config.ROW_INSET - Config.SCROLLBAR_WIDTH - Config.SCROLLBAR_GAP
+		local compactRebirthX = rowWidth - 64 - Config.ROW_INSET
 		local shortLayout = Config.SHORT_LAYOUT
 		local short = height < shortLayout.Height
 		panel.Size = UDim2.fromOffset(width, height)
@@ -235,9 +237,9 @@ function View.new(parent: Instance, localId: number)
 				UDim2.fromOffset(if compact then width - 180 elseif you then 218 else 270, 48)
 			gold.Position, gold.Size =
 				UDim2.fromOffset(if compact then 76 else 384, if compact then 21 else 4),
-				UDim2.fromOffset(if compact then width - 192 else 230, if compact then 30 else 48)
+				UDim2.fromOffset(if compact then compactRebirthX - 76 - 8 else 230, if compact then 30 else 48)
 			rebirths.Position, rebirths.Size =
-				UDim2.fromOffset(if compact then width - 100 else 624, if compact then 21 else 4),
+				UDim2.fromOffset(if compact then compactRebirthX else 624, if compact then 21 else 4),
 				UDim2.fromOffset(if compact then 64 else 120, if compact then 30 else 48)
 			if you then
 				you.Position = UDim2.fromOffset(if compact then width - 94 else 324, if compact then -8 else 4)

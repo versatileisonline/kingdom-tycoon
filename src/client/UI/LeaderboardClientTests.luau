@@ -40,7 +40,7 @@ function Tests.RunView(View: any, State: any, parent: Instance, capacity: number
 			table.insert(entries, {
 				UserId = id,
 				Name = if id == 1 then "AnExtremelyLongPlayerDisplayName" else "Knight" .. id,
-				LifetimeGold = (capacity - id) * 100,
+				LifetimeGold = (capacity - id + 1) * 100,
 				Rebirths = id,
 			})
 		end
@@ -53,6 +53,12 @@ function Tests.RunView(View: any, State: any, parent: Instance, capacity: number
 		assert(first.AbsolutePosition.X - list.AbsolutePosition.X >= halfStroke, "Left row outline clipped")
 		assert(list.AbsoluteCanvasSize.Y > list.AbsoluteWindowSize.Y, "Full server must overflow vertically")
 		assert(list.ScrollingDirection == Enum.ScrollingDirection.Y, "List must only scroll vertically")
+		assert(
+			first.Rebirths.AbsolutePosition.X + first.Rebirths.AbsoluteSize.X
+				<= first.AbsolutePosition.X + first.AbsoluteSize.X,
+			"Rebirths column extends into the scrollbar lane"
+		)
+		local headerPosition = view.Panel.LifetimeGold.AbsolutePosition
 		list.CanvasPosition = Vector2.new(0, list.AbsoluteCanvasSize.Y)
 		task.wait(0.2)
 		local last = list:FindFirstChild(tostring(capacity)) :: Frame
@@ -63,13 +69,21 @@ function Tests.RunView(View: any, State: any, parent: Instance, capacity: number
 			"Last row outline clipped"
 		)
 		local position = list.CanvasPosition
-		local headerPosition = view.Panel.LifetimeGold.AbsolutePosition
-		entries[1].LifetimeGold = 9007199254740991
+		assert(view.Panel.LifetimeGold.AbsolutePosition == headerPosition, "Column header scrolled with rows")
+		-- Move the highlighted player from first to last while scrolled down.
+		entries[1].LifetimeGold = 0
+		entries[1].Name, entries[1].Rebirths = "UpdatedKnight", 777
 		view.Render(State.Sort(entries), {})
 		task.wait(0.2)
-		assert(list:FindFirstChild("1") == first and first.LayoutOrder == 1, "Update replaced or misranked row")
+		assert(list:FindFirstChild("1") == first and first.LayoutOrder == capacity, "Update replaced or misranked row")
+		assert(first.Player.Text == "UpdatedKnight" and first.Rebirths.Text == "777", "Row metadata became stale")
 		assert((list.CanvasPosition - position).Magnitude < 1, "Score update reset scroll position")
 		assert(view.Panel.LifetimeGold.AbsolutePosition == headerPosition, "Column header scrolled with rows")
+		assert(
+			first.AbsolutePosition.Y + first.AbsoluteSize.Y + halfStroke
+				<= list.AbsolutePosition.Y + list.AbsoluteWindowSize.Y + 0.5,
+			"Highlighted last row outline clipped"
+		)
 		table.remove(entries, capacity)
 		view.Render(State.Sort(entries), {})
 		assert(list:FindFirstChild(tostring(capacity)) == nil, "Departure retained a stale row")
