@@ -1,0 +1,15 @@
+--!strict
+return table.freeze({
+	RUN_TESTS_IN_STUDIO = false,
+	WALL_HEIGHT = 24,
+	WALKWAY_WIDTH = 6,
+	DOOR_TICK = 0.1,
+	TOGGLE_DISTANCE = 10,
+	TOGGLE_COOLDOWN = 1,
+	WALK_SPEED = 6,
+	ROUTE_PAUSE = 2,
+	ROUTE_TIMEOUT = 9,
+	WALK_ANIMATION = "rbxassetid://507777826",
+	IDLE_ANIMATION = "rbxassetid://507766388",
+	MAX_CHARACTERS = 14,
+})

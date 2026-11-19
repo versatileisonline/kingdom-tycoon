@@ -111,6 +111,13 @@ not evidence that payment processing has been tested.
 
 ## Automated checks
 
+Acceptance repair (2026-11-19): Shop/Rebirth launchers hide while another menu
+is open, preventing the Shop button from covering the Rebirth cards on phones.
+They return when the other menu closes. The overlap assertion failed before the
+repair; both normal-bootstrap client menu suites passed afterward on Galaxy A06
+landscape. Existing observers own the visibility updates; no new connections,
+remotes, data or asset changes. Enter via Play before live GUI layout checks.
+
 Only in Studio Mock, enable ShopConfig.RUN_TESTS_IN_STUDIO on disk and set the
 Server Script attribute StudioShopPreview=true in Edit before Play. Run before
 claiming. Expect:

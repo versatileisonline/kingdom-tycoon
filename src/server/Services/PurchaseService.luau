@@ -96,6 +96,12 @@ local function refresh(player: Player): ()
 	for _, slot in state.Slots do
 		table.insert(entries, slot.Definition)
 	end
+	-- Stone supersedes only the runtime wooden enclosure. Its saved ID stays owned.
+	for _, slot in state.Slots do
+		if slot.Definition.Id == "WoodenWalls" and slot.Shown and slot.Unlock then
+			slot.Unlock.Parent = if data.PurchasedBuildings.StoneWalls == true then nil else state.Unlocks
+		end
+	end
 	local nextDefinition = Offers.Next(entries, data.PurchasedBuildings)
 	for _, slot in state.Slots do
 		if slot.Shown then
@@ -181,7 +187,7 @@ local function release(player: Player): ()
 		if slot.Connection ~= nil then
 			slot.Connection:Disconnect()
 		end
-		if not slot.Shown and slot.Unlock ~= nil then
+		if slot.Unlock ~= nil and slot.Unlock.Parent == nil then
 			slot.Unlock:Destroy()
 		end
 	end

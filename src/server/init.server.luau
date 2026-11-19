@@ -16,6 +16,8 @@ local services: { Types.Lifecycle } = {
 	require(script.Services.EntryService),
 	require(script.Services.FarmService),
 	require(script.Services.PurchaseService),
+	require(script.Services.ProtectionDoorService),
+	require(script.Services.KingdomResidentsService),
 	require(script.Services.EquipmentService),
 	require(script.Services.TrainingCourseService),
 	require(script.Services.SprintService),
@@ -178,5 +180,24 @@ end
 if game:GetService("RunService"):IsStudio() and script:GetAttribute("StudioCourtyardPreview") == true then
 	task.spawn(function()
 		require(script.Tests.CourtyardPreview).Run()
+	end)
+end
+
+if game:GetService("RunService"):IsStudio() and script:GetAttribute("StudioStrongholdTests") == true then
+	task.spawn(function()
+		require(script.Tests.StrongholdServiceTests).Run()
+		if script:GetAttribute("StudioStrongholdRegression") == true then
+			for _, run in
+				{
+					require(script.Tests.FarmServiceTests).Run,
+					require(script.Tests.PurchaseServiceTests).Run,
+					require(script.Tests.RebirthServiceTests).Run,
+				}
+			do
+				task.wait(1.3)
+				run()
+			end
+			print("[KingdomTycoon][Stronghold] All stronghold regressions passed")
+		end
 	end)
 end

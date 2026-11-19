@@ -82,6 +82,17 @@ in the always-visible banner. No new assets, schema, remotes, mappings or capaci
 changes. Desktop and two landscape sizes passed; real60-client load remains
 untested. Reproduction, screenshots, controls and limits: docs/SERVER_LEADERBOARD.md.
 
+Stone stronghold (2026-11-18): StrongholdConfig, ProtectionDoorService and
+KingdomResidentsService add the optional StoneWalls8000 → ProtectionDoor9000 →
+ArcherPosts10000 → KingdomResidents12000 chain after RoyalMintUpgrader08.
+PurchaseService retains superseded runtime wood unparented without changing saved
+ownership. Four archers, two workers and eight walkers cap each kingdom at14 rigs.
+Door is server-owned, owner-toggle, lethal to visitors regardless of PvP, respecting
+spawn shields; NPCs/owner exempt. Edit BuildStoneStronghold + RefineStoneStronghold
+preserve StoneStrongholdBackup_20261118 and central castle. Full script-free template,
+rig/route/door contracts, test commands, performance and rollback: docs/STONE_STRONGHOLD.md.
+No schema, new purchase remotes or mapping changes.
+
 Evade sprint adaptation (2026-11-18): assets/animations/evade-sprint-r15.rbxm
 is a Studio-serialized R15 adaptation of free R6 Run source74987847468722 by wifonn3.
 Tools.BuildEvadeSprintAnimation is a one-time authoring recipe; CheckEvadeSprintAnimation
@@ -573,6 +584,13 @@ full-server UI, enter/open Ranks and run tools/PreviewLeaderboard.luau; X remove
 the synthetic overlay, Tab closes it with the real board. No data writes.
 Exact commands and verification limits: docs/SERVER_LEADERBOARD.md.
 
+Stronghold: Studio Mock, no claim/other previews, Server attribute
+StudioStrongholdTests=true. Optional StudioStrongholdRegression=true runs farm,
+purchase and rebirth suites sequentially afterward. Expect All stronghold purchase
+and replacement checks passed, All protection door checks passed, All kingdom
+resident checks passed, Restoration and rebirth cleanup passed, and (optional)
+All stronghold regressions passed. Stop and clear both attributes afterward.
+
 Forest restyle: tools/RestylePlotForest.luau runs only in Edit, APPLY=false dry-run
 then APPLY=true. Requires sixteen existing trees and prepared Spruce asset; refuses
 an existing BroadleafForestBackup_20261118. Expect Dark spruce forest installed:
@@ -757,6 +775,26 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Layer1 acceptance (2026-11-19): fresh normal-bootstrap data/plot/entry, farm/purchase,
+both Mint chains, tutorial/HUD, Shop simulation, optional sword/sprint, course,
+stronghold and rebirth checks passed. Three isolated Persistent test-store sessions
+verified purchase/resident restoration and durable rebirth reset; normal player
+records untouched. Fixed Rebirth phone inset clipping and cross-menu left-launcher
+overlap, with regression checks, review and static/build verification. Real
+multiplayer attempt launched zero clients; visitor/cross-client/load checks remain.
+One plot/capacity60, unset pass IDs, physical devices, native wall traversal and
+legacy durable migration remain open. Restored Mock/default simulator/empty test
+attributes; native Play entered with0Gold/0Rebirths/0LifetimeGold/no claim. No save,
+publish or push. Full evidence/limits: docs/ACCEPTANCE_2026_11_19.md.
+
+Stone stronghold (2026-11-18): installed/refined in Studio with original template
+backed up; central castle preserved. Normal-bootstrap stronghold purchase, owner
+ward,14rig/moving-eight, reclaim and rebirth tests passed. Existing farm, purchase
+and rebirth regressions passed. Selene/build/format passed. Two-player visitor death,
+native full wall-walk traversal, Persistent rejoin, device UX and two-kingdom load
+remain acceptance limits. Strict LSP unavailable. Current assets require normal
+Studio save; no publish/push. See docs/STONE_STRONGHOLD.md.
 
 Approved main integration/documentation refresh (2026-11-18): creator requested
 main push after the Ranks/Shop/Rebirth/Gold styling changes. Integration starts

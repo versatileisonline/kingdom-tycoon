@@ -341,7 +341,8 @@ persistence, or physical-device acceptance before release.
 
 Additional implemented work: startup menu, optional courtyard purchases, training
 sword and sprint animations, stamina/Shift controls, timed checkpoint course,
-woodland landscaping, and shuffled medieval music.
+woodland landscaping, shuffled medieval music, and the stone stronghold with
+owner-controlled ward and bounded residents.
 
 ### Remaining release checks
 
@@ -354,6 +355,10 @@ woodland landscaping, and shuffled medieval music.
 - [ ] Tune economy pacing and rebirth targets from fresh-run playtests.
 - [ ] Scope analytics, complete exploit review, and run the planned broader playtest.
 - [ ] Implement global leaderboard work when the creator resumes that deferred scope.
+
+The [2026-11-19 acceptance pass](docs/ACCEPTANCE_2026_11_19.md) verified isolated
+Persistent restoration/rebirth and repaired phone panel/launcher overlap.
+Multiplayer, physical-device and legacy migration acceptance remain open.
 
 System verification details: [farms](docs/MILESTONE_1_6.md),
 [HUD/settings](docs/MILESTONE_1_7.md), [Shop](docs/ROYAL_SHOP.md),
