@@ -8,12 +8,84 @@ profiles show ellipses without a rank. Leaving removes the row and pending avata
 results cannot restore it. Failed headshots use a plain dark square. Narrow
 viewports use stacked rows at readable font sizes; longer lists scroll.
 
-The panel shares the existing royal blue, gold and dark palette/artwork. The
+The panel uses the existing royal-blue HUD fill, alternating blue rows, a lighter
+blue local-player highlight and gold trim/artwork. The
 starter menu's Arcade font is configured in HudConfig and reused across game-owned
 screen UI and plate labels. Text was increased two points from the initial pixel
 conversion, with subtle outlines for weight. Roblox system UI is unaffected.
 Opening the panel closes other gameplay menus and suspends camera lock/sprint.
 It stays hidden before Play. Rojo mappings remain unchanged.
+
+## Blue panel and full-server QA (2026-11-19)
+
+The creator approved replacing the black panel with royal blue and fixing the
+cropped top of the highlighted row's gold border. The old dark gradient multiplied
+the dark base color; it is removed from this panel. A three-design-pixel inset
+keeps the outward-extending two-pixel UIStroke inside the clipped scrolling
+viewport at both ends. A six-pixel gold scrollbar has its own reserved lane;
+compact Gold/Rebirths columns fit inside the padded row. Constants are in
+LeaderboardConfig. Other menus and gameplay are unchanged.
+
+The connected place reported `Players.MaxPlayers = 60`; capacity was not changed.
+Sixty entries produce an approximately3314-pixel rendered vertical canvas.
+Desktop panel736x451 has a267-pixel list window (four complete rows plus part of
+another). Samsung Galaxy A06 landscape reported705x338, with an88-pixel list
+window (one complete row plus part of another). A640x360 simulator override
+reported545x338 and passed the same layout checks. Title and column headings stay
+fixed while rows scroll. The game uses LandscapeSensor, so portrait was excluded.
+Simulation was reset to the default viewport afterward.
+
+Run the existing pure suite with the opt-in LeaderboardConfig test switch, or run
+these explicit checks in the **Client Command Bar during Studio Play**:
+
+```luau
+local player = game:GetService("Players").LocalPlayer
+local ui = player.PlayerScripts.Client.UI
+local tests = require(ui.LeaderboardClientTests)
+tests.Run(require(ui.LeaderboardState))
+tests.RunView(require(ui.LeaderboardView), require(ui.LeaderboardState), player.PlayerGui, 60)
+```
+
+Expect `[LeaderboardClientTests] All checks passed` and
+`[LeaderboardViewTests] All 60-entry layout checks passed`. RunView creates and
+destroys an isolated view, including on assertion failure. It checks top/left
+outline clearance, vertical overflow, last-row reachability, compact column
+containment, fixed headings, scroll preservation during reranking, name/rebirth
+updates, highlighted last-row clearance, departure, loading, one-row canvas
+clamping and empty-list cleanup. Pure checks cover60-entry ranking, ties, loading,
+immutable sorting and exact large-number formatting.
+
+For the hands-on showcase, enter the game and open Ranks, then run the contents
+of `tools/PreviewLeaderboard.luau` in the Client Command Bar. This unmapped recipe
+uses the actual View/State modules with60 simulated entries (or the current
+MaxPlayers), a long name and large values. Its banner always says PREVIEW,
+including short screens. X removes only the preview, revealing the real board;
+Tab closes the real board and removes the preview. Re-run the recipe to reopen.
+No fake Players, saved data writes, persistent attributes or preview bootstraps
+are installed. Synthetic IDs are below both zero and the local ID, avoiding
+Studio multiplayer's negative test IDs. The fixture observes the real GUI rather
+than requiring controllers: Command Bar and normal scripts can have separate
+require caches. All preview-owned connections disconnect on removal.
+
+Verification passed: Studio engine suites on desktop, A06 and short landscape;
+native wheel to rank60 on desktop/phone; native Ranks, Tab, X and Settings
+exclusivity; a temporary server LifetimeGold/Rebirths attribute update reached the
+real client row and was restored without data-service writes. Formatting, Selene
+(zero errors/warnings), code-only Rojo build and diff checks passed. Independent
+review caught compact-column overflow and preview identity/labeling issues, fixed
+before final QA. The border and compact-column regressions were reproduced before
+their fixes. Existing asset203785492 type warnings remain outside this UI task.
+
+These are60-entry UI simulations plus single-client replication checks, **not a
+60-client network/load test**. Real multi-client join/leave, per-player headshots
+and cross-client score propagation remain acceptance checks. Only one plot is
+installed despite the configured60-player capacity; align capacity with available
+plots before a public multiplayer playtest (see MAIN_MENU.md).
+
+Studio was left in the existing entered50,000-Gold Mock Stone Walls preview,
+with the temporary60-player board open at the top. No cloud save, publish or push
+was performed by this task. Local capture artifacts were written to
+`/private/tmp/kingdom-leaderboard-qa/` (desktop/phone top and bottom).
 
 ## Compact launcher and panel refinement (2026-11-18)
 

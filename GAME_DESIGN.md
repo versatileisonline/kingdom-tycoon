@@ -109,6 +109,11 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Leaderboard palette/borders (2026-11-19): creator approved the existing HUD's
+  royal-blue fill with alternating blue rows and retained gold trim, plus the
+  clipped highlighted-row border fix. Approved full-capacity simulated UI QA and
+  showcase; preserve existing ranking, server data and configured capacity.
+
 - Stone stronghold (2026-11-18): creator approved reference-style gray stone walls,
   24-stud bodies, connected walkable perimeter, four corner archer posts and reuse
   of copied central-castle details. Optional chain after first Mint lane:

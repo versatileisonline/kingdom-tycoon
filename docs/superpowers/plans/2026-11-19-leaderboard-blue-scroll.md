@@ -19,12 +19,29 @@
 - Preview data stays client-only and is clearly marked; real saved data remains untouched.
 
 ## Task 1: Palette and border regression
-- [ ] Reproduce the missing top stroke against the existing view (first row y equals viewport y).
-- [ ] Add view checks for outline clearance, full-capacity canvas and last-row reachability.
-- [ ] Apply scoped palette and inset changes; run engine checks, formatting/lint and build.
-- [ ] Commit coherent implementation and tests.
+- [x] Reproduce the missing top stroke against the existing view (first row y equals viewport y).
+- [x] Add view checks for outline clearance, full-capacity canvas and last-row reachability.
+- [x] Apply scoped palette and inset changes; run engine checks, formatting/lint and build.
+- [x] Commit coherent implementation and tests.
 
 ## Task 2: Showcase and documentation
-- [ ] Test desktop, phone landscape/portrait and short viewport; exercise native scrolling, Tab/X and menu exclusivity.
-- [ ] Showcase 60 simulated entries at top/bottom; record screenshots and accurate limits.
-- [ ] Update authorized docs and commit; leave a clearly marked temporary Studio preview for review.
+- [x] Test desktop, phone landscape and short viewport; exercise native scrolling, Tab/X and menu exclusivity. Portrait excluded because the game uses LandscapeSensor.
+- [x] Showcase 60 simulated entries at top/bottom; record screenshots and accurate limits.
+- [x] Update authorized docs and commit; leave a clearly marked temporary Studio preview for review.
+
+## Verification and review record
+
+Commits a0b52c3 and f6a49aa implement the approved UI change, engine checks and
+reproducible preview. Top-border regression failed before padding; compact-column
+containment failed on A06 before sizing the column from the padded row width.
+Both passed afterward. Suites passed desktop1429x974, A06 landscape705x338 and
+short-landscape545x338. Native wheel reached rank60 on phone/desktop, native
+Ranks/Tab/X and Settings exclusivity passed. Server attribute presentation was
+checked and restored. Existing203785492 asset-type warnings are unrelated.
+
+Fresh reviewer findings addressed: compact scrollbar intrusion, persistent preview
+label on short viewports, synthetic ID collision with Studio negative IDs, and
+fixed-header assertion timing. A fixture cache issue found during QA was resolved
+by observing live GUI state instead of requiring a gameplay controller from the
+Command Bar. No outstanding review findings. Review/test scope is UI simulations
+plus single-client replication, not a60-client network test.

@@ -73,6 +73,15 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Leaderboard blue/scroll QA (2026-11-19): LeaderboardView uses the HUD's royal-blue
+fill and alternating blue rows. LeaderboardConfig owns row colors, outline inset
+and a reserved gold scrollbar lane; compact values stay within the padded row.
+LeaderboardClientTests.RunView exercises60-entry engine layout/reranking/cleanup;
+tools/PreviewLeaderboard.luau is an unmapped, client-only showcase, marked PREVIEW
+in the always-visible banner. No new assets, schema, remotes, mappings or capacity
+changes. Desktop and two landscape sizes passed; real60-client load remains
+untested. Reproduction, screenshots, controls and limits: docs/SERVER_LEADERBOARD.md.
+
 Stone stronghold (2026-11-18): StrongholdConfig, ProtectionDoorService and
 KingdomResidentsService add the optional StoneWalls8000 → ProtectionDoor9000 →
 ArcherPosts10000 → KingdomResidents12000 chain after RoyalMintUpgrader08.
@@ -567,6 +576,13 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   from runtime plot clones outside Studio.
 
 ## 11. Commands
+
+Leaderboard: in Studio Play Client Command Bar, require Client.UI.LeaderboardClientTests
+and call Run(State), then RunView(View, State, LocalPlayer.PlayerGui,60).
+Expect All checks passed and All60-entry layout checks passed. For a hands-on
+full-server UI, enter/open Ranks and run tools/PreviewLeaderboard.luau; X removes
+the synthetic overlay, Tab closes it with the real board. No data writes.
+Exact commands and verification limits: docs/SERVER_LEADERBOARD.md.
 
 Stronghold: Studio Mock, no claim/other previews, Server attribute
 StudioStrongholdTests=true. Optional StudioStrongholdRegression=true runs farm,
