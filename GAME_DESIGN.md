@@ -109,6 +109,15 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Stone stronghold (2026-11-18): creator approved reference-style gray stone walls,
+  24-stud bodies, connected walkable perimeter, four corner archer posts and reuse
+  of copied central-castle details. Optional chain after first Mint lane:
+  StoneWalls8000, ProtectionDoor9000, ArcherPosts10000, Residents12000 Gold.
+  Latest population is14: four archers, eight walkers, two workers. Door is a visible
+  partly transparent ward with owner-only toggle, enabled each session; owner and
+  NPCs pass safely, visitors receive lethal damage even with PvP off. Explicitly
+  approved exception to opt-in PvP and visual-only defenses; general combat/armies
+  remain deferred. Existing spawn protection retained. Purchases reset on rebirth.
 - Sprint style refinement (2026-11-18): creator selected free Evade animation
   source74987847468722 and clarified that the run needs more sway. Adapt its R6
   Run motion to the existing R15 avatar while retaining the current sword,

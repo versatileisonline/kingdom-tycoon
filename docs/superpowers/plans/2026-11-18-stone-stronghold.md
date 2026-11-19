@@ -6,3 +6,11 @@ Approved chat plan: reference-style 24-stud stone walls and continuous six-stud 
 - Working in the connected Rojo checkout to preserve the live source path.
 - RED asset assertion observed: StoneWalls missing.
 - Tasks: authored assets; catalog/replacement; server door; residents; integration/verification/docs.
+
+## Results
+- Asset/chain commit22663aa; runtime/services/tests commit4cf3f96.
+- Normal bootstrap tests passed including8moving villagers,14restored rigs and rebirth cleanup.
+- Farm, purchase and rebirth regressions passed sequentially.
+- Review findings corrected: corner passage obstruction, character collision lifecycle,
+  saved-restore isolation timing, true castle copies and recognizable medieval props.
+- Limits and final verification recorded in docs/STONE_STRONGHOLD.md.
