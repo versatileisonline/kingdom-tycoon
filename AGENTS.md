@@ -776,6 +776,18 @@ before players have a purchase to make.
 
 ## 12. Status
 
+Layer1 acceptance (2026-11-19): fresh normal-bootstrap data/plot/entry, farm/purchase,
+both Mint chains, tutorial/HUD, Shop simulation, optional sword/sprint, course,
+stronghold and rebirth checks passed. Three isolated Persistent test-store sessions
+verified purchase/resident restoration and durable rebirth reset; normal player
+records untouched. Fixed Rebirth phone inset clipping and cross-menu left-launcher
+overlap, with regression checks, review and static/build verification. Real
+multiplayer attempt launched zero clients; visitor/cross-client/load checks remain.
+One plot/capacity60, unset pass IDs, physical devices, native wall traversal and
+legacy durable migration remain open. Restored Mock/default simulator/empty test
+attributes; native Play entered with0Gold/0Rebirths/0LifetimeGold/no claim. No save,
+publish or push. Full evidence/limits: docs/ACCEPTANCE_2026_11_19.md.
+
 Stone stronghold (2026-11-18): installed/refined in Studio with original template
 backed up; central castle preserved. Normal-bootstrap stronghold purchase, owner
 ward,14rig/moving-eight, reclaim and rebirth tests passed. Existing farm, purchase

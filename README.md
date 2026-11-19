@@ -311,7 +311,7 @@ depend on that running service context.
   - [ ] 1.8 Shop + gamepasses ([three-pass implementation; real pass setup and live purchase acceptance pending](docs/ROYAL_SHOP.md))
   - [ ] 1.9 Rebirth ([implemented; durable rejoin/device acceptance pending](docs/REBIRTH.md))
   - [ ] 1.10 Leaderboards ([server Tab panel and Lifetime Gold implemented; global rankings deferred](docs/SERVER_LEADERBOARD.md))
-  - [ ] 1.11 Polish + playtest (analytics, exploit pass and broader playtesting pending)
+  - [ ] 1.11 Polish + playtest ([acceptance results and two UI repairs](docs/ACCEPTANCE_2026_11_19.md); analytics, multiplayer/device checks and broader playtesting pending)
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)
