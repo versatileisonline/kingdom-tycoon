@@ -73,6 +73,14 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Evade sprint adaptation (2026-11-18): assets/animations/evade-sprint-r15.rbxm
+is a Studio-serialized R15 adaptation of free R6 Run source74987847468722 by wifonn3.
+Tools.BuildEvadeSprintAnimation is a one-time authoring recipe; CheckEvadeSprintAnimation
+asserts16-pose hierarchy,25 keys/0.65s, Movement priority, closed loop and stronger
+sway. No runtime mappings or imported scripts. Approved owner animation98098361982208
+now replaces sprint motion; native run/sword/jump/release/exhaustion checks passed. See
+assets/animations/README.md and docs/SPRINT_ANIMATION.md.
+
 Shop/Rebirth launcher trim (2026-11-18): both left buttons use the same 30px
 gold corner artwork as Settings/Ranks, with separate caption labels so padding
 cannot move the ornaments. HudConfig.UI.LauncherCornerSize owns their size;

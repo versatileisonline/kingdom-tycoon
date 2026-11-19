@@ -7,7 +7,8 @@ return table.freeze({
 	RECOVERY_DELAY = 1,
 	SPEED_MULTIPLIER = 1.5,
 	TICK_SECONDS = 0.1,
-	ANIMATION_ID = "rbxassetid://507767714",
+	-- R15 adaptation of free Evade Run74987847468722 (wifonn3); see assets/animations.
+	ANIMATION_ID = "rbxassetid://98098361982208",
 	ANIMATION_FADE = 0.15,
 	ANIMATION_REFERENCE_SPEED = 24,
 	DOUBLE_TAP_SECONDS = 0.3,

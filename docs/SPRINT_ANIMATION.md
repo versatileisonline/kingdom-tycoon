@@ -1,5 +1,43 @@
 # Sprint animation
 
+## Evade-style replacement
+
+The creator selected [Evade Animations v1](https://create.roblox.com/store/asset/74987847468722)
+by wifonn3 and requested more sway. Its free script-free Run is authored for R6,
+so the motion was adapted to R15 and exported by Studio to
+assets/animations/evade-sprint-r15.rbxm. The published Animation is
+**98098361982208**, owned by experience creator9916983918 and approved by Roblox.
+SprintConfig.ANIMATION_ID now uses that permanent ID. No temporary hashes ship.
+
+The adaptation preserves25 keys/0.65s, converts R6 joint axes, keeps R15 limb chains
+connected and closes the loop exactly. Alternating torso roll is amplified around
+its original center and distributed across pelvis/waist. Native measurements show
+11.69 degrees of total torso roll versus7.42 for the previous run. Small elbow/knee
+bends accommodate the R15 rig. Only the Run motion is reused; the source character,
+walk/jump/fall/idle clips and controls are not installed.
+
+Native fresh-Play checks confirmed the published clip loads and loops at full
+Movement weight during24-stud Shift sprint. One sword567479941 Action track played
+at full weight alongside one new run track, preserving the upper-body swipe and
+lower-body stride. Existing jump/freefall animations took over while airborne;
+release stopped the run and restored16-stud walking. Continuous circular movement
+reported authoritative exhaustion and stopped the new track/restored walking.
+An initial sword check ran before preview equipment was ready; after waiting for
+the issued sword, the native readback confirmed both tracks at full weight.
+
+Authoring checks assert the16-pose hierarchy, timing, priority, loop equality and
+sway. See assets/animations/README.md for attribution, asset contract, owner asset
+and rebuild steps. Formatting/Selene pass. Existing runtime controller, controls,
+stamina, sword code, schema and Rojo mappings are unchanged. The upload used the
+Open Cloud API after the creator approved the upload directory. No game publish.
+
+Creator acceptance: inspect the feel of the stronger sway and transitions with
+and without the sword. A two-client visibility test is still outstanding.
+Normal Output stays `[SprintAnimationController] Ready (R15 sprint animation)`.
+Authoring check Output: `All Evade R15 sprint asset checks passed`.
+
+## Previous compatible fallback (historical)
+
 Uses R15 run clip `507767714`, referenced by the free [Default Animate Script
 (R15)](https://create.roblox.com/store/asset/13015609472) by RoiGipot. The animation
 loads successfully in this experience (0.65-second loop). Creator Store search

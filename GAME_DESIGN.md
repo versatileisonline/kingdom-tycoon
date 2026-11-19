@@ -109,6 +109,12 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+- Sprint style refinement (2026-11-18): creator selected free Evade animation
+  source74987847468722 and clarified that the run needs more sway. Adapt its R6
+  Run motion to the existing R15 avatar while retaining the current sword,
+  sprint controls and stamina. Uploaded owner asset98098361982208 after the creator
+  approved the upload directory; the published clip passed native integration.
+
 
 - HUD consistency (2026-11-18): creator approved moving a compact Ranks launcher
   directly left of Settings, with matching royal-blue fill/gold trim and a new
