@@ -87,6 +87,16 @@ with the temporary60-player board open at the top. No cloud save, publish or pus
 was performed by this task. Local capture artifacts were written to
 `/private/tmp/kingdom-leaderboard-qa/` (desktop/phone top and bottom).
 
+Follow-up integration/reset (2026-11-19): creator approved the visuals and asked
+for local main integration and a fresh player. Only the three leaderboard commits
+were integrated; inherited stronghold work remains separate. Main formatting,
+Selene and Rojo build passed, and its four leaderboard source/fixture files match
+the Studio-tested branch. Cleared StudioTutorialPreview, StudioPreviewFrontier and
+StudioPreviewGold in Edit, restarted Mock Play and verified native menu entry:
+Gold0, Rebirths0, no claimed plot and no synthetic leaderboard overlay. Persistent
+saves were not erased. Studio was handed to the acceptance-testing agent, with
+the fresh-player state communicated. No push, cloud save or publish.
+
 ## Compact launcher and panel refinement (2026-11-18)
 
 Ranks now sits directly left of Settings with a 24px gap, matching royal blue
