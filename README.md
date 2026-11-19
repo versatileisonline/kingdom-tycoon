@@ -152,6 +152,9 @@ src/
     ├── Logger.luau                 # typed, scoped Info/Warn logging
     ├── Types.luau                  # Lifecycle and PlayerData type contracts
     └── Hello.luau                  # retained template module; unused
+assets/animations/                 # Studio-exported Evade-style R15 sprint source and attribution
+tools/BuildEvadeSprintAnimation.luau # one-time R6-to-R15 authoring recipe; not runtime-mapped
+tools/CheckEvadeSprintAnimation.luau # Studio hierarchy/loop/timing/sway authoring checks
 Packages/                          → ReplicatedStorage.Packages (generated, ignored)
 ServerPackages/                    → ServerScriptService.ServerPackages (generated, ignored)
 tools/BuildPlotScene.luau            # one-time Edit-mode scene builder; not synced or run in-game

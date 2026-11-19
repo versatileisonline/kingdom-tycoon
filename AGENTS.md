@@ -750,8 +750,12 @@ current systems, service/controller structure, schema v2/migration and partial
 leaderboard roadmap. SESSION_HANDOFF replaces the obsolete Shop-only snapshot.
 GAME_DESIGN adds only the explicitly approved HUD decision. Milestones remain
 open where live purchases, multiplayer/device/persistence acceptance is pending.
-Concurrent Evade sprint work owns Studio and its uncommitted SprintConfig sync;
-do not stage it with this integration. No Roblox save/publish is authorized here.
+Evade sprint replacement is committed: approved owner clip98098361982208 and
+Studio-exported R15 source now replace the old fallback. Native run/sword layering,
+jump, release, exhaustion and authoring checks pass. Studio save167; temporary Mock
+courtyard Play has100,000 Gold and sword/sprint unlocked. No game publish.
+The shared SprintConfig sync and its asset documentation are committed separately
+from the HUD integration; there is no pending sprint patch.
 
 Shop/Rebirth trim and royal-blue Gold badge (2026-11-18): formatting, Selene
 (zero errors/warnings), code-only Rojo build and diff checks passed. Runtime-only

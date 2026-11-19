@@ -59,21 +59,33 @@ do not contain the live map, templates, terrain or cloud place history.
 
 ## Studio ownership and verification
 
-Place77311816657817, experience10769565462. Another task currently owns Studio for
-an Evade-style R15 sprint animation replacement. Do not stop/restart Play, change
-camera/input, save, or clear preview flags without coordinating with that task.
-Its newer animation work is separate from this HUD/documentation integration.
-The committed fallback remains described in SPRINT_ANIMATION.md until the sprint
-replacement is independently committed. An uncommitted shared SprintConfig sync
-may be present; preserve it and do not stage it in unrelated commits.
+Place77311816657817, experience10769565462. Evade-style sprint replacement is
+complete: approved owner animation98098361982208 replaces the previous fallback.
+The R6 source was adapted to R15 with stronger torso sway and a closed loop;
+source asset, authoring recipe/checks and attribution are committed. Native tests
+covered published loading, Movement/Action sword layering, jump, release and
+exhaustion. The shared SprintConfig sync is now committed; no pending task patch.
 
-This integration authorizes **Git push**, not a Roblox publish or cloud save.
+Studio was saved as version167 and left in a temporary Mock courtyard Play preview
+with100,000 Gold, sword and sprint owned. The authoring clip is preserved as
+ServerStorage.KingdomEvadeSprintR15; imported R6 candidates/preview rigs were removed.
+This save is not a game publish. Preview flags remain for hands-on testing and were
+set again after the clean save; coordinate before stopping or changing the session.
+
+The HUD integration authorized **Git push**; the sprint task separately saved
+Studio version167. Neither task published the game.
 Do not treat any historical version number or fixture in older notes as current
 Studio state. Inspect the active place/mode, data mode, preview flags and owner
 before starting a new acceptance session. Default config is Mock and test switches
 are false; runtime fixtures are temporary and do not establish live purchases.
 
 Recent verification:
+
+- Evade sprint: Studio-exported25-key/0.65s R15 clip,11.69-degree torso roll, exact
+  loop seam, full-weight Movement run with Action sword overlay, jump yielding,
+  Shift release and authoritative exhaustion checks passed. Asset checks print
+  `All Evade R15 sprint asset checks passed`. Multiplayer visibility and creator
+  assessment of the new sway remain outstanding.
 
 - Leaderboard: fresh Mock desktop and short-viewport checks, trophy load, exact
   launcher/panel dimensions, native Ranks/Tab/X and Settings exclusivity passed.
