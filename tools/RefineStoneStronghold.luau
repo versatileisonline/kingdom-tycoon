@@ -151,5 +151,53 @@ for _, v in stone:GetChildren() do
 		end
 	end
 end
+for _, x in { -17, 17 } do
+	local pole = Instance.new("Part")
+	pole.Name = "GateFlagPole"
+	pole.Size = Vector3.new(0.25, 7, 0.25)
+	pole.Anchored = true
+	pole.CanTouch = false
+	pole.Material = Enum.Material.Metal
+	pole.Color = Color3.fromRGB(80, 76, 67)
+	pole.CFrame = pivot * CFrame.new(x, 33.5, 74)
+	pole.Parent = stone
+	local flag = Instance.new("Part")
+	flag.Name = "RoyalBlueFlag"
+	flag.Size = Vector3.new(5, 2.5, 0.15)
+	flag.Anchored = true
+	flag.CanCollide = false
+	flag.CanTouch = false
+	flag.Material = Enum.Material.Fabric
+	flag.Color = Color3.fromRGB(35, 66, 150)
+	flag.CFrame = pivot * CFrame.new(x + 2.5, 35, 74)
+	flag.Parent = stone
+	local torch = Instance.new("Part")
+	torch.Name = "GateTorch"
+	torch.Size = Vector3.new(0.6, 2, 0.6)
+	torch.Anchored = true
+	torch.CanTouch = false
+	torch.Material = Enum.Material.Wood
+	torch.Color = Color3.fromRGB(86, 53, 30)
+	torch.CFrame = pivot * CFrame.new(x, 9, 79)
+	torch.Parent = stone
+	local flame = Instance.new("Part")
+	flame.Name = "TorchGlow"
+	flame.Shape = Enum.PartType.Ball
+	flame.Size = Vector3.new(0.8, 1.2, 0.8)
+	flame.Anchored = true
+	flame.CanTouch = false
+	flame.CanCollide = false
+	flame.Material = Enum.Material.Neon
+	flame.Color = Color3.fromRGB(255, 177, 46)
+	flame.CFrame = pivot * CFrame.new(x, 10.5, 79)
+	flame.Parent = stone
+	local light = Instance.new("PointLight")
+	light.Color = flame.Color
+	light.Range = 8
+	light.Brightness = 1
+	light.Shadows = false
+	light.Parent = flame
+end
+
 t:SetAttribute("StrongholdRefined", true)
 return "Corner passage height repaired; central masonry copied; medieval props equipped"

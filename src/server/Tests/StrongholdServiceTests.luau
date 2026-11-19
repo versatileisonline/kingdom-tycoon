@@ -133,6 +133,15 @@ function Tests.Run(): ()
 			end
 		end
 		assert(restoredCount == 14, "Resident restoration failed")
+		for _, v in restored:GetChildren() do
+			if v:IsA("Model") and string.sub(v.Name, 1, 8) == "Villager" then
+				local npcRoot = v:FindFirstChild("HumanoidRootPart")
+				assert(
+					npcRoot and npcRoot:FindFirstChild("Player" .. player.UserId),
+					"Restored walkers must be nonblocking before data updates"
+				)
+			end
+		end
 		local target = require(Shared.RebirthConfig).Target(saved.Rebirths)
 		assert(Data.Update(player, function(draft)
 			draft.Gold = target

@@ -10,6 +10,7 @@ type Record = { Kingdom: Model, Rigs: { Model }, Added: { [string]: boolean }, A
 local records: { [Player]: Record } = {}
 local group = "KingdomResidents"
 local isolationDirty = false
+local isolateResidents: (() -> ())? = nil
 local function clear(r: Record): ()
 	r.Active = false
 	for _, rig in r.Rigs do
@@ -70,6 +71,11 @@ local function spawnRig(r: Record, role: string, frame: CFrame, walking: boolean
 	end
 	table.insert(r.Rigs, rig)
 	isolationDirty = true
+	task.defer(function()
+		if isolateResidents then
+			isolateResidents()
+		end
+	end)
 	return rig
 end
 local function walk(r: Record, rig: Model, points: { Vector3 }, offset: number): ()
@@ -285,13 +291,12 @@ function Service.Start(): ()
 			end
 		end
 	end
-	local isolationUpdates = Data.ObserveUpdates(function()
-		task.defer(isolate)
-	end)
+	isolateResidents = isolate
+	isolate()
 	game:BindToClose(function()
 		unsubscribe()
 		updated:Disconnect()
-		isolationUpdates:Disconnect()
+		isolateResidents = nil
 		added:Disconnect()
 		removing:Disconnect()
 		for player in playerConnections do
