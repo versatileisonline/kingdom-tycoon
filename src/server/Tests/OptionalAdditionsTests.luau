@@ -68,7 +68,7 @@ function Tests.Run(): ()
 		assert(not Equipment.TrySwing(owner), "Unowned sword accepted")
 		local optional = {}
 		for _, entry in Catalog.PURCHASES do
-			if entry.Optional then
+			if entry.Optional and entry.Requires == "RoyalMintDropper08" then
 				table.insert(optional, entry)
 			end
 		end

@@ -202,6 +202,29 @@ for _, offer in optionalOffers do
 	)
 end
 
+local strongholdPrevious = "RoyalMintUpgrader08"
+for _, offer in
+	{
+		{ "StoneWalls", "Stone Walls", 8000 },
+		{ "ProtectionDoor", "Protection Door", 9000 },
+		{ "ArcherPosts", "Archer Posts", 10000 },
+		{ "KingdomResidents", "Residents", 12000 },
+	}
+do
+	local id = offer[1] :: string
+	table.insert(
+		purchases,
+		table.freeze({
+			Id = id,
+			Name = offer[2] :: string,
+			Price = offer[3] :: number,
+			Requires = strongholdPrevious,
+			Optional = true,
+		})
+	)
+	strongholdPrevious = id
+end
+
 return table.freeze({
 	PURCHASES = table.freeze(purchases),
 	RUN_TESTS_IN_STUDIO = false,
