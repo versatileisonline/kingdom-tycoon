@@ -109,6 +109,14 @@ Roaming ambient NPCs; counts capped per server for performance.
 - [ ] Which analytics tool/events to log
 
 ## 9. Decision Log
+
+- HUD consistency (2026-11-18): creator approved moving a compact Ranks launcher
+  directly left of Settings, with matching royal-blue fill/gold trim and a new
+  trophy icon; reduce the open leaderboard panel by about 8%. Creator then requested
+  the same gold corner accents on Shop/Rebirth launchers and clarified that the
+  bottom-left Gold amount's black background should become matching royal blue.
+  Preserve current icons, text, collection behavior and gameplay. Creator approved
+  main integration/push and a documentation refresh after reviewing these changes.
 - Sprint animation (2026-11-18): creator requested a free Creator Store running
   animation tied to sprint, consistent with the sword and existing movement.
   Preserve current controls/stamina and default jump; layer a grounded sprint

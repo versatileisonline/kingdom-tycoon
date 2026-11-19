@@ -24,11 +24,13 @@ were runtime UI properties/instances. No Play restart or native menu input was
 performed during the other task's animation checks. Fresh Play remains the
 source/bootstrap acceptance check; expect normal `ClientBootstrap ... Ready`
 without HUD/Shop/Rebirth errors. No new frame work or connections; eight static
-corner ImageLabels reuse the existing asset. No push or publish; main integration
-waits for creator approval of the result.
+corner ImageLabels reuse the existing asset. Creator subsequently approved main
+integration/push and documentation refresh; no Roblox publish was requested.
 
 Approved: royal three-card mockup, permanent Collect Now 49 Robux, 2× Gold 99,
-Auto-Collect 149. Cosmetics, rebirth, leaderboards and horses are later milestones.
+Auto-Collect 149. Rebirth and server leaderboards are implemented separately; see
+[Rebirth](REBIRTH.md) and [Server leaderboard](SERVER_LEADERBOARD.md). Cosmetics
+and rideable horses remain later work.
 
 ## Player behavior
 

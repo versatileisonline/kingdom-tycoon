@@ -452,11 +452,17 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   as children. StarterPlayerScripts clones Client and its descendants into each
   player's PlayerScripts. ReplicatedStorage is visible to clients; do not put
   secrets or authoritative data there.
-- Server startup order: require DataService, PlotService, FarmService, PurchaseService, then ExampleService → call all
+- Server startup order: DataService, PresentationService, EntitlementService,
+  PlotService, EntryService, FarmService, PurchaseService, EquipmentService,
+  TrainingCourseService, SprintService, ShopService, RebirthService, ExampleService → call all
   services' Init() → call all services' Start() → log ServerBootstrap Ready.
   DataService loads player profiles asynchronously; Ready is not a data-ready signal.
   The optional Studio-only test switch runs DataLayerTests afterward via task.spawn.
-- Client startup order: require ExampleController, PlotController, CameraController → call all controllers' Init()
+- Client startup order: SettingsController, MainMenuController, HudController,
+  ShopController, RebirthController, LeaderboardController, AudioController,
+  GraphicsController, WorldTypographyController, ExampleController, PlotController,
+  CameraController, SprintController, SprintAnimationController, EquipmentController,
+  TrainingCourseController, PurchaseGuidanceController → call all controllers' Init()
   → call all controllers' Start() → log ClientBootstrap Ready.
 - Lists are explicit and ordered. Modules implement typed `Init(): ()` and
   `Start(): ()` functions called with dot syntax. Require/Init must avoid gameplay
@@ -466,10 +472,11 @@ ServerPackages/                             → ServerScriptService.ServerPackag
   1.0.3 is pinned as a server dependency. Track wally.lock; never edit generated packages.
 - DataService is the sole gameplay access path: GetSnapshot returns detached data;
   Update validates a non-yielding draft, rejects errors/stale revisions, and copies
-  committed data. No profiles or player data are replicated in this milestone.
-- Schema v1: Gold = 0, Rebirths = 0, PurchasedBuildings = {}, SchemaVersion = 1.
-  Future migrations run sequentially on copies when individual records load;
-  no historical steps exist yet. Invalid/unsupported/newer records are rejected.
+  committed data. Profiles stay server-only; selected read-only attributes support UI.
+- Schema v2: Gold = 0, LifetimeGold = 0, Rebirths = 0, PurchasedBuildings = {},
+  SchemaVersion = 2. The v1 → v2 migration initializes LifetimeGold from banked
+  Gold. Migrations run sequentially on copies when records load; invalid,
+  unsupported and newer records are rejected. See docs/SERVER_LEADERBOARD.md.
 - Studio defaults to Mock; optional Persistent uses only the test store. Published
   servers use only the live store. Persistent loads refuse unavailable API access
   and preflight raw envelopes (one extra read/join, not atomic with session locking).
@@ -726,6 +733,17 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Approved main integration/documentation refresh (2026-11-18): creator requested
+main push after the Ranks/Shop/Rebirth/Gold styling changes. Integration starts
+from current remote main, preserving woodland landscaping and the Shop preview
+entry fix; only the two new HUD commits are reapplied. README now documents
+current systems, service/controller structure, schema v2/migration and partial
+leaderboard roadmap. SESSION_HANDOFF replaces the obsolete Shop-only snapshot.
+GAME_DESIGN adds only the explicitly approved HUD decision. Milestones remain
+open where live purchases, multiplayer/device/persistence acceptance is pending.
+Concurrent Evade sprint work owns Studio and its uncommitted SprintConfig sync;
+do not stage it with this integration. No Roblox save/publish is authorized here.
 
 Shop/Rebirth trim and royal-blue Gold badge (2026-11-18): formatting, Selene
 (zero errors/warnings), code-only Rojo build and diff checks passed. Runtime-only

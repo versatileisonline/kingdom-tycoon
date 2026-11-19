@@ -9,9 +9,10 @@ A medieval knight tycoon for Roblox. Build a kingdom with droppers, farms, and w
 These are the goals this project is built around. Items are checked off only when implemented.
 
 - [x] Rojo + VS Code + Git workflow (code as files, not just inside Studio)
-- [ ] Typed Luau with a modular service/controller architecture
-- [ ] Session-locked data saving (ProfileStore) with versioned schema and migrations
-- [ ] Server-authoritative purchases, rebirths, and combat validation
+- [x] Typed Luau with a modular service/controller architecture
+- [x] Session-locked data saving (ProfileStore) with schema v2 and a v1 migration
+- [x] Server-authoritative purchases, collection, rebirths, sprint and practice-course validation
+- [ ] Server-authoritative combat (Layer 2; the current training sword does no damage)
 - [ ] Global leaderboards via OrderedDataStore (KOs, rebirths, gold)
 - [ ] Analytics: retention, session length, funnel drop-off
 - [ ] Documented performance work (NPC and army caps)
@@ -46,6 +47,20 @@ More help: [Rojo documentation](https://rojo.space/docs).
 
 ## Project structure
 
+Current Layer 1 implementation includes Play/Settings entry, touch claim and farm
+start, four farm droppers, timber walls, two Mint lanes with eight droppers and
+eight doubling arches each, shared collection, three permanent Shop offers,
+same-plot rebirth, optional courtyard purchases and a timed practice course.
+The custom server leaderboard ranks Lifetime Gold and shows Rebirths; global
+rankings remain deferred. The UI uses Arcade lettering, royal-blue launchers and
+gold trim. Ranks sits beside Settings; the Gold badge now shares their blue fill.
+
+Current system guides:
+
+- [Startup menu](docs/MAIN_MENU.md), [rebirth](docs/REBIRTH.md), and [server leaderboard/schema v2](docs/SERVER_LEADERBOARD.md).
+- [Optional purchases and sprint controls](docs/OPTIONAL_KINGDOM_ADDITIONS.md), [medieval courtyard/course](docs/MEDIEVAL_COURTYARD.md), and [landscaping](docs/PLOT_LANDSCAPING.md).
+- [Sword animation](docs/SWORD_ANIMATION.md) and [sprint animation](docs/SPRINT_ANIMATION.md).
+
 Royal Shop setup and testing: [docs/ROYAL_SHOP.md](docs/ROYAL_SHOP.md).
 
 Latest continuation notes: [docs/SESSION_HANDOFF.md](docs/SESSION_HANDOFF.md).
@@ -70,13 +85,18 @@ src/
 │   │   ├── DataSchema.luau         # defaults, validation, detached copies
 │   │   └── DataMigrations.luau     # versioned preparation; sequential migration registry
 │   ├── Services/
-│   │   ├── PresentationService.luau # Gold/GoldReady presentation from server data
+│   │   ├── PresentationService.luau # Gold/readiness/Lifetime Gold presentation
 │   │   ├── DataService.luau        # server-only player sessions and validated updates
 │   │   ├── EntryService.luau       # startup Play validation and character entry
 │   │   ├── PlotService.luau        # server-authoritative claims, template clones, respawns, cleanup
 │   │   ├── FarmService.luau        # wheat production, pit accounting, owner gold collection, cleanup
 │   │   ├── TrainingCourseService.luau # server-owned timed practice and recovery
 │   │   ├── PurchaseService.luau    # owner-only purchase plates and saved unlocks
+│   │   ├── EntitlementService.luau # server-owned Roblox pass entitlements
+│   │   ├── ShopService.luau        # pass lookup and validated collection requests
+│   │   ├── RebirthService.luau     # validated same-plot reset and multiplier
+│   │   ├── EquipmentService.luau   # non-damaging sword and validated swing
+│   │   ├── SprintService.luau      # authoritative stamina/speed and sprint state
 │   │   └── ExampleService.luau     # startup example; no gameplay
 │   ├── Plots/
 │   │   └── PlotRegistry.luau       # non-yielding session ownership and exclusivity
@@ -91,13 +111,23 @@ src/
 │       ├── PurchaseServiceTests.luau # opt-in authored farm progression checks
 │       └── FarmServiceTests.luau   # standalone accounting and opt-in physical collection checks
 ├── client/                         → StarterPlayer.StarterPlayerScripts.Client (LocalScript)
-│   ├── UI/LeaderboardView.luau    # custom server Tab rankings and player portraits
+│   ├── UI/                        # HUD, Settings, Shop, Rebirth, menu and stamina views
+│   ├── Movement/                  # sprint input, animation gating and helpers
+│   ├── UI/LeaderboardView.luau    # compact custom server Tab rankings and portraits
 │   ├── UI/LeaderboardState.luau   # stable lifetime Gold sorting and formatting
 │   ├── init.client.luau            # thin client bootstrap
 │   └── Controllers/
 │       ├── PlotController.luau     # claim guidance and server feedback; no authority
 │       ├── HudController.luau       # compact Gold display and Settings view
-│       ├── SettingsController.luau  # session preferences
+│       ├── SettingsController.luau  # session preferences and menu exclusivity
+│       ├── ShopController.luau      # pass UI and validated collection requests
+│       ├── RebirthController.luau   # reset confirmation and multiplier UI
+│       ├── LeaderboardController.luau # connected-player rankings and headshots
+│       ├── EquipmentController.luau # sword input and animation presentation
+│       ├── SprintController.luau    # sprint requests and stamina HUD
+│       ├── SprintAnimationController.luau # sprint locomotion visual layer
+│       ├── TrainingCourseController.luau # timer/checkpoint presentation
+│       ├── WorldTypographyController.luau # Arcade font on authored signs
 │       ├── AudioController.luau     # music/world volume
 │       ├── GraphicsController.luau  # reversible local quality reduction
 │       ├── PurchaseGuidanceController.luau # affordable first-action gold tutorial trail
@@ -105,7 +135,15 @@ src/
 │       ├── CameraController.luau   # R camera lock, restoration, respawn handling
 │       └── ExampleController.luau  # startup example; no gameplay
 └── shared/                         → ReplicatedStorage.Shared (Folder)
-    ├── HudConfig.luau              # HUD palette, session defaults, music IDs
+    ├── HudConfig.luau              # royal HUD palette, trim, defaults and music
+    ├── ShopConfig.luau             # three offers, permanent pass IDs (unset)
+    ├── RebirthConfig.luau          # targets, multipliers and reset presentation
+    ├── LeaderboardConfig.luau      # compact launcher, trophy and panel sizing
+    ├── MainMenuConfig.luau         # entry menu copy and presentation
+    ├── EquipmentConfig.luau        # sword controls, grip and free animation
+    ├── SprintConfig.luau           # speed/stamina, Shift timing and animation
+    ├── TrainingCourseConfig.luau   # checkpoint and recovery limits
+    ├── TutorialConfig.luau         # first-action progression and arrow trail
     ├── Config.luau                 # shared constants, including MAX_ARMY_SIZE = 10
     ├── FarmConfig.luau             # starter farm tuning and opt-in test switch
     ├── MintConfig.luau             # eight Mint producers, coin value and physics caps
@@ -134,8 +172,11 @@ and server-only packages stay on the server.
 
 Each bootstrap requires an explicit ordered list of services/controllers, calls
 all `Init()` functions, then all `Start()` functions in the same order, and logs
-`Ready` only if startup succeeds. Server order is DataService, PlotService, FarmService, PurchaseService, then ExampleService;
-the client contains ExampleController, PlotController, and CameraController. Player profiles load asynchronously, so
+`Ready` only if startup succeeds. The ordered lists in
+[src/server/init.server.luau](src/server/init.server.luau) and
+[src/client/init.client.luau](src/client/init.client.luau) are authoritative.
+DataService initializes before gameplay services; Settings initializes before
+client menus and movement. Player profiles load asynchronously, so
 server `Ready` does not mean a particular player's data is ready.
 Modules must keep top-level code and `Init()` free of gameplay side effects;
 `Start()` should return promptly. There is no server/client ordering guarantee.
@@ -177,15 +218,19 @@ On Play, expect these lines (server/client pairs may interleave):
 [KingdomTycoon][ServerBootstrap] Ready
 [KingdomTycoon][ExampleController] Started
 [KingdomTycoon][ClientBootstrap] Ready
-[KingdomTycoon][DataService] Profile loaded for <userId> (schema 1, Mock)
+[KingdomTycoon][DataService] Profile loaded for <userId> (schema 2, Mock)
 ```
 
 ### Data layer (milestone 1.2)
 
-Initial player data: `SchemaVersion = 1`, `Gold = 0`, `Rebirths = 0`,
-`PurchasedBuildings = {}` (building ID → boolean). Plots do not change this schema.
-Milestone 1.4 credits collected starter-farm Gold through DataService without a
-schema change. Purchases, the economy HUD, and data remotes remain deferred.
+Current player data: `SchemaVersion = 2`, `Gold = 0`, `LifetimeGold = 0`,
+`Rebirths = 0`, `PurchasedBuildings = {}` (building ID → boolean). Valid v1 saves
+migrate by initializing LifetimeGold from banked Gold; prior spending cannot be
+reconstructed. Successful banking increments both balances atomically. Purchases
+and rebirth preserve LifetimeGold. DataService remains the only gameplay data
+access path; PresentationService exposes selected read-only attributes to clients.
+See [the server leaderboard guide](docs/SERVER_LEADERBOARD.md) for migration and
+rollback limits. Rebirth/Shop/Sprint remotes are runtime-created and server-validated.
 See [the farm contract and verification guide](docs/MILESTONE_1_4.md) for assets,
 production, collection, camera lock, five-second spawn shields, and test instructions.
 
@@ -214,9 +259,10 @@ in Mock mode while probing availability; mock tests do not require enabling acce
 Schema versions belong to **each saved player record**, not a single database-wide
 flag. On a future schema change, increment the current version, add a sequential
 N → N+1 step to DataMigrations, update Types/defaults/validation, and test with
-representative old records. Players migrate when their records load. Version 1
-has no historical migration steps; missing, corrupt, newer, or unsupported data
-is rejected, not silently reset. Migration preparation operates on a copy.
+representative old records. Players migrate when their records load. The current
+registry includes v1 → v2; missing, corrupt, newer, or unsupported data is rejected,
+not silently reset. Migration preparation operates on a copy. Do not deploy
+schema-v1-only code after v2 records have been saved.
 
 Persistent loading performs one extra raw DataStore read to reject malformed
 ProfileStore envelopes before its repair path, then validates the locked profile.
@@ -227,7 +273,7 @@ safety costs. No per-frame server loops were added.
 Verification:
 
 1. Keep Studio mode `"Mock"`, set `RUN_TESTS_IN_STUDIO = true` in Config on disk,
-   sync, and press Play. Expect schema checks (11 cases), service isolation and
+   sync, and press Play. Expect schema/default/migration checks, service isolation and
    mutation checks, mock storage verification, and `All mock data-layer checks passed`.
    Tests restore the original player data after their mutations.
 2. Stop Play. Expect `Final save confirmed for <userId> (Mock)`. This confirms a
@@ -256,11 +302,13 @@ depend on that running service context.
   - [x] 1.2 Data layer (mock runtime and durable persistence verified)
   - [x] 1.3 Plot system ([full-platform touch claim, release, and reclaim verified in Studio](docs/KINGDOM_LAYOUT.md))
   - [x] 1.4 Starter farm/dropper loop ([solo and multiplayer Play acceptance verified in Mock mode](docs/KINGDOM_LAYOUT.md))
-  - [x] 1.5 Purchase buttons (linked purchases verified in Studio with Mock data; live assets pending)
+  - [x] 1.5 Purchase buttons (installed farm/Mint/optional unlocks; progressive plates verified in Mock)
   - [ ] 1.6 Farms ([four-dropper assets installed and saved; purchase/farm suites passed; broader acceptance pending](docs/MILESTONE_1_6.md))
   - [ ] 1.7 HUD + settings ([implemented; focused cursor/touch acceptance pending](docs/MILESTONE_1_7.md))
   - [ ] 1.8 Shop + gamepasses ([three-pass implementation; real pass setup and live purchase acceptance pending](docs/ROYAL_SHOP.md))
   - [ ] 1.9 Rebirth ([implemented; durable rejoin/device acceptance pending](docs/REBIRTH.md))
+  - [ ] 1.10 Leaderboards ([server Tab panel and Lifetime Gold implemented; global rankings deferred](docs/SERVER_LEADERBOARD.md))
+  - [ ] 1.11 Polish + playtest (analytics, exploit pass and broader playtesting pending)
 - [ ] **Layer 2: Open world** (horses, NPCs, outposts, opt-in PvP, bounties)
 - [ ] **Layer 3: Armies and defense** (formations, base defense)
 - [ ] **Layer 4: Houses and dragons** (alliances, server-wide buffs, cosmetic dragons)
