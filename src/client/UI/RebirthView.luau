@@ -250,7 +250,11 @@ function View.new(parent: Instance, settings: any)
 		if not camera then
 			return
 		end
-		local viewport = camera.ViewportSize
+		-- Core UI insets reduce this ScreenGui's usable height on phones.
+		local viewport = screen.AbsoluteSize
+		if viewport.X <= 0 or viewport.Y <= 0 then
+			return
+		end
 		local narrow = viewport.X < 840
 		local scale = math.min(1, math.max(1, viewport.Y - 48) / 440)
 		panelScale.Scale = scale
@@ -264,6 +268,7 @@ function View.new(parent: Instance, settings: any)
 		open.Position = UDim2.new(0, if narrow then 12 else 28, 0.30, Hud.UI.LauncherHeight + Hud.UI.LauncherGap)
 	end
 	local cameraConnection: RBXScriptConnection? = nil
+	table.insert(connections, screen:GetPropertyChangedSignal("AbsoluteSize"):Connect(fit))
 	local function cameraChanged(): ()
 		if cameraConnection then
 			cameraConnection:Disconnect()

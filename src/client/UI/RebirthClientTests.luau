@@ -16,6 +16,11 @@ function Tests.CheckLayout(): ()
 	assert(layout.FillDirectionMaxCells == (if viewport.X < 740 then 1 else 3), "narrow screens stack cards")
 	assert(cards.AbsoluteSize.Y > 80, "cards remain scrollable on short screens")
 	assert(panel.AbsolutePosition.X >= 0 and panel.AbsolutePosition.Y >= 0, "panel clears viewport origin")
+	assert(panel.AbsolutePosition.Y >= shade.AbsolutePosition.Y, "panel clears usable GUI origin")
+	assert(
+		panel.AbsolutePosition.Y + panel.AbsoluteSize.Y <= shade.AbsolutePosition.Y + shade.AbsoluteSize.Y,
+		"panel fits usable GUI height"
+	)
 	assert(panel.AbsolutePosition.X + panel.AbsoluteSize.X <= viewport.X, "panel fits viewport width")
 	assert(panel.AbsolutePosition.Y + panel.AbsoluteSize.Y <= viewport.Y, "panel fits viewport height")
 	assert(

@@ -50,6 +50,15 @@ the window itself explains the reset before the Rebirth action.
 
 ## Verification
 
+Acceptance repair (2026-11-19): panel fitting now uses the ScreenGui's usable
+size, including Roblox's core UI inset, and refits on usable-size changes. The
+Galaxy A06 landscape viewport was705x338 but the GUI was705x280; previously the
+panel began atY=-5 and extended beyond its container. The usable-origin assertion
+failed before the repair; normal-bootstrap client tests passed afterward on A06,
+and desktop layout checks passed after restoring the default simulator. New
+assertions check the panel against its actual shade bounds. Enter through Play
+before measuring game HUD layout: pre-entry ScreenGuis are intentionally disabled.
+
 Use Studio Mock, all other test switches false, and no StudioShopPreview.
 Enable only RebirthConfig.RUN_TESTS_IN_STUDIO, sync, Play before claiming.
 Expected Output:
