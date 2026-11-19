@@ -42,6 +42,7 @@ function View.new(parent: Instance, localId: number)
 	local screen = Instance.new("ScreenGui")
 	screen.Name, screen.ResetOnSpawn, screen.DisplayOrder = "KingdomLeaderboard", false, 25
 	screen.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	screen.IgnoreGuiInset = true
 	local panel = Instance.new("Frame")
 	panel.Name, panel.AnchorPoint = "Panel", Vector2.new(1, 0)
 	panel.Position, panel.Size = UDim2.new(1, -24, 0, 24), UDim2.fromOffset(Config.WIDTH, Config.HEIGHT)
@@ -85,12 +86,21 @@ function View.new(parent: Instance, localId: number)
 	local footer = label(panel, "Footer", "Tab to close", 160, Config.HEIGHT - 48, 480, 12)
 	footer.TextXAlignment, footer.TextColor3 = Enum.TextXAlignment.Center, Color3.fromHex(C.Muted)
 	local launcher = Instance.new("TextButton")
-	launcher.Name, launcher.Text, launcher.Font = "LeaderboardButton", "Ranks", Hud.FONT
-	launcher.TextSize, launcher.TextColor3 = 14, Color3.fromHex(C.Gold)
-	launcher.BackgroundColor3 = Color3.fromHex(C.Panel)
-	launcher.AnchorPoint, launcher.Position = Vector2.new(1, 0), UDim2.new(1, -20, 0, 212)
-	launcher.Size, launcher.Parent = UDim2.fromOffset(104, 42), screen
+	launcher.Name, launcher.Text = "LeaderboardButton", ""
+	launcher.BackgroundColor3 = Color3.fromHex(C.Raised)
+	launcher.AnchorPoint = Vector2.new(1, 0)
+	launcher.Size, launcher.Parent = UDim2.fromOffset(Config.LAUNCHER_WIDTH, Config.LAUNCHER_HEIGHT), screen
 	border(launcher, C.Border)
+	local launcherCorner = launcher:FindFirstChildOfClass("UICorner") :: UICorner
+	launcherCorner.CornerRadius = UDim.new(0, 12)
+	Style.Corners(launcher, 30, 2)
+	local icon = Style.Image(launcher, "LeaderboardIcon", Config.LAUNCHER_ART, 3)
+	icon.AnchorPoint, icon.Position = Vector2.new(0, 0.5), UDim2.new(0, 6, 0.5, 0)
+	icon.Size = UDim2.fromOffset(Config.LAUNCHER_ICON_SIZE, Config.LAUNCHER_ICON_SIZE)
+	local caption =
+		label(launcher, "Caption", "Ranks", Config.LAUNCHER_TEXT_INSET, 0, 78, Config.LAUNCHER_TEXT_SIZE - 2)
+	caption.Size = UDim2.fromOffset(Config.LAUNCHER_WIDTH - Config.LAUNCHER_TEXT_INSET - 6, Config.LAUNCHER_HEIGHT)
+	caption.TextStrokeColor3, caption.TextStrokeTransparency = caption.TextColor3, Hud.UI.LauncherStrokeTransparency
 	local rows: { [number]: Frame } = {}
 	local function portrait(row: Frame, content: string): ()
 		local avatar = row:FindFirstChild("Avatar") :: ImageLabel
@@ -147,16 +157,40 @@ function View.new(parent: Instance, localId: number)
 	end
 	fit = function(): ()
 		local viewport = screen.AbsoluteSize
-		local width = math.min(Config.WIDTH, math.max(280, viewport.X - 48))
-		local height = math.min(Config.HEIGHT, math.max(220, viewport.Y - 64))
+		local inset = game:GetService("GuiService"):GetGuiInset().Y
+		-- Both HUDs ignore the inset. Reuse Settings' authored position because
+		-- GuiService's inset can become ready after the HUD was constructed.
+		local hudScreen = parent:FindFirstChild("KingdomHUD")
+		local settingsButton = if hudScreen then hudScreen:FindFirstChild("SettingsButton") else nil
+		local settingsPosition = UDim2.new(1, -20, 0, inset + 16)
+		local settingsWidth = Config.LAUNCHER_HEIGHT
+		if settingsButton and settingsButton:IsA("GuiObject") then
+			settingsPosition = settingsButton.Position
+			settingsWidth = settingsButton.Size.X.Offset
+		end
+		local width = math.min(Config.WIDTH, math.max(280, (viewport.X - 48) / Config.PANEL_SCALE))
+		local height = math.min(Config.HEIGHT, math.max(220, (viewport.Y - inset - 64) / Config.PANEL_SCALE))
 		local compact = width < Config.WIDTH
+		local shortLayout = Config.SHORT_LAYOUT
+		local short = height < shortLayout.Height
 		panel.Size = UDim2.fromOffset(width, height)
-		scale.Scale = 1
-		banner.Position, banner.Size = UDim2.fromOffset(20, -25), UDim2.new(1, -64, 0, 110)
+		panel.Position = UDim2.new(1, -24, 0, inset + 24)
+		scale.Scale = Config.PANEL_SCALE
+		launcher.Position = UDim2.new(
+			settingsPosition.X.Scale,
+			settingsPosition.X.Offset - settingsWidth - Config.LAUNCHER_GAP,
+			settingsPosition.Y.Scale,
+			settingsPosition.Y.Offset
+		)
+		banner.Position, banner.Size =
+			UDim2.fromOffset(20, -25), UDim2.new(1, -64, 0, if short then shortLayout.BannerHeight else 110)
 		title.Position, title.Size = UDim2.fromOffset(12, 22), UDim2.new(1, -24, 0, 48)
 		title.TextSize = if compact then 14 else 24
 		subtitle.Position, subtitle.Size = UDim2.fromOffset(16, 64), UDim2.new(1, -32, 0, 32)
 		subtitle.TextSize = if compact then 10 else 14
+		subtitle.Visible, footer.Visible = not short, not short
+		scroll.Position = UDim2.fromOffset(16, if short then shortLayout.ScrollTop else 148)
+		scroll.Size = UDim2.new(1, -32, 1, if short then -(shortLayout.ScrollTop + shortLayout.ScrollBottom) else -200)
 		footer.Position, footer.Size = UDim2.new(0, 16, 1, -48), UDim2.new(1, -32, 0, 48)
 		for _, column in columns do
 			local heading = panel:FindFirstChild(column[1] :: string) :: TextLabel
@@ -164,12 +198,15 @@ function View.new(parent: Instance, localId: number)
 				local key = column[1]
 				heading.Position = UDim2.fromOffset(
 					if key == "Rank" then 20 elseif key == "Rebirths" then width - 92 else 92,
-					if key == "LifetimeGold" or key == "Rebirths" then 119 else 88
+					if key == "LifetimeGold" or key == "Rebirths"
+						then (if short then shortLayout.ValuesHeadingY else 119)
+						else (if short then shortLayout.PlayerHeadingY else 88)
 				)
 				heading.Size = UDim2.fromOffset(if key == "Rebirths" then 76 else width - 110, 24)
 				heading.TextSize = if key == "Rebirths" then 10 else 12
 			else
-				heading.Position = UDim2.fromOffset(column[3] :: number, 100)
+				heading.Position =
+					UDim2.fromOffset(column[3] :: number, if short then shortLayout.WideHeadingY else 100)
 				heading.Size, heading.TextSize = UDim2.fromOffset(column[4] :: number, 48), 14
 			end
 		end

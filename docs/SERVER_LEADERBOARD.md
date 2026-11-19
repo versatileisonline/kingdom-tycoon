@@ -13,7 +13,37 @@ starter menu's Arcade font is configured in HudConfig and reused across game-own
 screen UI and plate labels. Text was increased two points from the initial pixel
 conversion, with subtle outlines for weight. Roblox system UI is unaffected.
 Opening the panel closes other gameplay menus and suspends camera lock/sprint.
-It stays hidden before Play. No new assets or Rojo mappings are required.
+It stays hidden before Play. Rojo mappings remain unchanged.
+
+## Compact launcher and panel refinement (2026-11-18)
+
+Ranks now sits directly left of Settings with a 24px gap, matching royal blue
+fill, rounded corners and gold ornaments. Its 132x52 button contains an 18px
+Arcade caption and a 36px trophy. The view reuses Settings' position so delayed
+GuiService inset initialization cannot place the buttons on different rows.
+Desktop panel scale is 0.92: approximately736x451 instead of800x490. Existing
+desktop columns and narrow row reflow remain; panels below300 design pixels
+hide optional subtitle/footer and tighten headings to preserve a full row.
+
+Asset contract: `assets/hud/leaderboard-trophy.png` is a single1254x1254 RGBA
+image mapped by `LeaderboardConfig.LAUNCHER_ART` to `rbxassetid://130383942041603`.
+The centered gold trophy with crown emblem and royal-blue pedestal has transparent
+padding and no text. Replacement art must preserve alpha and a readable36px
+silhouette; the full image uses ScaleType.Fit, without atlas cropping. Generated
+with the built-in image tool; final prompt is recorded in
+`docs/superpowers/plans/2026-11-18-leaderboard-launcher-polish.md`.
+Rollback these client/config changes together; no schema/server rollback needed.
+
+Verification: formatting, Selene (zero errors/warnings) and code-only Rojo build
+passed. Fresh Mock Play confirmed startup gating, matching launcher position/fill,
+loaded trophy, exact132x52 button and736x450.8 panel. Native Ranks click, Tab open,
+X close and Settings exclusivity passed. Galaxy A06 simulator with640x360 override
+(reported viewport545x338) displayed a full player/Gold/Rebirths row; simulator
+was reset to default. Studio Output retained `LeaderboardController ... Ready
+(Tab toggles server leaderboard)` and `ClientBootstrap ... Ready`, with no client
+errors in the inspected log. Independent review found no actionable issues.
+Physical-device and multiplayer acceptance remain manual. Studio was returned to
+Edit and handed to the concurrent sprint task; no cloud save, publish or push.
 
 ## Lifetime earnings and compatibility
 

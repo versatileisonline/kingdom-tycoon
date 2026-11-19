@@ -73,6 +73,15 @@ If you notice a rule here is wrong, outdated, or blocking good work, propose a c
 
 ## 10. Project structure
 
+Leaderboard launcher polish (2026-11-18): compact 132x52 Ranks button sits 24px
+left of Settings, sharing its position, royal blue fill and gold ornaments.
+Transparent assets/hud/leaderboard-trophy.png maps to130383942041603; one centered
+gold crown trophy on blue pedestal, no atlas/cropping. LeaderboardConfig owns
+dimensions/art and 0.92 panel scale (desktop736x451). Short panels hide optional
+subtitle/footer to keep a full player row visible. No data/remotes/mapping or
+Studio template changes. See docs/SERVER_LEADERBOARD.md for checks.
+
+
 Final forest revision (2026-11-18) supersedes spruce:16 OpenWoodlandPine trees,
 70–82 studs, exposed brown lower trunks/branches and loose dark upper crowns.
 ServerStorage.PlotLandscapeAssets.WoodlandPine source116813767400777;
@@ -709,6 +718,14 @@ gone. The published-place template needs authored assets and live purchase IDs
 before players have a purchase to make.
 
 ## 12. Status
+
+Leaderboard launcher polish (2026-11-18): fresh Mock Play verified matching
+Settings alignment/color, trophy loading, 132x52 launcher and736x451 panel.
+Native Ranks/Tab/X and Settings exclusivity passed; short545x338 viewport showed
+a full player/Gold/Rebirths row after header compaction. Default viewport restored;
+Studio handed to the concurrent sprint task in Edit. Formatting/lint/build pass;
+review found no actionable issues. Physical devices/multiplayer remain untested.
+No push, cloud save or publish.
 
 Shop preview entry fix (2026-11-18): ShopPreview now waits for server-owned
 KingdomEntered before staging/claiming the plot, leaving land free for Play.
